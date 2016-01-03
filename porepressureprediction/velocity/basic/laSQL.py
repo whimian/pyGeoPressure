@@ -1,0 +1,318 @@
+# -*- coding: utf-8 -*-
+from __future__ import division
+import numpy as np
+from las import LASReader
+import json
+import sqlite3
+import os
+
+
+class Well(object):
+    """class for storing well log data with database file
+
+    This Well class stores the well log data in associated database files,
+    stores the well information in associated json files, and provides methods
+    for accessing these external data.
+
+    Attributes
+    ----------
+    db_file : string
+        the address of database file storing the log data
+    sellSetting : string
+        the address of json file storing well information
+
+    Methods
+    -------
+    add_log(log, name)
+        Add an array of log data to the Well object
+    drop_log(name)
+        delete the log named 'name'
+    logs()
+        display existing logs in the database
+    get_log(name)
+        retrieve specific log
+    Notes
+    -----
+
+    Raises
+    ------
+
+    """
+    def __init__(self, js=None, db=None):
+        self.db_file = 'new_db.db' if db is None else db
+        self.json_file = 'new_json.json' if js is None else js
+        self._check_file()
+        self.las_file = None
+        self.existing_logs = None
+        self._parse_existing_logs()
+        self.name = None
+        self.loc = None
+        self.start = None
+        self.stop = None
+        self.step = None
+        self._read_setting()
+
+    def __str__(self):
+        return "a well"
+
+    def __repr__(self):
+        pass
+
+    def _parse_existing_logs(self):
+        try:
+            conn = sqlite3.connect(self.db_file)
+            cur = conn.cursor()
+            cur.execute("SELECT name FROM curves")
+            temp = cur.fetchall()
+            conn.close()
+            self.existing_logs = [curv[0].lower() for curv in temp]
+        except:
+            print("Problem happened.")
+            pass
+
+    def _check_file(self):
+        if not self.db_file.endswith('.db'):
+            raise Exception("`db` should be .db file, " +
+                            "or use None instead")
+        if not os.path.exists(self.db_file):
+            try:
+                fDB = open(self.db_file, 'w')
+                fDB.close()
+            except:
+                print("Error: Database file cannot be created!")
+
+        if not self.json_file.endswith('.json'):
+            raise Exception("`json` should be .josn file, " +
+                            "or use None instead")
+        if not os.path.exists(self.json_file):
+            try:
+                fJSON = open(self.json_file, 'w')
+                fJSON.close()
+            except:
+                print("Error: JSON file cannot be created!")
+
+    def _feet_2_meter(self, item_in_feet):
+        """converts feet to meters
+        """
+        # vfunc_model = np.vectorize(spherical)
+        try:
+            return item_in_feet / 3.28084
+        except TypeError:
+            return float(item_in_feet) / 3.28084
+
+    def _rolling_window(self, a, window):
+        a = np.array(a)
+        shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+        strides = a.strides + (a.strides[-1],)
+        rolled = np.lib.stride_tricks.as_strided(
+                                            a, shape=shape, strides=strides)
+        return rolled
+
+    def _despike(self, curve, curve_sm, max_clip):
+        spikes = np.where(curve - curve_sm > max_clip)[0]
+        spukes = np.where(curve_sm - curve > max_clip)[0]
+        out = np.copy(curve)
+        out[spikes] = curve_sm[spikes] + max_clip
+        out[spukes] = curve_sm[spukes] - max_clip
+        return out
+
+    def _read_setting(self):
+        try:
+            with open(self.json_file, 'r') as fin:
+                jsStruct = json.load(fin)
+                location = jsStruct['LOC']['data'].split()
+                self.loc = (float(location[2]), float(location[5]))
+                self.start = jsStruct['STRT']['data']
+                self.stop = jsStruct['STOP']['data']
+                self.step = jsStruct['STEP']['data']
+                self.name = jsStruct['WELL']['data']
+                if self.step == 0:
+                    self.step = 0.1
+        except:
+            print("cannot open json file")
+            pass
+
+    def get_log(self, name, window=None):
+        if name not in self.existing_logs:
+            raise Exception("no log named {}!".format(name))
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute("SELECT {} FROM data".format(name))
+        log = cur.fetchall()
+        conn.close()
+        log = [d[0] for d in log]
+        if window is None:
+            return log
+        else:
+            log_sm = np.median(self._rolling_window(log, window), -1)
+            log_sm = np.pad(log_sm, window / 2, mode='edge')
+
+    def update_log(self, name, data):
+        if name not in self.existing_logs:
+            raise Exception("no log named {}!".format(name))
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        dTuple = [(d,) for d in data]
+        for i in xrange(len(dTuple)):
+            cur.execute("UPDATE data SET {} = ? WHERE \
+                        id = {}".format(name, i), dTuple[i])
+        conn.commit()
+        conn.close()
+
+    def add_log(self, name, data):
+        """save log data into the database
+        """
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute()
+        conn.close()
+
+    def drop_log(self, name):
+        """remove log from the database
+        """
+        pass
+
+    def logs(self):
+        """display all existing logs in the database"""
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM curves")
+        dataTuples = cur.fetchall()
+        conn.close()
+        return [{"id": a[0], "name": a[1], "units": a[2],
+                 "descr": a[3]} for a in dataTuples]
+
+    def _change_file_name(self):
+        project_folder = os.getcwd()
+
+        json_name = os.path.basename(self.json_file)
+        json_folder = os.path.abspath(os.path.dirname(self.json_file))
+        json_name_new = self.well_name + os.path.extsep +\
+            self.json_file.split('.')[1]
+
+        os.chdir(json_folder)
+        os.rename(json_name, json_name_new)
+        os.chdir(project_folder)
+
+        self.json_file = os.path.join(json_folder, json_name_new)
+
+        db_name = os.path.basename(self.db_file)
+        db_folder = os.path.abspath(os.path.dirname(self.db_file))
+        db_name_new = self.well_name + os.path.extsep +\
+            self.db_file.split('.')[1]
+
+        os.chdir(db_folder)
+        os.rename(db_name, db_name_new)
+        os.chdir(project_folder)
+
+        self.db_file = os.path.join(db_folder, db_name_new)
+
+    def read_las(self, las_file=None):
+        self.las_file = las_file
+        if self.las_file is None:
+            self.las_file = '../data/wells/TWT1.las'
+        las = LASReader(self.las_file, null_subs=np.nan)
+        self.well_name = las.well.items['WELL'].data
+
+        self._change_file_name()
+        self.existing_logs = []
+        jsonDict = las.well.items.copy()
+        for key in jsonDict.keys():
+            jsonDict[key] = {}
+            jsonDict[key]['units'] = las.well.items[key].units
+            jsonDict[key]['data'] = las.well.items[key].data
+            jsonDict[key]['descr'] = las.well.items[key].descr
+
+        with open(self.json_file, 'w') as fout:
+            json.dump(jsonDict, fout, indent=4, sort_keys=False)
+
+        sqlList = []
+        for litem in las.curves.items.values():
+            sqlTuple = []
+            tempList = litem.descr.split('=')
+            sqlTuple.append(tempList[0].split()[0])
+            sqlTuple.append(litem.name)
+            self.existing_logs.append(litem.name.lower())
+            sqlTuple.append(litem.units)
+            sqlTuple.append(tempList[-1][1:])
+            sqlTuple = tuple(sqlTuple)
+            sqlList.append(sqlTuple)
+
+        sqlList.sort(key=lambda x: x[0])
+
+        conn = sqlite3.connect(self.db_file)
+        cur = conn.cursor()
+        cur.execute("""CREATE TABLE curves (
+                 id INTEGER,
+                 name TEXT,
+                 units TEXT,
+                 decr TEXT
+            )""")
+
+        cur.executemany("INSERT INTO curves VALUES (?, ?, ?, ?)",
+                        sqlList)
+        template = ""
+        nameList = [a[1].lower() + " REAL" for a in sqlList]
+        nameList.insert(0, "id INTEGER PRIMARY KEY")
+        template = (',\n\t\t').join(nameList)
+        cur.execute("CREATE TABLE data (\n\t\t{}\n\t)".format(template))
+        for i in xrange(int(las.data2d.shape[0])):
+            temp = list(las.data2d[i])
+            temp.insert(0, i+1)
+            temp = tuple(temp)
+            cur.execute("INSERT INTO data \
+                        VALUES (" + ','.join(['?'] * len(temp)) + ")",
+                        temp)
+        conn.commit()
+        conn.close()
+        self._read_setting()
+        self._parse_existing_logs()
+
+
+def rolling_window(a, window):
+    a = np.array(a)
+    shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
+    strides = a.strides + (a.strides[-1],)
+    rolled = np.lib.stride_tricks.as_strided(
+                                        a, shape=shape, strides=strides)
+    return rolled
+
+
+def despike(curve, curve_sm, max_clip):
+    spikes = np.where(curve - curve_sm > max_clip)[0]
+    spukes = np.where(curve_sm - curve > max_clip)[0]
+    out = np.copy(curve)
+    out[spikes] = curve_sm[spikes] + max_clip
+    out[spukes] = curve_sm[spukes] - max_clip
+    return out
+
+
+def smooth(log, window=3003):
+    """
+    Parameter
+    ---------
+    log : 1-d array
+        log to smooth
+    window : scalar
+        window size of the median filter
+
+    Return
+    ------
+    smoothed log : 1-d array
+        smoothed log
+    """
+    log_sm = np.median(rolling_window(log, window), -1)
+    log_sm = np.pad(log_sm, window // 2, mode="edge")
+    return log_sm
+
+if __name__ == '__main__':
+    well = Well(js="../testFile/TWT1.json", db="../testFile/TWT1.db")
+    print(well.loc)
+    # well = Well()
+    # well.read_las("../data/wells/TWT3.las")
+    d1 = well.get_log("ac")
+    # d2 = list(np.random.rand(len(d1)))
+    # well.update_log('ac', d2)
+    # print well.get_log('ac')[:10]
+    print(d1[:10])
+    # print(well.existing_logs)
