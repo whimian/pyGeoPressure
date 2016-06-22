@@ -59,7 +59,7 @@ class Well(object):
         pass
 
     def __len__(self):
-        return (float(self.stop) - float(self.start)) // float(self.step)
+        return (float(self.stop) - float(self.start)) // float(self.step) + 1
 
     def _parse_existing_logs(self):
         try:
