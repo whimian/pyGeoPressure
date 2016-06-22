@@ -269,6 +269,19 @@ class Well(object):
         self._parse_existing_logs()
 
 
+class Log(object):
+    """
+    """
+    def __init__(self):
+        self.name = ""
+        self.units = ""
+        self.decr = ""
+        self.data = None
+
+    def __len__():
+        return len(data)
+
+
 def rolling_window(a, window):
     a = np.array(a)
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
