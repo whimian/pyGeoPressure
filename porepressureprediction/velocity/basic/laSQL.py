@@ -271,12 +271,13 @@ class Well(object):
 
 class Log(object):
     """
+    class for well log
     """
     def __init__(self):
         self.name = ""
         self.units = ""
         self.decr = ""
-        self.data = None
+        self.data = list()
 
     def __len__():
         return len(data)
