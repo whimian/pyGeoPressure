@@ -58,6 +58,9 @@ class Well(object):
     def __repr__(self):
         pass
 
+    def __len__(self):
+        return (float(self.stop) - float(self.start)) // double(self.step)
+
     def _parse_existing_logs(self):
         try:
             conn = sqlite3.connect(self.db_file)
@@ -121,6 +124,8 @@ class Well(object):
             with open(self.json_file, 'r') as fin:
                 jsStruct = json.load(fin)
                 location = jsStruct['LOC']['data'].split()
+                if len(location) == 0:
+                    raise ValueError
                 self.loc = (float(location[2]), float(location[5]))
                 self.start = jsStruct['STRT']['data']
                 self.stop = jsStruct['STOP']['data']
@@ -128,6 +133,8 @@ class Well(object):
                 self.name = jsStruct['WELL']['data']
                 if self.step == 0:
                     self.step = 0.1
+        except ValueError:
+            print("No valid coordination found.")
         except:
             print("cannot open json file")
             pass
