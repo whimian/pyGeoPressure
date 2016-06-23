@@ -248,12 +248,15 @@ class Well(object):
         sqlList = []
         for litem in las.curves.items.values():
             sqlTuple = []
-            tempList = litem.descr.split('=')
-            sqlTuple.append(tempList[0].split()[0])
+            # tempList = litem.descr.split('=')
+            # sqlTuple.append(tempList[0].split()[0])
+            sqlTuple.append(las.data.dtype.names.index(litem.name) + 1)
+            # giving each entry the right index to match the order of log data.
             sqlTuple.append(litem.name)
             self.existing_logs.append(litem.name.lower())
             sqlTuple.append(litem.units)
-            sqlTuple.append(tempList[-1][1:])
+            # sqlTuple.append(tempList[-1][1:])
+            sqlTuple.append(litem.descr)
             sqlTuple = tuple(sqlTuple)
             sqlList.append(sqlTuple)
 
