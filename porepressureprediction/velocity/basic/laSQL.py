@@ -166,6 +166,18 @@ class Well(object):
         conn.commit()
         conn.close()
 
+    def add_log(self, log):
+        """save log data into the database
+        """
+        try:
+            if self.__len__() != len(log):
+                raise Exception("length does not match")
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+
+        except:
+            pass
+
     def add_log(self, name, data):
         """save log data into the database
         """
