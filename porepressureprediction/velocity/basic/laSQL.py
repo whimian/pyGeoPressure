@@ -311,9 +311,21 @@ class Log(object):
         self.units = ""
         self.decr = ""
         self.data = list()
+        self.depth = list()
 
     def __len__(self):
         return len(self.data)
+
+    def read_od(self, file_name):
+        try:
+            with open(file_name, "r") as fin:
+                fin.readline()
+                for line in fin:
+                    tempList = line.split()
+                    self.depth.append(round(float(tempList[0]), 1))
+                    self.data.append(float(tempList[1]))
+        except Exception as inst:
+            print(inst.args)
 
 
 def rolling_window(a, window):
