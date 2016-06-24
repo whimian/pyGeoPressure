@@ -59,7 +59,7 @@ class Well(object):
         pass
 
     def __len__(self):
-        return (float(self.stop) - float(self.start)) // float(self.step) + 1
+        return (float(self.stop) - float(self.start)) / float(self.step) + 1
 
     def _parse_existing_logs(self):
         try:
@@ -170,7 +170,9 @@ class Well(object):
         """save log data into the database
         """
         try:
-            if self.__len__() != len(log):
+            if len(log) == 0:
+                raise Exception("No valid data in log")
+            if self.__len__() < len(log):
                 raise Exception("length does not match")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
@@ -180,10 +182,15 @@ class Well(object):
                 curvesTuple = (index, log.name, log.units, log.descr)
                 cur.execute("INSERT INTO curves VALUES (?, ?, ?, ?)",
                             curvesTuple)
-                cur.execute("ALTER TABLE curves ADD COLUMN {} REAL".format(log.name.lower()))
+                cur.execute("ALTER TABLE data \
+                             ADD COLUMN {} REAL".format(log.name.lower()))
                 dataList = [(a,) for a in log.data]
-                cur.executemany("INSERT INTO data ({}) VALUES (?)".format(log.name.lower()),
-                                dataList)
+
+                for de, da in zip(log.depth, dataList):
+                    cur.execute("UPDATE data \
+                                   SET {} = ?\
+                                   WHERE dept = {}".format(
+                                   log.name.lower(), de), da)
                 conn.commit()
         except Exception as inst:
             print(inst.args[0])
@@ -323,7 +330,10 @@ class Log(object):
                 for line in fin:
                     tempList = line.split()
                     self.depth.append(round(float(tempList[0]), 1))
-                    self.data.append(float(tempList[1]))
+                    if tempList[1] == "1e30":
+                        self.data.append(np.nan)
+                    else:
+                        self.data.append(float(tempList[1]))
         except Exception as inst:
             print(inst.args)
 
