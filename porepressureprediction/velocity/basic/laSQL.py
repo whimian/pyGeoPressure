@@ -175,16 +175,27 @@ class Well(object):
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
 
-        except:
+                cur.execute("SELECT COUNT(*) FROM curves")
+                index = cur.fetchone()[0] + 1
+                curvesTuple = (index, log.name, log.units, log.descr)
+                cur.execute("INSERT INTO curves VALUES (?, ?, ?, ?)",
+                            curvesTuple)
+                cur.execute("ALTER TABLE curves ADD COLUMN {} REAL".format(log.name.lower()))
+                dataList = [(a,) for a in log.data]
+                cur.executemany("INSERT INTO data ({}) VALUES (?)".format(log.name.lower()),
+                                dataList)
+                conn.commit()
+        except Exception as inst:
+            print(inst.args[0])
             pass
 
-    def add_log(self, name, data):
-        """save log data into the database
-        """
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute()
-        conn.close()
+    # def add_log(self, name, data):
+    #     """save log data into the database
+    #     """
+    #     conn = sqlite3.connect(self.db_file)
+    #     cur = conn.cursor()
+    #     cur.execute()
+    #     conn.close()
 
     def drop_log(self, name):
         """remove log from the database
@@ -301,8 +312,8 @@ class Log(object):
         self.decr = ""
         self.data = list()
 
-    def __len__():
-        return len(data)
+    def __len__(self):
+        return len(self.data)
 
 
 def rolling_window(a, window):
