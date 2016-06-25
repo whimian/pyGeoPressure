@@ -325,6 +325,8 @@ class Log(object):
         self.decr = ""
         self.data = list()
         self.depth = list()
+        self.log_start = None
+        self.log_stop = None
 
     def __len__(self):
         return len(self.data)
@@ -340,6 +342,15 @@ class Log(object):
 
     def __repr__(self):
         return self._info()
+
+    @property
+    def start(self):
+        if self.log_start is None:
+            for dep, dat in zip(self.depth, self.data):
+                if dat is not np.nan:
+                    self.log_start = dep
+                    break
+        return self.log_start
 
     def read_od(self, file_name):
         try:
