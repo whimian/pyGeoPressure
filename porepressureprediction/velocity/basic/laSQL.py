@@ -363,6 +363,14 @@ class Log(object):
                     break
         return self.log_stop
 
+    @property
+    def top(self):
+        return self.depth[0]
+
+    @property
+    def bottom(self):
+        return self.depth[-1]
+
     def read_od(self, file_name):
         try:
             with open(file_name, "r") as fin:
