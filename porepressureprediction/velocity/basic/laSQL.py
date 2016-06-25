@@ -52,11 +52,17 @@ class Well(object):
         self.step = None
         self._read_setting()
 
+    def _info(self):
+        return "Well Name: {}\n".format(self.name) +\
+               "Position: {}\n".format(self.loc) +\
+               "Depth range: {} - {} - {}\n".format(
+                self.start, self.stop, self.step)
+
     def __str__(self):
-        return "a well"
+        return self._info()
 
     def __repr__(self):
-        pass
+        return self._info()
 
     def __len__(self):
         return (float(self.stop) - float(self.start)) / float(self.step) + 1
