@@ -145,20 +145,47 @@ class Well(object):
             print("cannot open json file")
             pass
 
-    def get_log(self, name, window=None):
+    # def get_log(self, name, window=None):
+    #     if name not in self.existing_logs:
+    #         raise Exception("no log named {}!".format(name))
+    #     conn = sqlite3.connect(self.db_file)
+    #     cur = conn.cursor()
+    #     cur.execute("SELECT {} FROM data".format(name))
+    #     log = cur.fetchall()
+    #     conn.close()
+    #     log = [d[0] for d in log]
+    #     if window is None:
+    #         return log
+    #     else:
+    #         log_sm = np.median(self._rolling_window(log, window), -1)
+    #         log_sm = np.pad(log_sm, window / 2, mode='edge')
+
+    def get_log(self, name):
         if name not in self.existing_logs:
             raise Exception("no log named {}!".format(name))
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute("SELECT {} FROM data".format(name))
-        log = cur.fetchall()
-        conn.close()
-        log = [d[0] for d in log]
-        if window is None:
-            return log
-        else:
-            log_sm = np.median(self._rolling_window(log, window), -1)
-            log_sm = np.pad(log_sm, window / 2, mode='edge')
+        depth = None
+        data = None
+        info = None
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.execute("SELECT {} FROM data".format(name))
+            data = cur.fetchall()
+            cur.execute("SELECT dept FROM data")
+            depth = cur.fetchall()
+            cur.execute("SELECT * FROM curves WHERE name = \"{}\"".format(name.upper()))
+            info = cur.fetchall()
+        data = [d[0] for d in data]
+        depth = [d[0] for d in depth]
+        for idx, d in enumerate(data):
+            if d is None:
+                data[idx] = np.nan
+        log = Log()
+        log.name = info[0][1].lower()
+        log.units = info[0][2].lower()
+        log.descr = info[0][3]
+        log.depth = depth
+        log.data = data
+        return log
 
     def update_log(self, name, data):
         if name not in self.existing_logs:
