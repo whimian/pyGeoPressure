@@ -329,6 +329,18 @@ class Log(object):
     def __len__(self):
         return len(self.data)
 
+    def _info(self):
+        return "Log Name: {}\n".format(self.name) +\
+               "Log Units: {}\n".format(self.units) +\
+               "Depth range: {} - {} - {}\n".format(
+                self.depth[0], self.depth[-1], 0.1)
+
+    def __str__(self):
+        return self._info()
+
+    def __repr__(self):
+        return self._info()
+
     def read_od(self, file_name):
         try:
             with open(file_name, "r") as fin:
