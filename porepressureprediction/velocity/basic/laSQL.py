@@ -172,7 +172,8 @@ class Well(object):
             data = cur.fetchall()
             cur.execute("SELECT dept FROM data")
             depth = cur.fetchall()
-            cur.execute("SELECT * FROM curves WHERE name = \"{}\"".format(name.upper()))
+            cur.execute("SELECT * FROM curves WHERE name = \"{}\"".format(
+                                                                name.upper()))
             info = cur.fetchall()
         data = [d[0] for d in data]
         depth = [d[0] for d in depth]
@@ -187,17 +188,19 @@ class Well(object):
         log.data = data
         return log
 
-    def update_log(self, name, data):
-        if name not in self.existing_logs:
-            raise Exception("no log named {}!".format(name))
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        dTuple = [(d,) for d in data]
-        for i in xrange(len(dTuple)):
-            cur.execute("UPDATE data SET {} = ? WHERE \
-                        id = {}".format(name, i), dTuple[i])
-        conn.commit()
-        conn.close()
+    def update_log(self, log):
+        try:
+            if name not in self.existing_logs:
+                raise Exception("no log named {}!".format(log.name))
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                dTuple = [(d,) for d in log.data]
+                for dep, dat in zip(log.depth, dTuple):
+                    cur.execute("UPDATE data SET {} = ? WHERE \
+                                dept = {}".format(log.name, dep), dat)
+                conn.commit()
+        except Exception as inst:
+            print(inst.args[0])
 
     def add_log(self, log):
         """save log data into the database
