@@ -5,6 +5,7 @@ from las import LASReader
 import json
 import sqlite3
 import os
+import copy
 
 
 class Well(object):
@@ -232,14 +233,6 @@ class Well(object):
             print(inst.args[0])
             pass
 
-    # def add_log(self, name, data):
-    #     """save log data into the database
-    #     """
-    #     conn = sqlite3.connect(self.db_file)
-    #     cur = conn.cursor()
-    #     cur.execute()
-    #     conn.close()
-
     def drop_log(self, name):
         """remove log from the database
         """
@@ -434,23 +427,30 @@ def despike(curve, curve_sm, max_clip):
     return out
 
 
-def smooth(log, window=3003):
+def smooth_log(log, window=3003):
     """
     Parameter
     ---------
-    log : 1-d array
+    log : Log object
         log to smooth
     window : scalar
         window size of the median filter
 
     Return
     ------
-    smoothed log : 1-d array
+    smoothed log : Log object
         smoothed log
     """
-    log_sm = np.median(rolling_window(log, window), -1)
+    data2smooth = copy.copy(log.data)
+    log_sm = np.median(rolling_window(data2smooth, window), -1)
     log_sm = np.pad(log_sm, window // 2, mode="edge")
-    return log_sm
+    logSmoothed = Log()
+    logSmoothed.name = log.name + "_edited"
+    logSmoothed.units = log.units
+    logSmoothed.descr = log.descr
+    logSmoothed.depth = log.depth
+    logSmoothed.data = log_sm
+    return logSmoothed
 
 if __name__ == '__main__':
     well = Well(js="../testFile/TWT1.json", db="../testFile/TWT1.db")
