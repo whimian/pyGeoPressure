@@ -461,7 +461,9 @@ def shale(gr_log, vel_log, thresh):
     mask = []
     for dep in vel_log.depth:
         if dep <= gr_stop and dep >= gr_start:
-            if gr_dict[dep] > thresh:
+            if np.isnan(gr_dict[dep]):
+                mask.append(True)
+            elif gr_dict[dep] > thresh:
                 mask.append(True)
             else:
                 mask.append(False)
