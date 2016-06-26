@@ -452,6 +452,35 @@ def smooth_log(log, window=3003):
     logSmoothed.data = log_sm
     return logSmoothed
 
+
+def shale(gr_log, vel_log, thresh):
+    gr_depth = np.array(gr_log.depth)
+    gr_dict = dict(zip(gr_log.depth, gr_log.data))
+    gr_start = gr_log.start
+    gr_stop = gr_log.stop
+    mask = []
+    for dep in vel_log.depth:
+        if dep <= gr_stop and dep >= gr_start:
+            if gr_dict[dep] > thresh:
+                mask.append(True)
+            else:
+                mask.append(False)
+        else:
+            mask.append(True)
+    if len(mask) != len(vel_log.data):
+        raise Exception("mask length is wrong.")
+    mask = np.array(mask)
+    vel_data = np.array(vel_log.data)
+    vel_shale = vel_data[mask]
+    vel_shale = list(vel_shale)
+    log_vel_shale = Log()
+    log_vel_shale.name = vel_log.name + "_shale"
+    log_vel_shale.units = vel_log.units
+    log_vel_shale.decr = vel_log.decr + " in Shale"
+    log_vel_shale.depth = vel_log.depth
+    log_vel_shale.data = vel_shale
+    return log_vel_shale
+
 if __name__ == '__main__':
     well = Well(js="../testFile/TWT1.json", db="../testFile/TWT1.db")
     print(well.loc)
