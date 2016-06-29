@@ -212,24 +212,25 @@ class Well(object):
                 raise Exception("No valid data in log")
             if self.__len__() < len(log):
                 raise Exception("length does not match")
+            # add new row to curves table
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
-
                 cur.execute("SELECT COUNT(*) FROM curves")
                 index = cur.fetchone()[0] + 1
                 curvesTuple = (index, log.name, log.units, log.descr)
                 cur.execute("INSERT INTO curves VALUES (?, ?, ?, ?)",
                             curvesTuple)
+            # add new column to data table
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
                 cur.execute("ALTER TABLE data \
                              ADD COLUMN {} REAL".format(log.name.lower()))
                 dataList = [(a,) for a in log.data]
-
                 for de, da in zip(log.depth, dataList):
                     cur.execute("UPDATE data \
                                    SET {} = ?\
                                    WHERE dept = {}".format(
                                    log.name.lower(), de), da)
-                conn.commit()
         except Exception as inst:
             print(inst.args[0])
             pass
