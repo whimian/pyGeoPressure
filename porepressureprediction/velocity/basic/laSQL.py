@@ -6,6 +6,7 @@ import json
 import sqlite3
 import os
 import copy
+from collections import deque
 
 
 class Well(object):
@@ -454,7 +455,7 @@ def smooth_log(log, window=3003):
 
 
 def shale(gr_log, vel_log, thresh):
-    gr_depth = np.array(gr_log.depth)
+    # gr_depth = np.array(gr_log.depth)
     gr_dict = dict(zip(gr_log.depth, gr_log.data))
     gr_start = gr_log.start
     gr_stop = gr_log.stop
@@ -472,8 +473,12 @@ def shale(gr_log, vel_log, thresh):
     if len(mask) != len(vel_log.data):
         raise Exception("mask length is wrong.")
     mask = np.array(mask)
-    vel_data = np.array(vel_log.data)
-    vel_shale = vel_data[mask]
+    vel_shale = deque()
+    for masque, dat in zip(mask, vel_log.data):
+        if masque:
+            vel_shale.append(dat)
+        else:
+            vel_shale.append(np.nan)
     vel_shale = list(vel_shale)
     log_vel_shale = Log()
     log_vel_shale.name = vel_log.name + "_shale"
