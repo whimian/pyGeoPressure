@@ -311,31 +311,30 @@ class Well(object):
 
         sqlList.sort(key=lambda x: x[0])
 
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute("""CREATE TABLE curves (
-                 id INTEGER,
-                 name TEXT,
-                 units TEXT,
-                 decr TEXT
-            )""")
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.execute("""CREATE TABLE curves (
+                     id INTEGER,
+                     name TEXT,
+                     units TEXT,
+                     decr TEXT
+                )""")
 
-        cur.executemany("INSERT INTO curves VALUES (?, ?, ?, ?)",
-                        sqlList)
-        template = ""
-        nameList = [a[1].lower() + " REAL" for a in sqlList]
-        nameList.insert(0, "id INTEGER PRIMARY KEY")
-        template = (',\n\t\t').join(nameList)
-        cur.execute("CREATE TABLE data (\n\t\t{}\n\t)".format(template))
-        for i in xrange(int(las.data2d.shape[0])):
-            temp = list(las.data2d[i])
-            temp.insert(0, i+1)
-            temp = tuple(temp)
-            cur.execute("INSERT INTO data \
-                        VALUES (" + ','.join(['?'] * len(temp)) + ")",
-                        temp)
-        conn.commit()
-        conn.close()
+            cur.executemany("INSERT INTO curves VALUES (?, ?, ?, ?)",
+                            sqlList)
+            template = ""
+            nameList = [a[1].lower() + " REAL" for a in sqlList]
+            nameList.insert(0, "id INTEGER PRIMARY KEY")
+            template = (',\n\t\t').join(nameList)
+            cur.execute("CREATE TABLE data (\n\t\t{}\n\t)".format(template))
+            for i in xrange(int(las.data2d.shape[0])):
+                temp = list(las.data2d[i])
+                temp.insert(0, i+1)
+                temp = tuple(temp)
+                cur.execute("INSERT INTO data \
+                            VALUES (" + ','.join(['?'] * len(temp)) + ")",
+                            temp)
+            cur.execute("CREATE INDEX IF NOT EXISTS depth_idx ON data(dept)")
         self._read_setting()
         self._parse_existing_logs()
 
