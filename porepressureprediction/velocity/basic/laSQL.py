@@ -206,9 +206,8 @@ class Well(object):
         """save log data into the database
         """
         try:
-            with sqlite3.connect(self.db_file) as conn:
-                cur = conn.cursor()
-                cur.execute()
+            if log.name in self.existing_logs:
+                raise Exception("A log with the name already exists")
             if len(log) == 0:
                 raise Exception("No valid data in log")
             if self.__len__() < len(log):
