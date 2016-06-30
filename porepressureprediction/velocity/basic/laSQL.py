@@ -242,13 +242,16 @@ class Well(object):
 
     def logs(self):
         """display all existing logs in the database"""
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM curves")
-        dataTuples = cur.fetchall()
-        conn.close()
-        return [{"id": a[0], "name": a[1], "units": a[2],
-                 "descr": a[3]} for a in dataTuples]
+        dataTuples = list()
+        try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM curves")
+                dataTuples = cur.fetchall()
+            return [{"id": a[0], "name": a[1], "units": a[2],
+                     "descr": a[3]} for a in dataTuples]
+        except:
+            return dataTuples
 
     def _change_file_name(self):
         project_folder = os.getcwd()
