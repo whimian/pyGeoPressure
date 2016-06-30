@@ -45,8 +45,7 @@ class Well(object):
         self.json_file = 'new_json.json' if js is None else js
         self._check_file()
         self.las_file = None
-        self.existing_logs = None
-        self._parse_existing_logs()
+        self._existing_logs = list()
         self.name = None
         self.loc = None
         self.start = None
@@ -69,17 +68,16 @@ class Well(object):
     def __len__(self):
         return (float(self.stop) - float(self.start)) / float(self.step) + 1
 
-    def _parse_existing_logs(self):
-        try:
-            conn = sqlite3.connect(self.db_file)
+    @property
+    def existing_logs(self):
+        temp = list()
+        with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
-            cur.execute("SELECT name FROM curves")
+            cur.execute("PRAGMA table_info('data')")
             temp = cur.fetchall()
-            conn.close()
-            self.existing_logs = [curv[0].lower() for curv in temp]
-        except:
-            print("Problem happened.")
-            pass
+        if len(temp) != 0:
+            self._existing_logs = [item[1] for item in temp]
+        return self._existing_logs
 
     def _check_file(self):
         if not self.db_file.endswith('.db'):
@@ -208,6 +206,9 @@ class Well(object):
         """save log data into the database
         """
         try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute()
             if len(log) == 0:
                 raise Exception("No valid data in log")
             if self.__len__() < len(log):
@@ -283,7 +284,7 @@ class Well(object):
         self.well_name = las.well.items['WELL'].data
 
         self._change_file_name()
-        self.existing_logs = []
+        # self.existing_logs = []
         jsonDict = las.well.items.copy()
         for key in jsonDict.keys():
             jsonDict[key] = {}
@@ -302,7 +303,7 @@ class Well(object):
             sqlTuple.append(las.data.dtype.names.index(litem.name) + 1)
             # giving each entry the right index to match the order of log data.
             sqlTuple.append(litem.name)
-            self.existing_logs.append(litem.name.lower())
+            # self.existing_logs.append(litem.name.lower())
             sqlTuple.append(litem.units)
             # sqlTuple.append(tempList[-1][1:])
             sqlTuple.append(litem.descr)
@@ -336,7 +337,6 @@ class Well(object):
                             temp)
             cur.execute("CREATE INDEX IF NOT EXISTS depth_idx ON data(dept)")
         self._read_setting()
-        self._parse_existing_logs()
 
 
 class Log(object):
