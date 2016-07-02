@@ -175,21 +175,6 @@ class Well(object):
             print("cannot open json file")
             pass
 
-    # def get_log(self, name, window=None):
-    #     if name not in self.existing_logs:
-    #         raise Exception("no log named {}!".format(name))
-    #     conn = sqlite3.connect(self.db_file)
-    #     cur = conn.cursor()
-    #     cur.execute("SELECT {} FROM data".format(name))
-    #     log = cur.fetchall()
-    #     conn.close()
-    #     log = [d[0] for d in log]
-    #     if window is None:
-    #         return log
-    #     else:
-    #         log_sm = np.median(self._rolling_window(log, window), -1)
-    #         log_sm = np.pad(log_sm, window / 2, mode='edge')
-
     def get_log(self, name):
         """retrieve a log from a well object based on name"""
         try:
@@ -270,7 +255,6 @@ class Well(object):
                                    log.name.lower(), de), da)
         except Exception as inst:
             print(inst.args[0])
-            pass
 
     def drop_log(self, name):
         """remove log from the database
@@ -526,15 +510,3 @@ def shale(gr_log, vel_log, thresh):
     log_vel_shale.depth = vel_log.depth
     log_vel_shale.data = vel_shale
     return log_vel_shale
-
-if __name__ == '__main__':
-    well = Well(js="../testFile/TWT1.json", db="../testFile/TWT1.db")
-    print(well.loc)
-    # well = Well()
-    # well.read_las("../data/wells/TWT3.las")
-    d1 = well.get_log("ac")
-    # d2 = list(np.random.rand(len(d1)))
-    # well.update_log('ac', d2)
-    # print well.get_log('ac')[:10]
-    print(d1[:10])
-    # print(well.existing_logs)
