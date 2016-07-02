@@ -230,38 +230,25 @@ class SeisCube():
                 fout.write("{}\t{}\t{}\n".format(
                                             self.stepInline, self.stepCrline,
                                             self.stepDepth))
-                conn = sqlite3.connect(self.db_file)
-                cur = conn.cursor()
-                for inl in range(self.startInline, self.endInline+1,
-                                 self.stepInline):
-                    for crl in range(self.startCrline, self.endCrline+1,
-                                     self.stepCrline):
-                        cur.execute('''SELECT attribute FROM {table}
-                                    WHERE inline=:inl AND crline=:xl
-                                    ORDER BY twt'''.format(talbe=attr),
-                                    {'inl': inl, 'xl': crl})
-                        temp = cur.fetchall()
-                        if len(temp) == 0:
-                            continue
-                        else:
-                            tempStr = list()
-                            for i in range(len(temp)):
-                                tempStr.append(str(temp[i][0]))
-                            data = '\t'.join(tempStr) + '\n'
-                            string = str(inl) + '\t' + str(crl) + '\t'
-                            fout.write(string + data)
+                with sqlite3.connect(self.db_file) as conn:
+                    cur = conn.cursor()
+                    for inl in range(self.startInline, self.endInline+1,
+                                     self.stepInline):
+                        for crl in range(self.startCrline, self.endCrline+1,
+                                         self.stepCrline):
+                            cur.execute('''SELECT attribute FROM {table}
+                                        WHERE inline=:inl AND crline=:xl
+                                        ORDER BY twt'''.format(talbe=attr),
+                                        {'inl': inl, 'xl': crl})
+                            temp = cur.fetchall()
+                            if len(temp) == 0:
+                                continue
+                            else:
+                                tempStr = list()
+                                for i in range(len(temp)):
+                                    tempStr.append(str(temp[i][0]))
+                                data = '\t'.join(tempStr) + '\n'
+                                string = str(inl) + '\t' + str(crl) + '\t'
+                                fout.write(string + data)
         except:
             print("failed to export")
-
-if __name__ == "__main__":
-    # a = SeisCube(os.path.join(os.path.pardir, "velocity_2.db"),
-    #              os.path.join(os.path.pardir, "survey.json"))
-
-    # data1 = a.get_Inline(1620)
-    # data2 = a.get_Crline(5680)
-    # data3 = a.get_Cdp((1620, 5680))
-    # data4 = a.get_Depth(2400)
-    # print(a)
-    # print(a.nInline)
-    # print(a.alpha_x, a.beta_x, a.gamma_x, sep=' ', end='\n')
-    pass
