@@ -100,6 +100,36 @@ class Well(object):
             except:
                 print("Error: JSON file cannot be created!")
 
+    def check_integrity(self):
+        """
+        To check if the database is empty and if number of records in
+        the curves table match the number of colums in data table
+        """
+        curves = list()
+        data = list()
+        schema = list()
+        try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("""SELECT name
+                               FROM sqlite_master
+                               WHERE type='table'""")
+                schema = cur.fetchall()
+            if len(schema) == 0:
+                raise Exception("No table in database.")
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM curves")
+                curves = cur.fetchall()
+                cur.execute("PRAGMA table_info('data')")
+                data = cur.fetchall()
+            if len(curves) + 1 != len(data):
+                raise Exception("Mismatch between curves data and data table.")
+            return True
+        except Exception as inst:
+            print(inst.args[0])
+            return False
+
     def _feet_2_meter(self, item_in_feet):
         """converts feet to meters
         """
