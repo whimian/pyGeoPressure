@@ -126,10 +126,11 @@ class SeisCube():
                              ON position.id = {table}.id \
                              WHERE inline = {inl}".format(
                                                     table=attr, inl=inline))
-                vv = cur.fetchall()
-            vv = [v[0] for v in vv]
-            return vv
-        except:
+                data = cur.fetchall()
+            data = [d[0] for d in data]
+            return data
+        except Exception as inst:
+            print(inst.args[0])
             return []
 
     def get_crline(self, crline, attr):
@@ -142,10 +143,11 @@ class SeisCube():
                              ON position.id = {table}.id \
                              WHERE crline = {crl}".format(
                                                     table=attr, crl=crline))
-                vv = cur.fetchall()
-            vv = [v[0] for v in vv]
-            return vv
-        except:
+                data = cur.fetchall()
+            data = [d[0] for d in data]
+            return data
+        except Exception as inst:
+            print(inst.args[0])
             return []
 
     def get_depth(self, depth, attr):
@@ -155,28 +157,29 @@ class SeisCube():
                 cur.execute("""SELECT attribute FROM position JOIN {table}
                             ON position.id = {table}.id
                             WHERE twt = {d}""".format(table=attr, d=depth))
-                vv = cur.fetchall()
-            vv = [v[0] for v in vv]
-            return vv
-        except:
+                data = cur.fetchall()
+            data = [d[0] for d in data]
+            return data
+        except Exception as inst:
+            print(inst.args[0])
             return []
 
     def get_cdp(self, CDP, attr):
-        il = CDP[0]
-        cl = CDP[1]
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        # cur.execute("""SELECT vel FROM velocity WHERE
-        #             inline=:inl AND crline=:xl ORDER BY twt""",
-        #             {"inl": il, "xl": cl})
-        cur.execute("""SELECT attribute FROM position JOIN {table}
-                    ON position.id = {table}.id
-                    WHERE inline = {inl} AND crline = {crl}
-                    """.format(table=attr, inl=il, crl=cl))
-        vv = cur.fetchall()
-        conn.close()
-        vv = [v[0] for v in vv]
-        return vv
+        try:
+            il = CDP[0]
+            cl = CDP[1]
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("""SELECT attribute FROM position JOIN {table}
+                            ON position.id = {table}.id
+                            WHERE inline = {inl} AND crline = {crl}
+                            """.format(table=attr, inl=il, crl=cl))
+                data = cur.fetchall()
+            data = [d[0] for d in data]
+            return data
+        except Exception as inst:
+            print(inst.args[0])
+            return []
 
     def set_inline(self, inline, attr, vel):
         val = [(v[0],) for v in vel]
