@@ -119,9 +119,7 @@ class SeisCube():
     def get_inline(self, inline, attr):
         try:
             if inline < self.startInline or inline > self.endInline:
-                raise Exception("Inline number out of range."
-                                .format(self.startInline,
-                                        self.endInline, self.stepInline))
+                raise Exception("Inline number out of range.")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("SELECT attribute \
@@ -140,9 +138,7 @@ class SeisCube():
     def get_crline(self, crline, attr):
         try:
             if crline < self.startCrline or crline > self.endCrline:
-                raise Exception("Crossline number out of range."
-                                .format(self.startCrline,
-                                        self.endCrline, self.stepCrline))
+                raise Exception("Crossline number out of range.")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("SELECT attribute \
@@ -160,6 +156,8 @@ class SeisCube():
 
     def get_depth(self, depth, attr):
         try:
+            if depth < self.startDepth or depth > self.endDepth:
+                raise Exception("Depth out of range.")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("""SELECT attribute FROM position JOIN {table}
@@ -169,13 +167,17 @@ class SeisCube():
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.args[0])
+            print(inst.message)
             return []
 
     def get_cdp(self, CDP, attr):
         try:
             il = CDP[0]
             cl = CDP[1]
+            if il < self.startInline or il > self.endInline:
+                raise Exception("Inline out of range.")
+            if cl < self.startCrline or cl > self.endCrline:
+                raise Exception("Crossline out of range.")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("""SELECT attribute FROM position JOIN {table}
@@ -186,7 +188,7 @@ class SeisCube():
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.args[0])
+            print(inst.message)
             return []
 
     def set_inline(self, inline, attr, vel):
