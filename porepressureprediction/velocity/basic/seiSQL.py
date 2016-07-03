@@ -12,9 +12,6 @@ class SeisCube():
         self.json_file = js
         if self.json_file is not None:
             self._readJSON()
-        self.attr = None
-        if self.attr is None:
-            self._get_existing_attr()
 
     def _info(self):
         return "A seismic Data Cube\n" +\
@@ -33,7 +30,6 @@ class SeisCube():
         return self._info()
 
     def _readJSON(self):
-        # fin = open(self.json_file, 'r')
         with open(self.json_file, 'r') as fin:
             json_setting = json.load(fin)
             self.startInline = json_setting['inline'][0]
@@ -57,13 +53,11 @@ class SeisCube():
             self.crline_C = json_setting['Coordinate'][2][1]
             self.east_C = json_setting['Coordinate'][2][2]
             self.north_C = json_setting['Coordinate'][2][3]
-
-            self.nEast = (self.endInline - self.startInline) // \
-                self.stepInline + 1
-            self.nNorth = (self.endCrline - self.startCrline) // \
-                self.stepCrline + 1
-
-            self._coordinate_conversion()
+        self.nEast = (self.endInline - self.startInline) // \
+            self.stepInline + 1
+        self.nNorth = (self.endCrline - self.startCrline) // \
+            self.stepCrline + 1
+        self._coordinate_conversion()
 
     def _coordinate_conversion(self):
         self.gamma_x = (self.east_B - self.east_A) / \
@@ -81,14 +75,20 @@ class SeisCube():
             self.beta_y * self.inline_A - \
             self.gamma_y * self.crline_A
 
-    def _get_existing_attr(self):
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute("""SELECT name FROM sqlite_master
-                    WHERE type='table' ORDER BY name""")
-        temp = cur.fetchall()
-        self.attr = tuple([item[0] for item in temp])
-        conn.close()
+    @property
+    def attributes(self):
+        try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("""SELECT name FROM sqlite_master
+                            WHERE type='table' ORDER BY name""")
+                temp = cur.fetchall()
+            attributelist = [item[0] for item in temp]
+            attributelist.remove('position')
+            return attributelist
+        except Exception as inst:
+            print(inst.args[0])
+            return []
 
     def coord_2_line(self, coordinate):
         x = coordinate[0]
