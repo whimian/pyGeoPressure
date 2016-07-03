@@ -92,3 +92,13 @@ class Reader(object):
                         inline, crline, startTwt + (i-2) * stepTwt,
                         float(data[i])])
         return velocity
+
+    def read(self, textfile, attr, filetype="od"):
+        if filetype == "od":
+            velocity = self._read_od(textfile)
+        elif filetype == "hrs":
+            pass
+        else:
+            raise Exception("Unkown filetype. (>_<)")
+        self._add_position(velocity)
+        self._add_attribute(velocity, attr)
