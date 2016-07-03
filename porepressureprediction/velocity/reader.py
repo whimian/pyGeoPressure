@@ -7,7 +7,7 @@ class Reader(object):
     def __init__(self, db_name=None):
         self.db_file = str(db_name) + ".db" if db_name is not None \
             else "new_db.db"
-        self._create_db()
+        # self._create_db()
 
     def _create_db(self):
         with sqlite3.connect(self.db_file) as conn:
@@ -31,12 +31,18 @@ class Reader(object):
             )""".format(attr))
             cur.executemany("INSERT INTO {} VALUES (?, ?)".format(attr), at)
 
-    def _update_position(self, data):
+    def _add_position(self, data):
         n = len(data)
         po = [tuple([i, data[i][0], data[i][1], data[i][2]])
               for i in xrange(n)]
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
+            cur.execute('''CREATE TABLE position(
+                id INTEGER PRIMARY KEY,
+                inline INTEGER,
+                crline INTEGER,
+                twt REAL
+            )''')
             cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
                             po)
 
@@ -77,5 +83,5 @@ class Reader(object):
                     velocity.append([
                         inline, crline, startTwt + (i-2) * stepTwt,
                         float(data[i])])
-        self._update_position(velocity)
+        self._add_position(velocity)
         self._add_attribute(velocity, attr)
