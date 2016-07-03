@@ -82,3 +82,16 @@ class Reader(object):
             raise Exception("Unkown filetype. (>_<)")
         self._add_position(velocity)
         self._add_attribute(velocity, attr)
+
+    def add(self, textfile, attr, filetype="od"):
+        """
+        Add new attribute to seismic database without changing its position
+        information.
+        """
+        if filetype == "od":
+            velocity = self._read_od(textfile)
+        elif filetype == "hrs":
+            velocity = self._read_hrs(textfile)
+        else:
+            raise Exception("Unkown filetype. (>_<)")
+        self._add_attribute(velocity, attr)
