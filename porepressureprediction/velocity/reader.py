@@ -7,17 +7,6 @@ class Reader(object):
     def __init__(self, db_name=None):
         self.db_file = str(db_name) + ".db" if db_name is not None \
             else "new_db.db"
-        # self._create_db()
-
-    def _create_db(self):
-        with sqlite3.connect(self.db_file) as conn:
-            cur = conn.cursor()
-            cur.execute('''CREATE TABLE position(
-                id INTEGER PRIMARY KEY,
-                inline INTEGER,
-                crline INTEGER,
-                twt REAL
-            )''')
 
     def _add_attribute(self, data, attr):
         n = len(data)
