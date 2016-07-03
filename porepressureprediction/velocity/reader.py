@@ -19,23 +19,35 @@ class Reader(object):
                 twt REAL
             )''')
 
-    def _update_db(self, data, attr):
+    def _add_attribute(self, data, attr):
         n = len(data)
-
-        po = [tuple([i, data[i][0], data[i][1], data[i][2]])
-              for i in xrange(n)]
         at = [tuple([i, data[i][3]]) for i in xrange(n)]
 
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
-            cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
-                            po)
-
             cur.execute("""CREATE TABLE {}(
                 id INTEGER PRIMARY KEY,
                 attribute REAL
             )""".format(attr))
             cur.executemany("INSERT INTO {} VALUES (?, ?)".format(attr), at)
+
+    def _update_position(self, data):
+        n = len(data)
+        po = [tuple([i, data[i][0], data[i][1], data[i][2]])
+              for i in xrange(n)]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
+                            po)
+
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_txt ON \
+                         position(twt)")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_inl ON \
+                         position(inline)")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_crl ON \
+                         position(crline)")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_cdp ON \
+                         position(inline, crline)")
 
     def read_HRS(self, textfile, attr):
         velocity = list()
@@ -65,5 +77,5 @@ class Reader(object):
                     velocity.append([
                         inline, crline, startTwt + (i-2) * stepTwt,
                         float(data[i])])
-
-        self._update_db(velocity, attr)
+        self._update_position(velocity)
+        self._add_attribute(velocity, attr)
