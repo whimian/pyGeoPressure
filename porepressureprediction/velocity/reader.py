@@ -55,25 +55,6 @@ class Reader(object):
                 velocity.append(temp)
         return velocity
 
-    def read_od(self, textfile, attr):
-        velocity = list()
-        with open(textfile, 'r') as textVel:
-            info = textVel.readline()
-            fileInfo = info.split()
-            startTwt = float(fileInfo[0])
-            stepTwt = float(fileInfo[1])
-            nTwt = int(fileInfo[-1])
-            for line in textVel:
-                data = line.split()
-                inline = int(data[0])
-                crline = int(data[1])
-                for i in range(2, nTwt + 2):
-                    velocity.append([
-                        inline, crline, startTwt + (i-2) * stepTwt,
-                        float(data[i])])
-        self._add_position(velocity)
-        self._add_attribute(velocity, attr)
-
     def _read_od(self, textfile):
         velocity = list()
         with open(textfile, 'r') as textVel:
