@@ -135,18 +135,20 @@ class SeisCube():
             pass
 
     def get_crline(self, crline, attr):
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        # cur.execute("""SELECT vel FROM velocity WHERE
-        #             crline=:xl ORDER BY inline""",
-        #             {"xl": crl})
-        cur.execute("""SELECT attribute FROM position JOIN {table}
-                    ON position.id = {table}.id
-                    WHERE crline = {crl}""".format(table=attr, crl=crline))
-        vv = cur.fetchall()
-        conn.close()
-        vv = [v[0] for v in vv]
-        return vv
+        try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT attribute \
+                             FROM position \
+                             JOIN {table} \
+                             ON position.id = {table}.id \
+                             WHERE crline = {crl}".format(
+                                                    table=attr, crl=crline))
+                vv = cur.fetchall()
+            vv = [v[0] for v in vv]
+            return vv
+        except:
+            return []
 
     def get_depth(self, depth, attr):
         try:
