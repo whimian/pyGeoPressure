@@ -191,50 +191,50 @@ class SeisCube():
             print(inst.message)
             return []
 
-    def set_inline(self, inline, attr, vel):
-        val = [(v[0],) for v in vel]
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.executemany("""UPDATE {table}
-                       SET attribute = ?
-                       WHERE inline={inl}
-                       """.format(table=attr, inl=inline), val)
-        conn.commit()
-        conn.close()
+    def set_inline(self, inline, attr, data):
+        """update attribute within an inline
 
-    def set_crline(self, crline, attr, vel):
-        val = [(v[0],) for v in vel]
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.executemany("""UPDATE {table}
-                       SET attribute = ?
-                       WHERE crline={crl}
-                       """.format(table=attr, crl=crline), val)
-        conn.commit()
-        conn.close()
+           Parameters
+           ----------
+           inline : int
+           attr : str
+           data : list of float
+        """
+        val = [(d[0],) for d in data]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("""UPDATE {table}
+                           SET attribute = ?
+                           WHERE inline={inl}
+                           """.format(table=attr, inl=inline), val)
 
-    def set_depth(self, depth, attr, vel):
-        val = [(v[0],) for v in vel]
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.executemany("""UPDATE {table}
-                       SET attribute = ?
-                       WHERE twt={d}""".format(table=attr, d=depth), val)
-        conn.commit()
-        conn.close()
+    def set_crline(self, crline, attr, data):
+        val = [(d[0],) for d in data]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("""UPDATE {table}
+                           SET attribute = ?
+                           WHERE crline={crl}
+                           """.format(table=attr, crl=crline), val)
 
-    def set_cdp(self, CDP, attr, vel):
+    def set_depth(self, depth, attr, data):
+        val = [(d[0],) for d in data]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("""UPDATE {table}
+                           SET attribute = ?
+                           WHERE twt={d}""".format(table=attr, d=depth), val)
+
+    def set_cdp(self, CDP, attr, data):
         il = CDP[0]
         cl = CDP[1]
-        val = [(v[0],) for v in vel]
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.executemany("""UPDATE {table}
-                       SET attribute = ?
-                       WHERE inlne={inl} AND crline={crl}
-                       """.format(table=attr, inl=il, crl=cl), val)
-        conn.commit()
-        conn.close()
+        val = [(d[0],) for d in data]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("""UPDATE {table}
+                           SET attribute = ?
+                           WHERE inlne={inl} AND crline={crl}
+                           """.format(table=attr, inl=il, crl=cl), val)
 
     def add_attr(self, attr):
         "Add an empty attribute to a SeisCube object"
