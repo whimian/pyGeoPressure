@@ -53,8 +53,8 @@ class Reader(object):
                 del temp[2]
                 del temp[2]
                 velocity.append(temp)
-
-        self._update_db(velocity, attr)
+        self._add_position(velocity)
+        self._add_attribute(velocity, attr)
 
     def read_od(self, textfile, attr):
         velocity = list()
