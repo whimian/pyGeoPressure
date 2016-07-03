@@ -236,6 +236,20 @@ class SeisCube():
         conn.commit()
         conn.close()
 
+    def add_attr(self, attr):
+        "Add an empty attribute to a SeisCube object"
+        try:
+            if attr in self.attributes:
+                raise Exception("Attribute already exists, use another name")
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("""CREATE TABLE {}(
+                    id INTEGER PRIMARY KEY,
+                    attribute REAL
+                )""".format(attr))
+        except Exception as inst:
+            print(inst.message)
+
     def export_od(self, attr, fname):
         try:
             with open(fname, 'w') as fout:
