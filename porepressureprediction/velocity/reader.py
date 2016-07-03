@@ -10,18 +10,14 @@ class Reader(object):
         self._create_db()
 
     def _create_db(self):
-        f = open(self.db_file, 'w')
-        f.close()
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.execute('''CREATE TABLE position(
-            id INTEGER PRIMARY KEY,
-            inline INTEGER,
-            crline INTEGER,
-            twt REAL
-        )''')
-        conn.commit()
-        conn.close()
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.execute('''CREATE TABLE position(
+                id INTEGER PRIMARY KEY,
+                inline INTEGER,
+                crline INTEGER,
+                twt REAL
+            )''')
 
     def _update_db(self, data, attr):
         n = len(data)
