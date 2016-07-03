@@ -139,6 +139,10 @@ class SeisCube():
 
     def get_crline(self, crline, attr):
         try:
+            if crline < self.startCrline or crline > self.endCrline:
+                raise Exception("Crossline number out of range."
+                                .format(self.startCrline,
+                                        self.endCrline, self.stepCrline))
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("SELECT attribute \
@@ -151,7 +155,7 @@ class SeisCube():
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.args[0])
+            print(inst.message)
             return []
 
     def get_depth(self, depth, attr):
