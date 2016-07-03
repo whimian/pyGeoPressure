@@ -117,22 +117,20 @@ class SeisCube():
         return (x, y)
 
     def get_inline(self, inline, attr):
-        if attr in self.attr:
-            conn = sqlite3.connect(self.db_file)
-            cur = conn.cursor()
-            # cur.execute("""SELECT attribute FROM {table}
-            #             WHERE inline=:il
-            #             ORDER BY crline""".format(table=attr),
-            #             {"il": inl})
-            cur.execute("""SELECT attribute FROM position JOIN {table}
-                        ON position.id = {table}.id
-                        WHERE inline = {inl}""".format(table=attr, inl=inline))
-            vv = cur.fetchall()
-            conn.close()
+        try:
+            with sqlite3.connect(self.db_file) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT attribute \
+                             FROM position \
+                             JOIN {table} \
+                             ON position.id = {table}.id \
+                             WHERE inline = {inl}".format(
+                                                    table=attr, inl=inline))
+                vv = cur.fetchall()
             vv = [v[0] for v in vv]
             return vv
-        else:
-            pass
+        except:
+            return []
 
     def get_crline(self, crline, attr):
         try:
