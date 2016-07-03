@@ -118,6 +118,10 @@ class SeisCube():
 
     def get_inline(self, inline, attr):
         try:
+            if inline < self.startInline or inline > self.endInline:
+                raise Exception("Inline number out of range."
+                                .format(self.startInline,
+                                        self.endInline, self.stepInline))
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
                 cur.execute("SELECT attribute \
@@ -130,7 +134,7 @@ class SeisCube():
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.args[0])
+            print(inst.message)
             return []
 
     def get_crline(self, crline, attr):
