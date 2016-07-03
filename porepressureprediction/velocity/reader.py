@@ -23,39 +23,23 @@ class Reader(object):
         conn.commit()
         conn.close()
 
-    def _update_db(self, vel, attr):
-        # po = [[v[0], v[1], v[2]] for v in vel]
-        # at = [[v[3]] for v in vel]
-        n = len(vel)
-        # for i in xrange(n):
-        #     po[i].insert(0, i)
-        #     at[i].insert(0, i)
+    def _update_db(self, data, attr):
+        n = len(data)
 
-        po = [tuple([i, vel[i][0], vel[i][1], vel[i][2]]) for i in xrange(n)]
-        at = [tuple([i, vel[i][3]]) for i in xrange(n)]
+        po = [tuple([i, data[i][0], data[i][1], data[i][2]])
+              for i in xrange(n)]
+        at = [tuple([i, data[i][3]]) for i in xrange(n)]
 
-        conn = sqlite3.connect(self.db_file)
-        cur = conn.cursor()
-        cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
-                        po)
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
+                            po)
 
-        # for i in xrange(n):
-        #     temp = po[i]
-        #     temp.insert(0, i)
-        #     cur.execute("INSERT INTO position VALUES (?, ?, ?, ?)",
-        #                 tuple(temp))
-        cur.execute("""CREATE TABLE {}(
-            id INTEGER PRIMARY KEY,
-            attribute REAL
-        )""".format(attr))
-        cur.executemany("INSERT INTO {} VALUES (?, ?)".format(attr), at)
-        # for i in xrange(n):
-        #     temp = at[i]
-        #     temp.insert(0, i)
-        #     cur.execute("INSERT INTO {} VALUES (?, ?)".format(attr),
-        #                 tuple(temp))
-        conn.commit()
-        conn.close()
+            cur.execute("""CREATE TABLE {}(
+                id INTEGER PRIMARY KEY,
+                attribute REAL
+            )""".format(attr))
+            cur.executemany("INSERT INTO {} VALUES (?, ?)".format(attr), at)
 
     def read_HRS(self, textfile, attr):
         velocity = list()
