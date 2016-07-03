@@ -44,7 +44,7 @@ class Reader(object):
             cur.execute("CREATE INDEX IF NOT EXISTS idx_cdp ON \
                          position(inline, crline)")
 
-    def read_HRS(self, textfile, attr):
+    def _read_hrs(self, textfile, attr):
         velocity = list()
         with open(textfile, 'r') as textVel:
             for line in textVel:
@@ -53,8 +53,7 @@ class Reader(object):
                 del temp[2]
                 del temp[2]
                 velocity.append(temp)
-        self._add_position(velocity)
-        self._add_attribute(velocity, attr)
+        return velocity
 
     def read_od(self, textfile, attr):
         velocity = list()
@@ -97,7 +96,7 @@ class Reader(object):
         if filetype == "od":
             velocity = self._read_od(textfile)
         elif filetype == "hrs":
-            pass
+            velocity = self._read_hrs(textfile)
         else:
             raise Exception("Unkown filetype. (>_<)")
         self._add_position(velocity)
