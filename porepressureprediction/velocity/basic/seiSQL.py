@@ -276,5 +276,6 @@ class SeisCube():
                                 data = '\t'.join(tempStr) + '\n'
                                 string = str(inl) + '\t' + str(crl) + '\t'
                                 fout.write(string + data)
-        except:
+        except Exception as inst:
+            print(inst.message)
             print("failed to export")
