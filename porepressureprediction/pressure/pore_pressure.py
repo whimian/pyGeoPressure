@@ -64,27 +64,5 @@ def fillipino():
     pass
 
 
-def gardner(v, c, d):
-    """
-    Convert velocity to density
-
-    Parameters
-    ----------
-    v : 1-d ndarray
-        interval velocity array
-    c : float, optional
-        coefficient a
-    d : float, optional
-        coefficient d
-
-    Returns
-    -------
-    out : 1-d ndarray
-        density array
-    """
-    rho = c * v**d
-    return rho
-
-
 if __name__ == '__main__':
     pass
