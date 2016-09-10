@@ -13,7 +13,7 @@ def traugott(depth, a=16.3, b=3125, c=0.6):
 
     Notes
     -----
-    .. math:: \cap{\rho (h)}=a+{h/b}^{c}
+    .. math:: \overline{\rho (h)}=a+{h/b}^{c}
 
     .. math:: \cap{\rho (h)}=16.3+{h/3125}^{0.6}
     gives the average sediment density in pounds per gallon (ppg) mud weight
@@ -42,6 +42,17 @@ def gardner(v, c, d):
     -------
     out : 1-d ndarray
         density array
+
+    Notes
+    -----
+    .. math:: \rho = c{V}^{d}
+
+    typical values for a and b in GOM coast are a=0.31, b=0.25
+
+    [1]G. Gardner, L. Gardner, and A. Gregory, “Formation velocity and density
+       -the diagnostic basics for stratigraphic traps,” Geophysics, vol. 39,
+       no. 6, pp. 770–780, 1974.
+
     """
     rho = c * v**d
     return rho
