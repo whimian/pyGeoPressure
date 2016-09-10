@@ -1,13 +1,23 @@
 import numpy as np
 
+v0 = 1500
 
-def normal(depth, a, b):
+
+def set_v0(v):
+    """
+    set global variable v0 for slotnick()
+    """
+    global v0
+    v0 = v
+
+
+def normal(x, a, b):
     """
     Extrapolate velocity using normal trend.
 
     Parameters
     ----------
-    depth : 1-d ndarray
+    x : 1-d ndarray
         depth to convert
     a, b : scalar
         coefficents
@@ -21,24 +31,42 @@ def normal(depth, a, b):
     -----
     .. math:: \log d{t}_{Normal}=a-bz
 
-    the exponential relation is unphysical especially in depth bellow the
-    interval within which the equation is calibrated.
+    is transformed to
 
-    [1]C. Hottmann, R. Johnson, and others, “Estimation of formation pressures
-       from log-derived shale properties,” Journal of Petroleum Technology,
-       vol. 17, no. 6, pp. 717–722, 1965.
+    .. math:: v={e}^{bz-a}
+
+    **Note** that the exponential relation is unphysical especially in depth
+    bellow the interval within which the equation is calibrated.
+
+    References
+    ----------
+    .. [1] C. Hottmann, R. Johnson, and others, "Estimation of formation
+       pressures from log-derived shale properties," Journal of Petroleum
+       Technology, vol. 17, no. 6, pp. 717-722, 1965.
 
     """
-    return np.exp(z*b - a)
+    return np.exp(x*b - a)
 
 
-def slotnick(depth, k, v0=1500):
+def slotnick(x, k):
     """
+    Relation between velocity and depth
+
+    Parameters
+    ----------
+    x : 1-d ndarray
+        Depth to convert
+    k : scalar
+        velocity gradient
+
     Notes
     -----
     typical values of velocity gradient k falls in the range 0.6-1.0s-1
 
-    [1]M. Slotnick, “On seismic computations, with applications, I,”
-        Geophysics, vol. 1, no. 1, pp. 9–22, 1936.
+    References
+    ----------
+    .. [1] M. Slotnick, "On seismic computations, with applications, I,"
+       Geophysics, vol. 1, no. 1, pp. 9-22, 1936.
     """
-    return v0 + k*depth
+    global v0
+    return v0 + k*x
