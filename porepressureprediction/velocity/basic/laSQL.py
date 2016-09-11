@@ -376,6 +376,8 @@ class Log(object):
         self.log_stop = None
         self.depth_start = None
         self.depth_stop = None
+        self.log_start_idx = None
+        self.log_stop_idx = None
 
     def __len__(self):
         return len(self.data)
@@ -402,6 +404,14 @@ class Log(object):
         return self.log_start
 
     @property
+    def start_idx(self):
+        for i, dat in enumerate(self.data):
+            if dat is not np.nan:
+                self.log_start_idx = i
+                break
+        return self.log_start_idx
+
+    @property
     def stop(self):
         if self.log_stop is None:
             for dep, dat in zip(reversed(self.depth), reversed(self.data)):
@@ -409,6 +419,15 @@ class Log(object):
                     self.log_stop = dep
                     break
         return self.log_stop
+
+    @property
+    def stop_idx(self):
+        for i, dat in reversed(list(enumerate(self.data))):
+            if dat is not np.nan:
+                self.log_stop_idx = i + 1
+                # so when used in slice, +1 will not needed.
+                break
+        return self.log_stop_idx
 
     @property
     def top(self):
