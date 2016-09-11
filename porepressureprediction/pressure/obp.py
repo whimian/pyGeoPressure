@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def traugott(depth, a=16.3, b=3125, c=0.6):
+def traugott(x, a, b):
     """
     estimate density with depth
 
@@ -9,20 +9,23 @@ def traugott(depth, a=16.3, b=3125, c=0.6):
     ----------
     depth : 1-d ndarray
 
-    a, b, c: scalar
+    a, b: scalar
 
     Notes
     -----
-    .. math:: \overline{\rho (h)}=a+{h/b}^{c}
-
-    .. math:: \cap{\rho (h)}=16.3+{h/3125}^{0.6}
+    .. math:: \overline{\rho (h)}=16.3+{h/3125}^{0.6}
     gives the average sediment density in pounds per gallon (ppg) mud weight
     equivalent between the sea floor and depth h (in feet) below the sea floor.
+
+    So, density variation with depth takes the form
+
+    .. math:: \rho(z) = {\rho}_{0} + a{z}^{b}
 
     .. [1] Traugott, Martin. "Pore/fracture pressure determinations in deep
        water." World Oil 218.8 (1997): 68-70.
     """
-    return a + (depth / b)**c
+    rho0 = 2.65
+    return 2.65 + a * z**b
 
 
 def gardner(v, c, d):
