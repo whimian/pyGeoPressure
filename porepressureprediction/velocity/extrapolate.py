@@ -1,6 +1,6 @@
 import numpy as np
 
-v0 = 1500
+v0 = 1600  # take values larger than 1500
 
 
 def set_v0(v):
