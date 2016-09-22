@@ -451,6 +451,12 @@ class Log(object):
         except Exception as inst:
             print(inst.args)
 
+    def get_depth_idx(self, d):
+        if d > self.bottom or d < self.top:
+            return None
+        else:
+            return int((d - self.top) // 0.1)
+
 
 def rolling_window(a, window):
     a = np.array(a)
