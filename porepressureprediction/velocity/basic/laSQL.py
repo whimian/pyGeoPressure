@@ -451,6 +451,17 @@ class Log(object):
         except Exception as inst:
             print(inst.args)
 
+    def write_od(self, file_name):
+        try:
+            with open(file_name, 'w') as fout:
+                fout.write("Depth(m)    rock_vel(Meter/second)")
+                for d, v in zip(self.depth, self.data):
+                    d = str(d)
+                    v = "1e30" if np.isnan(v) else str(v)
+                    fout.write("\t".join([d, v]) + "\n")s
+        except Exception as inst:
+            print(inst.args)
+
     def get_depth_idx(self, d):
         if d > self.bottom or d < self.top:
             return None
