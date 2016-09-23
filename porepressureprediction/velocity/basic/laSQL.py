@@ -454,7 +454,7 @@ class Log(object):
     def write_od(self, file_name):
         try:
             with open(file_name, 'w') as fout:
-                fout.write("Depth(m)    rock_vel(Meter/second)")
+                fout.write("Depth(m)    rock_vel(Meter/second)\n")
                 for d, v in zip(self.depth, self.data):
                     d = str(d)
                     v = "1e30" if np.isnan(v) else str(v)
