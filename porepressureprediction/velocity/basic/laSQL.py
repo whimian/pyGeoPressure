@@ -458,7 +458,7 @@ class Log(object):
                 for d, v in zip(self.depth, self.data):
                     d = str(d)
                     v = "1e30" if np.isnan(v) else str(v)
-                    fout.write("\t".join([d, v]) + "\n")s
+                    fout.write("\t".join([d, v]) + "\n")
         except Exception as inst:
             print(inst.args)
 
