@@ -501,9 +501,13 @@ def smooth_log(log, window=3003):
     smoothed log : Log object
         smoothed log
     """
-    data2smooth = copy.copy(log.data)
-    log_sm = np.median(rolling_window(data2smooth, window), -1)
-    log_sm = np.pad(log_sm, window // 2, mode="edge")
+    # data2smooth = copy.copy(log.data)
+    data2smooth = log.data[log.start_idx:log.stop_idx]
+    data_sm = np.median(rolling_window(data2smooth, window), -1)
+    data_sm = np.pad(data_sm, window // 2, mode="edge")
+    log_sm = copy.copy(log.data)
+    log_sm[log.start_idx:log.stop_idx] = data_sm
+
     logSmoothed = Log()
     logSmoothed.name = log.name + "_edited"
     logSmoothed.units = log.units
