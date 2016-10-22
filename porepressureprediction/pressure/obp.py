@@ -52,10 +52,9 @@ def gardner(v, c, d):
 
     typical values for a and b in GOM coast are a=0.31, b=0.25
 
-    [1]G. Gardner, L. Gardner, and A. Gregory, “Formation velocity and density
-       -the diagnostic basics for stratigraphic traps,” Geophysics, vol. 39,
-       no. 6, pp. 770–780, 1974.
-
+    [1]G. Gardner, L. Gardner, and A. Gregory, "Formation velocity and density
+       - the diagnostic basics for stratigraphic traps," Geophysics, vol. 39,
+       no. 6, pp. 770-780, 1974.
     """
     rho = c * v**d
     return rho
@@ -85,6 +84,7 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
     """
     rho = 1000 * rho  # convert unit from g/cm3 to kg/m3
     rho_w = 1000 * rho_w
+    depth = np.array(depth)
     delta_h = np.zeros(depth.shape)
     delta_h[1:] = depth[1:] - depth[:-2]
     p = rho * delta_h * g
