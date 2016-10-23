@@ -87,7 +87,7 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
     rho = 1000 * rho  # convert unit from g/cm3 to kg/m3
     rho_w = 1000 * rho_w
     delta_h = np.zeros(depth.shape)
-    delta_h[1:] = depth[1:] - depth[:-2]
+    delta_h[1:] = depth[1:] - depth[:-1]
     p = rho * delta_h * g
     obp = np.cumsum(p)
     water_pressure = rho_w * depth_w * g  # pressure of water column
