@@ -82,9 +82,10 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
     obp : 1-d ndarray
         overburden pressure in Pa
     """
+    depth = np.array(depth)
+    rho = np.array(rho)
     rho = 1000 * rho  # convert unit from g/cm3 to kg/m3
     rho_w = 1000 * rho_w
-    depth = np.array(depth)
     delta_h = np.zeros(depth.shape)
     delta_h[1:] = depth[1:] - depth[:-2]
     p = rho * delta_h * g
