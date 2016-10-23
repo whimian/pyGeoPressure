@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def traugott(x, a, b):
+def traugott(z, a, b):
     """
     estimate density with depth
 
