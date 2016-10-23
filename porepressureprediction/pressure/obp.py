@@ -24,8 +24,8 @@ def traugott(z, a, b):
     .. [1] Traugott, Martin. "Pore/fracture pressure determinations in deep
        water." World Oil 218.8 (1997): 68-70.
     """
-    rho0 = 2.65
-    return 2.65 + a * z**b
+    # rho0 = 2.65
+    return 1.70 + a * z**b
 
 
 def gardner(v, c, d):
