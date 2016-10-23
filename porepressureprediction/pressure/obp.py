@@ -56,8 +56,7 @@ def gardner(v, c, d):
        - the diagnostic basics for stratigraphic traps," Geophysics, vol. 39,
        no. 6, pp. 770-780, 1974.
     """
-    rho = c * v**d
-    return rho
+    return c * v**d
 
 
 def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
