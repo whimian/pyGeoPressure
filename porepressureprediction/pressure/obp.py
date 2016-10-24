@@ -79,7 +79,7 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
     Returns
     -------
     obp : 1-d ndarray
-        overburden pressure in Pa
+        overburden pressure in mPa
     """
     depth = np.array(depth)
     rho = np.array(rho)
@@ -95,5 +95,5 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
                           (("Overburden pressure in Pa", "obp"), 'f8')])
     OBP = np.zeros(depth.shape, dtype=obp_dtype)
     OBP['depth'] = depth
-    OBP['obp'] = obp
+    OBP['obp'] = obp * 10**(-6)
     return OBP
