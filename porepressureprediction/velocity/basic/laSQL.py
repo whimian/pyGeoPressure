@@ -509,7 +509,7 @@ def smooth_log(log, window=3003):
     log_sm[log.start_idx:log.stop_idx] = data_sm
 
     logSmoothed = Log()
-    logSmoothed.name = log.name + "_edited"
+    logSmoothed.name = log.name + "_sm"
     logSmoothed.units = log.units
     logSmoothed.descr = log.descr
     logSmoothed.depth = log.depth
