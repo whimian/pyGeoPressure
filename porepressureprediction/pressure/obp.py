@@ -59,7 +59,7 @@ def gardner(v, c, d):
     return c * v**d
 
 
-def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
+def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
     """
     Calculate Overburden Pressure
 
@@ -74,7 +74,7 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=0.98):
         density of sea water - depending on the salinity of sea water
         (1.01-1.05g/cm3)
     g : scalar
-        gravitational acceleration in m/s2
+        gravitational acceleration in m/s2, default value: 9.8 m/s2
 
     Returns
     -------
