@@ -384,6 +384,7 @@ class Log(object):
 
     def _info(self):
         return "Log Name: {}\n".format(self.name) +\
+               "Attribute Name: {}\n".format(self.decr) +\
                "Log Units: {}\n".format(self.units) +\
                "Depth range: {} - {} - {}\n".format(
                 self.depth[0], self.depth[-1], 0.1)
@@ -454,7 +455,10 @@ class Log(object):
     def write_od(self, file_name):
         try:
             with open(file_name, 'w') as fout:
-                fout.write("Depth(m)    rock_vel(Meter/second)\n")
+                # fout.write("Depth(m)    rock_vel(Meter/second)\n")
+                split_list = self.descr.split(' ')
+                description = '_'.join(split_list)
+                fout.write("Depth(m)\t" + description + "(" + self.units + ")\n")
                 for d, v in zip(self.depth, self.data):
                     d = str(d)
                     v = "1e30" if np.isnan(v) else str(v)
