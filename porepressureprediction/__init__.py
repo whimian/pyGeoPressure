@@ -10,4 +10,4 @@ from porepressureprediction.velocity.conversion import rms2int, int2rms, int2avg
 from porepressureprediction.velocity.interpolation import interp_DW, spline_1d
 from porepressureprediction.velocity.extrapolate import set_v0, normal, slotnick
 from porepressureprediction.pressure.obp import overburden_pressure, gardner, traugott
-from porepressureprediction.pressure.pore_pressure import virgin_curve
+from porepressureprediction.pressure.pore_pressure import virgin_curve, bowers
