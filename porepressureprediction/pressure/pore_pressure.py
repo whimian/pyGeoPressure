@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def bowers(v, obp, v0=5000, a=9.18448, b=0.764984):
+def bowers(v, obp, a=275, b=0.6, v0=1500):
     """
     Compute pressure using Bowers equation.
 
@@ -14,7 +14,7 @@ def bowers(v, obp, v0=5000, a=9.18448, b=0.764984):
     obp : 1-d ndarray
         Overburden pressure whose unit is Pa.
     v0 : float, optional
-        the velocity of unconsolidated regolith whose unit is ft/s.
+        the velocity of unconsolidated regolith whose unit is m/s.
     a : float, optional
         coefficient a
     b : float, optional
@@ -24,9 +24,10 @@ def bowers(v, obp, v0=5000, a=9.18448, b=0.764984):
     -----
     .. math:: P = OBP - [\\frac{(V-V_{0})}{a}]^{\\frac{1}{b}}
     """
-    ves = ((v * 3.2808300 - v0) / a)**(1.0 / b)
-    pressure = obp - ves * 6894.75729
-    return pressure
+    # ves = ((v - v0) / a)**(1.0 / b)
+    # pressure = obp - ves
+    # return pressure
+    return obp - ((v - v0) / a)**(1.0 / b)
 
 
 def virgin_curve(effective_stress, a, b):
