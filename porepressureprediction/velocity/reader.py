@@ -44,7 +44,7 @@ class Reader(object):
             cur.execute("CREATE INDEX IF NOT EXISTS idx_cdp ON \
                          position(inline, crline)")
 
-    def _read_hrs(self, textfile, attr):
+    def _read_hrs(self, textfile):
         velocity = list()
         with open(textfile, 'r') as textVel:
             for line in textVel:
