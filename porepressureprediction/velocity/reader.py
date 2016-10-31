@@ -74,6 +74,23 @@ class Reader(object):
         return velocity
 
     def read(self, textfile, attr, filetype="od"):
+        """
+        Parameters
+        ----------
+        textfile : str
+            input file path
+        attr : str
+            attribute name
+        filetype: str
+            ["od", "hrs"]
+
+        Notes
+        -----
+        For filetype, the format should be
+        "Output a position for every trace  Yes"
+        "Position in file will be   Inl Crl"
+        "Put sampling info in file start    Yes"
+        """
         if filetype == "od":
             velocity = self._read_od(textfile)
         elif filetype == "hrs":
