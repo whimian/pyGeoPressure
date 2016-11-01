@@ -279,3 +279,41 @@ class SeisCube():
         except Exception as inst:
             print(inst.message)
             print("failed to export")
+
+    def export_gslib(self, attr, fname, title="seismic data"):
+        """
+        Output attributes to a gslib data file.
+        A description of this file format could be found on
+        'http://www.gslib.com/gslib_help/format.html'
+        """
+        try:
+            with open(fname, 'w') as fout:
+                fout.write(title+'\n')
+                fout.write("4\nx\ny\nz\n")
+                fout.write(attr+'\n')
+                with sqlite3.connect(self.db_file) as conn:
+                    cur = conn.cursor()
+                    for inl in range(self.startInline, self.endInline+1,
+                                     self.stepInline):
+                        for crl in range(self.startCrline, self.endCrline+1,
+                                         self.stepCrline):
+                            cur.execute(
+                                "SELECT attribute \
+                                 FROM position \
+                                 JOIN {table} \
+                                 ON position.id = {table}.id \
+                                 WHERE inline = {inline} \
+                                 AND crline = {crline}".format(table=attr,
+                                                               inline=inl,
+                                                               crline=crl))
+                            temp = cur.fetchall()
+                            if len(temp) == 0:
+                                continue
+                            else:
+                                x, y = self.line_2_coord(inl, crl)
+                                for i in xrange(self.nDepth):
+                                    tempList = [str(x), str(y), str(self.startDepth+self.stepDepth*i), str(temp[i][0])]
+                                    fout.write('\t'.join(tempList) + '\n')
+        except Exception as inst:
+            print(inst)
+            print("Failed to export.")
