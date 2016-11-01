@@ -263,10 +263,15 @@ class SeisCube():
                                      self.stepInline):
                         for crl in range(self.startCrline, self.endCrline+1,
                                          self.stepCrline):
-                            cur.execute('''SELECT attribute FROM {table}
-                                        WHERE inline=:inl AND crline=:xl
-                                        ORDER BY twt'''.format(talbe=attr),
-                                        {'inl': inl, 'xl': crl})
+                            cur.execute(
+                                "SELECT attribute \
+                                 FROM position \
+                                 JOIN {table} \
+                                 ON position.id = {table}.id \
+                                 WHERE inline = {inline} \
+                                 AND crline = {crline}".format(table=attr,
+                                                               inline=inl,
+                                                               crline=crl))
                             temp = cur.fetchall()
                             if len(temp) == 0:
                                 continue
@@ -278,7 +283,7 @@ class SeisCube():
                                 string = str(inl) + '\t' + str(crl) + '\t'
                                 fout.write(string + data)
         except Exception as inst:
-            print(inst.message)
+            print(inst)
             print("failed to export")
 
     def export_gslib(self, attr, fname, title="seismic data"):
