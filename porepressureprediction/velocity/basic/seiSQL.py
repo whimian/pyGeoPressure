@@ -131,7 +131,8 @@ class SeisCube():
                                                     table=attr, inl=inline))
                 data = cur.fetchall()
             data = [d[0] for d in data]
-            return data
+            return np.array(data).reshape((self.nNorth, self.nDepth))
+            # return data
         except Exception as inst:
             print(inst.message)
             return []
