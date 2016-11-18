@@ -16,12 +16,15 @@ class SeisCube():
     def _info(self):
         return "A seismic Data Cube\n" +\
                'In-line range: {} - {} - {}\n'.format(
-                self.startInline, self.endInline, self.stepInline) +\
+                   self.startInline, self.endInline, self.stepInline) +\
                'Cross-line range: {} - {} - {}\n'.format(
-                self.startCrline, self.endCrline, self.stepCrline) +\
+                   self.startCrline, self.endCrline, self.stepCrline) +\
                'Z range: {} - {} - {}\n'.format(
-                self.startDepth, self.endDepth, self.stepDepth) +\
-               "SQL file location : {}\n".format(os.path.abspath(self.db_file))
+                   self.startDepth, self.endDepth, self.stepDepth) +\
+               "Inl/Crl bin size (m/line): {}/{}\n".format(
+                   self.inline_bin, self.crline_bin) +\
+               "SQL file location : {}\n".format(
+                   os.path.abspath(self.db_file))
 
     def __str__(self):
         return self._info()
@@ -75,6 +78,18 @@ class SeisCube():
         self.alpha_y = self.north_A - \
             self.beta_y * self.inline_A - \
             self.gamma_y * self.crline_A
+        dist_ab = np.sqrt((self.north_B - self.north_A) *\
+                          (self.north_B - self.north_A) + \
+                          (self.east_B - self.east_A) * \
+                          (self.east_B - self.east_A))
+        dist_bc = np.sqrt((self.north_C - self.north_B) *\
+                          (self.north_C - self.north_B) + \
+                          (self.east_C - self.east_B) * \
+                          (self.east_C - self.east_B))
+        self.crline_bin = np.round(dist_ab / (self.crline_B - self.crline_A),
+                                   decimals=2)
+        self.inline_bin = np.round(dist_bc / (self.inline_C - self.inline_B),
+                                   decimals=2)
 
     @property
     def attributes(self):
