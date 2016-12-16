@@ -12,6 +12,7 @@ class SeisCube():
         self.json_file = js
         if self.json_file is not None:
             self._readJSON()
+        self._inline_indices = None
 
     def _info(self):
         return "A seismic Data Cube\n" +\
@@ -105,6 +106,15 @@ class SeisCube():
         except Exception as inst:
             print(inst.args[0])
             return []
+
+    @property
+    def inline_indices(self):
+        if self._inline_indices is None:
+            self._inline_indices = np.arange(self.startInline,
+                                             self.endInline+1,
+                                             self.stepInline, dtype=np.int)
+        return self._inline_indices
+
 
     def coord_2_line(self, coordinate):
         x = coordinate[0]
