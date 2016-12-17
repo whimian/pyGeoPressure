@@ -441,7 +441,10 @@ class Log(object):
     def read_od(self, file_name):
         try:
             with open(file_name, "r") as fin:
-                fin.readline()
+                info_list = fin.readline().split('\t')
+                temp_list = info_list[-1].split('(')
+                self.descr = temp_list[0]
+                self.units = temp_list[1][:-2]
                 for line in fin:
                     tempList = line.split()
                     self.depth.append(round(float(tempList[0]), 1))
