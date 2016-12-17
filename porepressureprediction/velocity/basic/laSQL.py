@@ -369,7 +369,7 @@ class Log(object):
     def __init__(self):
         self.name = ""
         self.units = ""
-        self.decr = ""
+        self.descr = ""
         self.data = list()
         self.depth = list()
         self.log_start = None
@@ -519,6 +519,37 @@ def smooth_log(log, window=3003):
     logSmoothed.depth = log.depth
     logSmoothed.data = log_sm
     return logSmoothed
+
+
+def truncate_log(log, top, bottom):
+    """
+    Remove unreliable values in the top and bottom section of well log
+
+    Parameters
+    ----------
+    log : Log object
+    top, bottom : scalar
+        depth value
+
+    Returns
+    -------
+    trunc_log : Log object
+    """
+    depth = np.array(log.depth)
+    data = np.array(log.data)
+    if top != 0:
+        mask = depth < top
+        data[mask] = np.nan
+    if bottom != 0:
+        mask = depth > bottom
+        data[mask] = np.nan
+    trunc_log = Log()
+    trunc_log.name = log.name + '_trunc'
+    trunc_log.units = log.units
+    trunc_log.descr = log.descr
+    trunc_log.depth = depth
+    trunc_log.data = data
+    return trunc_log
 
 
 def shale(gr_log, vel_log, thresh):
