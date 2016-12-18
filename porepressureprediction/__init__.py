@@ -8,7 +8,7 @@ from porepressureprediction.velocity.smoothing import smooth, smooth_2d
 from porepressureprediction.stochastic.krig import Krig
 from porepressureprediction.velocity.conversion import rms2int, int2rms, int2avg, avg2int, twt2depth
 from porepressureprediction.velocity.interpolation import interp_DW, spline_1d
-from porepressureprediction.velocity.extrapolate import set_v0, normal, slotnick
+from porepressureprediction.velocity.extrapolate import set_v0, normal, slotnick, normal_dt
 from porepressureprediction.pressure.obp import overburden_pressure, gardner, traugott
 from porepressureprediction.pressure.pore_pressure import virgin_curve, bowers
 from porepressureprediction.pressure.hydrostatic import hydrostatic_pressure

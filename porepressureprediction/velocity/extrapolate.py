@@ -70,3 +70,15 @@ def slotnick(x, k):
     """
     global v0
     return v0 + k*x
+
+
+def normal_dt(x, a, b):
+    """
+    normal trend of transit time
+
+    Parameters
+    ----------
+    x : 1-d ndarray
+        depth to convert
+    """
+    return a - b * x
