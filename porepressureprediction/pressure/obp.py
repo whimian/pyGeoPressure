@@ -96,9 +96,4 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     delta_h[0] = 0
     obp = rho * delta_h * g
     obp = np.cumsum(obp)
-    # obp_dtype = np.dtype([("depth", 'f8'),
-    #                       (("Overburden pressure in Pa", "obp"), 'f8')])
-    # OBP = np.zeros(depth.shape, dtype=obp_dtype)
-    # OBP['depth'] = depth
-    # OBP['obp'] = obp / 1000000  # mPa
     return obp / 1000000  # mPa
