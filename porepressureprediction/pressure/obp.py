@@ -86,19 +86,19 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     rho = np.array(rho)
     rho = 1000 * rho  # convert unit from g/cm3 to kg/m3
     rho_w = 1000 * rho_w
-    mask = depth < kelly_bushing + depth_w
+    # sea bottom to sea level
+    mask = depth < (kelly_bushing + depth_w)
     rho[mask] = rho_w
     mask = depth < kelly_bushing
     rho[mask] = 0
-    delta_h = np.zeros(depth.shape)
+    delta_h = np.full_like(depth, np.nan)
     delta_h[1:] = depth[1:] - depth[:-1]
-    p = rho * delta_h * g
-    obp = np.cumsum(p)
-    water_pressure = rho_w * depth_w * g  # pressure of water column
-    obp = obp + water_pressure
-    obp_dtype = np.dtype([("depth", 'f8'),
-                          (("Overburden pressure in Pa", "obp"), 'f8')])
-    OBP = np.zeros(depth.shape, dtype=obp_dtype)
-    OBP['depth'] = depth
-    OBP['obp'] = obp / 1000000
-    return OBP
+    delta_h[0] = 0
+    obp = rho * delta_h * g
+    obp = np.cumsum(obp)
+    # obp_dtype = np.dtype([("depth", 'f8'),
+    #                       (("Overburden pressure in Pa", "obp"), 'f8')])
+    # OBP = np.zeros(depth.shape, dtype=obp_dtype)
+    # OBP['depth'] = depth
+    # OBP['obp'] = obp / 1000000  # mPa
+    return obp / 1000000  # mPa
