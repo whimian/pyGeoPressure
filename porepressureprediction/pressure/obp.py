@@ -59,7 +59,7 @@ def gardner(v, c, d):
     return c * v**d
 
 
-def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
+def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     """
     Calculate Overburden Pressure
 
@@ -68,23 +68,28 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
     depth : 1-d ndarray
     rho : 1-d ndarray
         density in g/cm3
+    kelly_bushing : scalar
+        kelly bushing elevation in meter
     depth_w : scalar
-        from sea level to sea bottom (a.k.a mudline) in meters
+        from sea level to sea bottom (a.k.a mudline) in meter
     rho_w : scalar
         density of sea water - depending on the salinity of sea water
         (1.01-1.05g/cm3)
-    g : scalar
-        gravitational acceleration in m/s2, default value: 9.8 m/s2
 
     Returns
     -------
     obp : 1-d ndarray
         overburden pressure in mPa
     """
+    g = 9.80665  # m/s2
     depth = np.array(depth)
     rho = np.array(rho)
     rho = 1000 * rho  # convert unit from g/cm3 to kg/m3
     rho_w = 1000 * rho_w
+    mask = depth < kelly_bushing + depth_w
+    rho[mask] = rho_w
+    mask = depth < kelly_bushing
+    rho[mask] = 0
     delta_h = np.zeros(depth.shape)
     delta_h[1:] = depth[1:] - depth[:-1]
     p = rho * delta_h * g
@@ -95,5 +100,5 @@ def overburden_pressure(depth, rho, depth_w=90, rho_w=1.01, g=9.8):
                           (("Overburden pressure in Pa", "obp"), 'f8')])
     OBP = np.zeros(depth.shape, dtype=obp_dtype)
     OBP['depth'] = depth
-    OBP['obp'] = obp * 10**(-6)
+    OBP['obp'] = obp / 1000000
     return OBP
