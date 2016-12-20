@@ -1,9 +1,10 @@
 """routines to assist velocity data processing.
 """
+from __future__ import division
 import numpy as np
 
 
-def bowers(v, obp, a=275, b=0.6, v0=1500):
+def bowers(v, obp, a=275, b=0.6, v0=1524):
     """
     Compute pressure using Bowers equation.
 
@@ -31,8 +32,8 @@ def bowers(v, obp, a=275, b=0.6, v0=1500):
 
 
 def virgin_curve(effective_stress, a, b):
-    v0 = 1500
-    # return ((v - v0) / a)**(1.0 / b)
+    "Virgin curve in Bowers' method."
+    v0 = 1524
     return v0 + a * effective_stress**b
 
 
@@ -68,8 +69,4 @@ def eaton(v, vn, vesn, obp, a=0.785213, b=1.49683):
 
 
 def fillipino():
-    pass
-
-
-if __name__ == '__main__':
     pass
