@@ -384,7 +384,7 @@ class Log(object):
 
     def _info(self):
         return "Log Name: {}\n".format(self.name) +\
-               "Attribute Name: {}\n".format(self.decr) +\
+               "Attribute Name: {}\n".format(self.descr) +\
                "Log Units: {}\n".format(self.units) +\
                "Depth range: {} - {} - {}\n".format(
                 self.depth[0], self.depth[-1], 0.1)
@@ -588,3 +588,4 @@ def shale(gr_log, vel_log, thresh):
     log_vel_shale.depth = vel_log.depth
     log_vel_shale.data = vel_shale
     return log_vel_shale
+
