@@ -7,6 +7,7 @@ import sqlite3
 import os
 import copy
 from collections import deque
+from scipy import interpolate
 
 
 class Well(object):
@@ -589,3 +590,23 @@ def shale(gr_log, vel_log, thresh):
     log_vel_shale.data = vel_shale
     return log_vel_shale
 
+
+def interpolate_log(log):
+    "log curve interpolation"
+    depth = np.array(log.depth)
+    data = np.array(log.data)
+    # interpolation function
+    mask_finite = np.isfinite(data)
+    func = interpolate.interp1d(depth[mask_finite], data[mask_finite])
+    mask = np.isnan(depth)
+    mask[log.start_idx: log.stop_idx] = True
+    mask_nan = np.isnan(data)
+    mask = mask * mask_nan
+    data[mask] = func(depth[mask])
+    interp_log = Log()
+    interp_log.name = log.name + '_interp'
+    interp_log.units = log.units
+    interp_log.descr = log.descr
+    interp_log.depth = depth
+    interp_log.data = data
+    return interp_log

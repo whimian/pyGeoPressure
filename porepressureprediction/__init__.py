@@ -1,6 +1,6 @@
 from porepressureprediction.velocity.basic.laSQL import Well
 from porepressureprediction.velocity.basic.laSQL import Log
-from porepressureprediction.velocity.basic.laSQL import smooth_log, truncate_log, shale
+from porepressureprediction.velocity.basic.laSQL import smooth_log, truncate_log, interpolate_log, shale
 from porepressureprediction.velocity.basic.seiSQL import SeisCube
 from porepressureprediction.velocity.basic.survey import Survey
 from porepressureprediction.velocity.reader import Reader
