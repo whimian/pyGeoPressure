@@ -454,7 +454,7 @@ class Log(object):
                     else:
                         self.data.append(float(tempList[1]))
         except Exception as inst:
-            print(inst.args)
+            print('{}: '.format(self.name) + inst.args[1])
 
     def write_od(self, file_name):
         try:
