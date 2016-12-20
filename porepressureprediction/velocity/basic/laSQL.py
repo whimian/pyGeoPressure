@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
 from las import LASReader
 import json
@@ -145,7 +145,7 @@ class Well(object):
         shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
         strides = a.strides + (a.strides[-1],)
         rolled = np.lib.stride_tricks.as_strided(
-                                            a, shape=shape, strides=strides)
+            a, shape=shape, strides=strides)
         return rolled
 
     def _despike(self, curve, curve_sm, max_clip):
@@ -388,7 +388,7 @@ class Log(object):
                "Attribute Name: {}\n".format(self.descr) +\
                "Log Units: {}\n".format(self.units) +\
                "Depth range: {} - {} - {}\n".format(
-                self.depth[0], self.depth[-1], 0.1)
+                   self.depth[0], self.depth[-1], 0.1)
 
     def __str__(self):
         return self._info()
@@ -482,7 +482,7 @@ def rolling_window(a, window):
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
     strides = a.strides + (a.strides[-1],)
     rolled = np.lib.stride_tricks.as_strided(
-                                        a, shape=shape, strides=strides)
+        a, shape=shape, strides=strides)
     return rolled
 
 
@@ -556,39 +556,30 @@ def truncate_log(log, top, bottom):
     return trunc_log
 
 
-def shale(gr_log, vel_log, thresh):
-    # gr_depth = np.array(gr_log.depth)
-    gr_dict = dict(zip(gr_log.depth, gr_log.data))
-    gr_start = gr_log.start
-    gr_stop = gr_log.stop
-    mask = []
-    for dep in vel_log.depth:
-        if dep <= gr_stop and dep >= gr_start:
-            if np.isnan(gr_dict[dep]):
-                mask.append(True)
-            elif gr_dict[dep] > thresh:
-                mask.append(True)
-            else:
-                mask.append(False)
-        else:
-            mask.append(True)
-    if len(mask) != len(vel_log.data):
-        raise Exception("mask length is wrong.")
-    mask = np.array(mask)
-    vel_shale = deque()
-    for masque, dat in zip(mask, vel_log.data):
-        if masque:
-            vel_shale.append(dat)
-        else:
-            vel_shale.append(np.nan)
-    vel_shale = list(vel_shale)
-    log_vel_shale = Log()
-    log_vel_shale.name = vel_log.name + "_shale"
-    log_vel_shale.units = vel_log.units
-    log_vel_shale.decr = vel_log.decr + " in Shale"
-    log_vel_shale.depth = vel_log.depth
-    log_vel_shale.data = vel_shale
-    return log_vel_shale
+def shale(log, vsh_log, thresh=0.35):
+    """
+    Discern shale intervals
+
+    log : Log
+        log to discern
+    vsh_log : Log
+        shale volume log
+    thresh : scalar
+        percentage threshold, 0 < thresh < 1
+    """
+    shale_mask = np.isfinite(vsh_log.depth)
+    shale_mask[vsh_log.start_idx: vsh_log.stop_idx] = True
+    mask_thresh = np.array(vsh_log.data) < thresh
+    mask = shale_mask * mask_thresh
+    data = np.array(log.data)
+    data[mask] = np.nan
+    log_sh = Log()
+    log_sh.name = log.name + "_sh"
+    log_sh.units = log.units
+    log_sh.descr = log.descr
+    log_sh.depth = log.depth
+    log_sh.data = data
+    return log_sh
 
 
 def interpolate_log(log):
