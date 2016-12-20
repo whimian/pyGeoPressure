@@ -37,7 +37,7 @@ def virgin_curve(effective_stress, a, b):
     return v0 + a * effective_stress**b
 
 
-def eaton(v, vn, vesn, obp, a=0.785213, b=1.49683):
+def eaton(v, vn, hydrostatic, lithostatic, n=3):
     """
     Compute pore pressure using Eaton equation.
 
@@ -47,24 +47,21 @@ def eaton(v, vn, vesn, obp, a=0.785213, b=1.49683):
         velocity array whose unit is m/s.
     vn : 1-d ndarray
         normal velocity array whose unit is m/s.
-    vesn : 1-d ndarray
-        vertical effective stress under normal compaction array
-        whose unit is m/s.
-    obp : 1-d ndarray
+    hydrostatic : 1-d ndarray
+        hydrostatic pressure
+    lithostatic : 1-d ndarray
         Overburden pressure whose unit is Pa.
     v0 : float, optional
         the velocity of unconsolidated regolith whose unit is ft/s.
-    a : float, optional
-        coefficient a
-    b : float, optional
-        coefficient b
+    n : float, optional
+        eaton exponent
 
     Notes
     -----
     .. math:: P = OBP - VES_{n}* a (\\frac{V}{V_{n}})^{b}
     """
-    ves = vesn * a * (v / vn)**b
-    pressure = obp - ves
+    ves = (lithostatic - hydrostatic) * (v / vn)**n
+    pressure = lithostatic - ves
     return pressure
 
 
