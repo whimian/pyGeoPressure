@@ -48,9 +48,9 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
     vn : 1-d ndarray
         normal velocity array whose unit is m/s.
     hydrostatic : 1-d ndarray
-        hydrostatic pressure
+        hydrostatic pressure in mPa
     lithostatic : 1-d ndarray
-        Overburden pressure whose unit is Pa.
+        Overburden pressure whose unit is mPa.
     v0 : float, optional
         the velocity of unconsolidated regolith whose unit is ft/s.
     n : float, optional
