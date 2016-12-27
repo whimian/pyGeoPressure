@@ -61,7 +61,7 @@ class SeisCube():
             self.stepInline + 1
         self.nNorth = (self.endCrline - self.startCrline) // \
             self.stepCrline + 1
-        self.nDepth = (self.endDepth - self.startDepth) // self.stepDepth + 1
+        self.nDepth = int((self.endDepth - self.startDepth) // self.stepDepth + 1)
         self._coordinate_conversion()
 
     def _coordinate_conversion(self):
