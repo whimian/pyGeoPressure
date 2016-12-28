@@ -1,1 +1,1 @@
-__all__ = ['laSQL', 'seiSQL', 'survey']
+__all__ = ['laSQL', 'seiSQL', 'survey', 'well']

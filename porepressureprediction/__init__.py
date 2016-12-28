@@ -1,4 +1,4 @@
-from porepressureprediction.velocity.basic.laSQL import Well
+# from porepressureprediction.velocity.basic.laSQL import Well
 from porepressureprediction.velocity.basic.laSQL import Log
 from porepressureprediction.velocity.basic.laSQL import smooth_log, truncate_log, interpolate_log, shale
 from porepressureprediction.velocity.basic.seiSQL import SeisCube
@@ -12,3 +12,4 @@ from porepressureprediction.velocity.extrapolate import set_v0, normal, slotnick
 from porepressureprediction.pressure.obp import overburden_pressure, gardner, traugott
 from porepressureprediction.pressure.pore_pressure import virgin_curve, bowers, eaton
 from porepressureprediction.pressure.hydrostatic import hydrostatic_pressure
+from porepressureprediction.velocity.basic.well import Well
