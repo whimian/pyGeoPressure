@@ -52,7 +52,7 @@ class Survey(object):
         param_cr = (crline - self.seisCube.startCrline) // \
             self.seisCube.stepCrline + \
             ((inline - self.seisCube.startCrline) %
-                self.seisCube.stepCrline) // \
+             self.seisCube.stepCrline) // \
             (self.seisCube.stepCrline)
         crline = self.seisCube.startCrline + \
             self.seisCube.stepCrline * param_cr
@@ -64,13 +64,16 @@ class Survey(object):
         self.wells_loc[well.name] = loc
 
     def get_seis(self, well_name, attr):
+        """
+        Get seismic trace data nearest to the well location.
+        """
         if well_name in self.wells_loc.keys():
             loc = self.wells_loc[well_name]
             data = self.seisCube.get_cdp(loc, attr)
             return data
         else:
-            print("Well not found! return None")
-            return None
+            print("Well not found!")
+            return []
 
     def sparse_mesh(self, depth, log_name):
         depth_range = range(self.seisCube.startDepth,
