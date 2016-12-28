@@ -6,10 +6,10 @@ import json
 import numpy as np
 
 
-class SeisCube():
-    def __init__(self, db, js):
-        self.db_file = db
-        self.json_file = js
+class SeisCube(object):
+    def __init__(self, json_file):
+        self.db_file = None
+        self.json_file = json_file
         if self.json_file is not None:
             self._readJSON()
         self._inline_indices = None
@@ -36,6 +36,7 @@ class SeisCube():
     def _readJSON(self):
         with open(self.json_file, 'r') as fin:
             json_setting = json.load(fin)
+            self.db_file = json_setting['db_file']
             self.startInline = json_setting['inline'][0]
             self.endInline = json_setting['inline'][1]
             self.stepInline = json_setting['inline'][2]
