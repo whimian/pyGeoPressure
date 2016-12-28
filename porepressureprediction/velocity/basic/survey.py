@@ -5,6 +5,7 @@ Created on Fri Dec 11 20:24:38 2015
 @author: yuhao
 """
 from __future__ import division, print_function
+from itertools import product
 import json
 import numpy as np
 from seiSQL import SeisCube
@@ -89,17 +90,52 @@ class Survey(object):
         self.wells.append(well)
         self.inl_crl[well.well_name] = loc
 
-    def get_seis(self, well_name, attr):
+    def get_seis(self, well_name, attr, radius=0):
         """
         Get seismic trace data nearest to the well location.
         """
+        radius = int(radius)
         if well_name in self.inl_crl.keys():
             loc = self.inl_crl[well_name]
-            data = self.seisCube.get_cdp(loc, attr)
-            return data
+            if radius == 0:
+                data = self.seisCube.get_cdp(loc, attr)
+                return [loc], [data]
+            else:
+                inlines, crlines = self._get_traces(radius, loc)
+                loc = list()
+                data = list()
+                for inl, crl in product(inlines, crlines):
+                    loc.append((inl, crl))
+                    data.append(self.seisCube.get_cdp((inl, crl), attr))
+                return loc, data
         else:
             print("Well not found!")
             return []
+
+    def _get_traces(self, radius, cdp):
+        inline, crline = cdp
+        start_inline = self.seisCube.startInline
+        end_inline = self.seisCube.endInline
+        step_inline = self.seisCube.stepInline
+        start_crline = self.seisCube.startCrline
+        end_crline = self.seisCube.endCrline
+        step_crline = self.seisCube.stepCrline
+
+        inl_min = inline - radius * step_inline
+        if inl_min < start_inline:
+            inl_min = start_inline
+        inl_max = inline + radius * step_inline
+        if inl_max > end_inline:
+            inl_max = end_inline
+        crl_min = crline - radius * step_crline
+        if crl_min < start_crline:
+            crl_min = start_crline
+        crl_max = crline + radius * step_crline
+        if crl_max > end_crline:
+            crl_max = end_crline
+        inlines = np.arange(inl_min, inl_max+1, step_inline)
+        crlines = np.arange(crl_min, crl_max+1, step_crline)
+        return (inlines, crlines)
 
     def sparse_mesh(self, depth, log_name):
         depth_range = range(
