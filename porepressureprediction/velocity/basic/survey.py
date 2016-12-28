@@ -22,9 +22,10 @@ class Survey(object):
         self.wells = list()
         self.seisCube = None
         self.inl_crl = dict()
-        self._passe_json()
+        self._parse_json()
+        self._add_seis_wells()
 
-    def _passe_json(self):
+    def _parse_json(self):
         try:
             with open(self.json_file) as fin:
                 params = json.load(fin)
@@ -39,7 +40,7 @@ class Survey(object):
             self.wells.append(Well(jsf))
         for well in self.wells:
             loc = self._tie(well)
-            self.inl_crl[well.name] = loc
+            self.inl_crl[well.well_name] = loc
 
     def _tie(self, well):
         w_east = well.loc[0]
@@ -86,7 +87,7 @@ class Survey(object):
     def add_well(self, well):
         loc = self._tie(well)
         self.wells.append(well)
-        self.inl_crl[well.name] = loc
+        self.inl_crl[well.well_name] = loc
 
     def get_seis(self, well_name, attr):
         """
