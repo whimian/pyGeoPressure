@@ -5,16 +5,41 @@ Created on Fri Dec 11 20:24:38 2015
 @author: yuhao
 """
 from __future__ import division, print_function
+import json
 import numpy as np
+from seiSQL import SeisCube
+from well import Well
 
 
 class Survey(object):
-    """a survey is a combination of seismic and well logs
     """
-    def __init__(self, cube):
+    Survey object for combining seismic data and well log data.
+    """
+    def __init__(self, json_file):
+        self.json_file = json_file
+        self.seis_json = None
+        self.well_json = None
         self.wells = list()
-        self.seisCube = cube
-        self.wells_loc = dict()
+        self.seisCube = None
+        self.inl_crl = dict()
+        self._passe_json()
+
+    def _passe_json(self):
+        try:
+            with open(self.json_file) as fin:
+                params = json.load(fin)
+                self.seis_json = params['seis']
+                self.well_json = params['wells']
+        except Exception as inst:
+            print(inst)
+
+    def _add_seis_wells(self):
+        self.seisCube = SeisCube(self.seis_json)
+        for name in self.well_json.keys():
+            self.wells.append(Well(self.well_json[name]))
+        for well in self.wells:
+            loc = self._tie(well)
+            self.inl_crl[well.name] = loc
 
     def _tie(self, well):
         w_east = well.loc[0]
@@ -61,14 +86,14 @@ class Survey(object):
     def add_well(self, well):
         loc = self._tie(well)
         self.wells.append(well)
-        self.wells_loc[well.name] = loc
+        self.inl_crl[well.name] = loc
 
     def get_seis(self, well_name, attr):
         """
         Get seismic trace data nearest to the well location.
         """
-        if well_name in self.wells_loc.keys():
-            loc = self.wells_loc[well_name]
+        if well_name in self.inl_crl.keys():
+            loc = self.inl_crl[well_name]
             data = self.seisCube.get_cdp(loc, attr)
             return data
         else:
@@ -76,9 +101,9 @@ class Survey(object):
             return []
 
     def sparse_mesh(self, depth, log_name):
-        depth_range = range(self.seisCube.startDepth,
-                            (self.seisCube.endDepth + 1),
-                            self.seisCube.stepDepth)
+        depth_range = range(
+            self.seisCube.startDepth, (self.seisCube.endDepth + 1),
+            self.seisCube.stepDepth)
         if depth > self.seisCube.endDepth:
             print("input depth larger than maximum depth")
             # depth = self.seisCube.endDepth
@@ -98,8 +123,8 @@ class Survey(object):
             log_index = range(len(log_depth))
             d = log_data[min(log_index, key=lambda x: abs(log_depth[x]-depth))]
             # print("d = ", d)
-            w_inline = self.wells_loc[we.name][0]
-            w_crline = self.wells_loc[we.name][1]
+            w_inline = self.inl_crl[we.name][0]
+            w_crline = self.inl_crl[we.name][1]
             a = (w_crline - self.seisCube.startCrline) // \
                 self.seisCube.stepCrline
             b = (w_inline - self.seisCube.startInline) // \
@@ -129,8 +154,8 @@ class Survey(object):
             log_index = range(len(log_depth))
             d = log_data[min(log_index, key=lambda x: abs(log_depth[x]-depth))]
             # print("d = ", d)
-            w_inline = self.wells_loc[we.name][0]
-            w_crline = self.wells_loc[we.name][1]
+            w_inline = self.inl_crl[we.name][0]
+            w_crline = self.inl_crl[we.name][1]
             a = (w_crline - self.seisCube.startCrline) // \
                 self.seisCube.stepCrline
             b = (w_inline - self.seisCube.startInline) // \
@@ -178,22 +203,3 @@ class Survey(object):
     #         angle = np.pi + arctanAngle
     #     return angle
 # endregion
-
-if __name__ == "__main__":
-    from seiSQL import SeisCube
-    from laSQL import Well
-    chx = Well(js="../testFile/TWT1.json", db="../testFile/TWT1.db")
-
-    cube = SeisCube("../velocity_2.db", "../survey.json")
-
-    sur = Survey(cube)
-    sur.add_well(chx)
-    print(sur.wells_loc)
-    tdk = sur.get_seis(chx.name)
-    print(type(tdk), tdk[:10], sep=',')
-    me = sur.sparse_mesh(1600, 'ac')
-    print("shape:", me.shape)
-    for m in me:
-        for n in m:
-            if not np.isnan(n):
-                print(n)
