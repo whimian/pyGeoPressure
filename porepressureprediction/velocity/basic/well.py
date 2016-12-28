@@ -27,6 +27,12 @@ class Well(object):
         self._parse_json()
         self._read_hdf()
 
+    def __str__(self):
+        return "Well Object: {}".format(self.well_name)
+
+    def __repr__(self):
+        return "Well Object: {}".format(self.well_name)
+
     def _parse_json(self):
         try:
             with open(self.json_file) as fin:
