@@ -35,8 +35,8 @@ class Survey(object):
 
     def _add_seis_wells(self):
         self.seisCube = SeisCube(self.seis_json)
-        for name in self.well_json.keys():
-            self.wells.append(Well(self.well_json[name]))
+        for jsf in self.well_json:
+            self.wells.append(Well(jsf))
         for well in self.wells:
             loc = self._tie(well)
             self.inl_crl[well.name] = loc
