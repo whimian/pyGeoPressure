@@ -75,9 +75,10 @@ class Well(object):
             log_list = logs
         for name in log_list:
             new_log = Log()
-            new_log.name = name
+            new_log.name = name.lower()[:3] + '_' + \
+                self.well_name.lower().replace('-', '_')
             new_log.units = self.unit_dict[name]
-            new_log.descr = self.well_name + name
+            new_log.descr = name
             new_log.depth = self.data_frame['Depth(m)'].values
             new_log.data = self.data_frame[
                 '{}({})'.format(name, self.unit_dict[name])].values
