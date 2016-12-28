@@ -78,9 +78,9 @@ class Well(object):
             new_log.name = name
             new_log.units = self.unit_dict[name]
             new_log.descr = self.well_name + name
-            new_log.depth = self.data_frame.depth
+            new_log.depth = self.data_frame['Depth(m)'].values
             new_log.data = self.data_frame[
-                '{}({})'.format(name, self.unit_dict[name])]
+                '{}({})'.format(name, self.unit_dict[name])].values
             output_list.append(new_log)
         if isinstance(logs, str):
             return output_list[0]
