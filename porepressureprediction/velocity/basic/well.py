@@ -70,7 +70,7 @@ class Well(object):
         return {key: '' if temp_dict[key] == key else temp_dict[key] \
             for key in temp_dict.keys()}
 
-    def get_log(self, logs):
+    def get_log(self, logs, ref=None):
         log_list = list()
         output_list = list()
         if isinstance(logs, str):
@@ -86,6 +86,8 @@ class Well(object):
             new_log.depth = self.data_frame['Depth(m)'].values
             new_log.data = self.data_frame[
                 '{}({})'.format(name, self.unit_dict[name])].values
+            if ref == 'sea':
+                new_log.depth += self.kelly_bushing
             output_list.append(new_log)
         if isinstance(logs, str):
             return output_list[0]
