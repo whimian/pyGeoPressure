@@ -102,3 +102,10 @@ class Well(object):
                         log.descr.replace(' ', '_'), log.units): log.data})
             self.data_frame = pd.merge(self.data_frame, temp_dataframe,
                                        how='outer')
+
+    def save_well(self):
+        try:
+            with pd.HDFStore(self.hdf_file) as store:
+                store[self.well_name] = self.data_frame
+        except Exception as inst:
+            print(inst)
