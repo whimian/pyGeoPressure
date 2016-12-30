@@ -22,7 +22,6 @@ class Well(object):
         # self.trajectory = None
         self.data_frame = None
         self.params = None
-        # self.unit_dict = None
         self._parse_json()
         self._read_hdf()
 
@@ -102,6 +101,12 @@ class Well(object):
                         log.descr.replace(' ', '_'), log.units): log.data})
             self.data_frame = pd.merge(self.data_frame, temp_dataframe,
                                        how='outer')
+
+    def drop_log(self, log_name):
+        if log_name in self.unit_dict.keys():
+            column_name = '{}({})'.format(log_name, self.unit_dict[log_name])
+        else:
+            print("no log named {}".format(log_name))
 
     def save_well(self):
         try:
