@@ -20,7 +20,7 @@ class Survey(object):
         self.json_file = json_file
         self.seis_json = None
         self.well_json = None
-        self.wells = list()
+        self.wells = dict()
         self.seisCube = None
         self.inl_crl = dict()
         self._parse_json()
@@ -38,8 +38,9 @@ class Survey(object):
     def _add_seis_wells(self):
         self.seisCube = SeisCube(self.seis_json)
         for jsf in self.well_json:
-            self.wells.append(Well(jsf))
-        for well in self.wells:
+            temp = Well(jsf)
+            self.wells[temp.well_name] = temp
+        for well in self.wells.values():
             loc = self._tie(well)
             self.inl_crl[well.well_name] = loc
 
@@ -83,11 +84,11 @@ class Survey(object):
             (self.seisCube.stepCrline)
         crline = self.seisCube.startCrline + \
             self.seisCube.stepCrline * param_cr
-        return (inline, crline)
+        return (int(inline), int(crline))
 
     def add_well(self, well):
         loc = self._tie(well)
-        self.wells.append(well)
+        self.wells[well.well_name] = well
         self.inl_crl[well.well_name] = loc
 
     def get_seis(self, well_name, attr, radius=0):
@@ -154,7 +155,7 @@ class Survey(object):
         depth = min(depth_range, key=lambda x: abs(x-depth))
         mesh = np.array([np.nan] * self.seisCube.nNorth * self.seisCube.nEast)
         mesh.shape = (self.seisCube.nNorth, self.seisCube.nEast)
-        for we in self.wells:
+        for we in self.wells.values():
             log_depth = we.get_log("depth")
             log_data = we.get_log(log_name)
             log_index = range(len(log_depth))
@@ -185,7 +186,7 @@ class Survey(object):
             pass
         depth = min(depth_range, key=lambda x: abs(x-depth))
         sparse_list = list()
-        for we in self.wells:
+        for we in self.wells.values():
             log_depth = we.get_log("depth")
             log_data = we.get_log(log_name)
             log_index = range(len(log_depth))
