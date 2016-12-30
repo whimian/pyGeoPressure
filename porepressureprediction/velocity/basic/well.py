@@ -105,6 +105,7 @@ class Well(object):
     def drop_log(self, log_name):
         if log_name in self.unit_dict.keys():
             column_name = '{}({})'.format(log_name, self.unit_dict[log_name])
+            del self.data_frame[column_name]
         else:
             print("no log named {}".format(log_name))
 
