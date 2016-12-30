@@ -112,6 +112,7 @@ class Well(object):
     def save_well(self):
         try:
             with pd.HDFStore(self.hdf_file) as store:
-                store[self.well_name] = self.data_frame
+                store[self.well_name.lower().replace('-', '_')] =  \
+                    self.data_frame
         except Exception as inst:
             print(inst)
