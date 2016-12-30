@@ -8,7 +8,6 @@ from __future__ import division, print_function
 import json
 import numpy as np
 import pandas as pd
-# from las import LASReader
 from laSQL import Log
 
 class Well(object):
@@ -93,3 +92,13 @@ class Well(object):
             return output_list[0]
         else:
             return output_list
+
+    def add_log(self, logs):
+        for log in logs:
+            temp_dataframe = pd.DataFrame(
+                data={
+                    'Depth(m)':log.depth,
+                    '{}({})'.format(
+                        log.descr.replace(' ', '_'), log.units): log.data})
+            self.data_frame = pd.merge(self.data_frame, temp_dataframe,
+                                       how='outer')
