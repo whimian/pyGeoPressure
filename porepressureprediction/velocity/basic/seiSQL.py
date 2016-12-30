@@ -92,6 +92,9 @@ class SeisCube(object):
                                    decimals=2)
         self.inline_bin = np.round(dist_bc / (self.inline_C - self.inline_B),
                                    decimals=2)
+    @property
+    def depth(self):
+        return np.arange(self.startDepth, self.endDepth+0.001, self.stepDepth)
 
     @property
     def attributes(self):
