@@ -477,6 +477,16 @@ class Log(object):
         else:
             return int((d - self.top) // 0.1)
 
+    def get_data(self, depth):
+        depth_idx = list()
+        for de in depth:
+            depth_idx.append(self.get_depth_idx(de))
+        depth = np.array(self.depth)
+        data = np.array(self.data)
+        mask = depth < 0
+        for idx in depth_idx:
+            mask[idx] = True
+        return data[mask]
 
 def rolling_window(a, window):
     a = np.array(a)
