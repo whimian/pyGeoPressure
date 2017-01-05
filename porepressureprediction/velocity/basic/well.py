@@ -83,9 +83,9 @@ class Well(object):
                 self.well_name.lower().replace('-', '_')
             new_log.units = self.unit_dict[name]
             new_log.descr = name
-            new_log.depth = self.data_frame['Depth(m)'].values
-            new_log.data = self.data_frame[
-                '{}({})'.format(name, self.unit_dict[name])].values
+            new_log.depth = np.array(self.data_frame['Depth(m)'].values)
+            new_log.data = np.array(self.data_frame[
+                '{}({})'.format(name, self.unit_dict[name])].values)
             if ref == 'sea':
                 new_log.depth += self.kelly_bushing
             output_list.append(new_log)
