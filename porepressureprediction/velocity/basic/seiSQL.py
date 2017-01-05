@@ -25,7 +25,8 @@ class SeisCube(object):
                "Inl/Crl bin size (m/line): {}/{}\n".format(
                    self.inline_bin, self.crline_bin) +\
                "SQL file location : {}\n".format(
-                   os.path.abspath(self.db_file))
+                   os.path.abspath(self.db_file)) +\
+               "Stored attributes: {}".format(self.attributes)
 
     def __str__(self):
         return self._info()
