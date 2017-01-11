@@ -408,7 +408,8 @@ class Log(object):
     @property
     def start_idx(self):
         for i, dat in enumerate(self.data):
-            if dat is not np.nan:
+            # if dat is not np.nan:
+            if np.isfinite(dat):
                 self.log_start_idx = i
                 break
         return self.log_start_idx
