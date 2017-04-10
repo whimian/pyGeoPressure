@@ -9,6 +9,8 @@ import json
 import numpy as np
 import pandas as pd
 from laSQL import Log
+from ...pressure.hydrostatic import hydrostatic_pressure
+
 
 class Well(object):
     def __init__(self, json_file):
@@ -118,3 +120,31 @@ class Well(object):
                     self.data_frame
         except Exception as inst:
             print(inst)
+
+    def get_pressure_measured(self):
+        obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth,
+                                     rho_f=1)
+        depth = self.params["Measured_Pressure"]["depth"]
+        coef = None
+        try:
+            coef = self.params["Measured_Pressure"]["coef"]
+        except KeyError:
+            print("Cannot find Pressure Coefficient")
+            return None
+        obp_depth = obp_log.depth
+        pres_data = list()
+        for dp, co in zip(depth, coef):
+            idx = np.searchsorted(obp_depth, dp)
+            pres_data.append(hydro[idx] * co)
+        # pres_data = list()
+        # for de, cf in depth, coef:
+        #     pres_data.append(hydro[hydro_log.get_depth_idx(de)] * cf)
+        # pres_data = [hydro[hydro_log.get_depth_idx(de)] * cf \
+        #              for de, cf in depth, coef]
+        log = Log()
+        log.depth = depth
+        log.data = pres_data
+        return log
