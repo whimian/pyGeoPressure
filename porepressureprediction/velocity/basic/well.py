@@ -122,28 +122,25 @@ class Well(object):
             print(inst)
 
     def get_pressure_measured(self):
+        """
+        Get Measured Pressure Points
+        """
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
                                      kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth,
-                                     rho_f=1)
+                                     depth_w=self.water_depth)
         depth = self.params["Measured_Pressure"]["depth"]
         coef = None
         try:
             coef = self.params["Measured_Pressure"]["coef"]
         except KeyError:
             print("Cannot find Pressure Coefficient")
-            return None
+            return Log()
         obp_depth = obp_log.depth
         pres_data = list()
         for dp, co in zip(depth, coef):
             idx = np.searchsorted(obp_depth, dp)
             pres_data.append(hydro[idx] * co)
-        # pres_data = list()
-        # for de, cf in depth, coef:
-        #     pres_data.append(hydro[hydro_log.get_depth_idx(de)] * cf)
-        # pres_data = [hydro[hydro_log.get_depth_idx(de)] * cf \
-        #              for de, cf in depth, coef]
         log = Log()
         log.depth = depth
         log.data = pres_data
@@ -156,8 +153,7 @@ class Well(object):
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
                                      kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth,
-                                     rho_f=1.)
+                                     depth_w=self.water_depth)
         depth = self.params["MP"]
         obp_depth = obp_log.depth
         pres_data = list()
