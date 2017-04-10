@@ -7,7 +7,7 @@ Created on Fri Nov 11 2016
 import numpy as np
 
 
-def hydrostatic_pressure(depth, kelly_bushing=41, depth_w=82, rho_f=1.174, rho_w=1.01):
+def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
     """
     Parameters
     ----------
