@@ -148,3 +148,24 @@ class Well(object):
         log.depth = depth
         log.data = pres_data
         return log
+
+    def get_pressure_normal(self):
+        """
+        return pressure points within normally pressured zone.
+        """
+        obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth,
+                                     rho_f=1.)
+        depth = self.params["MP"]
+        obp_depth = obp_log.depth
+        pres_data = list()
+        for dp in depth:
+            idx = np.searchsorted(obp_depth, dp)
+            pres_data.append(hydro[idx])
+
+        log = Log()
+        log.depth = depth
+        log.data = pres_data
+        return log
