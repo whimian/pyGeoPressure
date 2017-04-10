@@ -134,7 +134,7 @@ class Well(object):
         try:
             coef = self.params["Measured_Pressure"]["coef"]
         except KeyError:
-            print("Cannot find Pressure Coefficient")
+            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
             return Log()
         obp_depth = obp_log.depth
         pres_data = list()
