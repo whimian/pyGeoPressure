@@ -11,6 +11,7 @@ import numpy as np
 from scipy import interpolate
 
 from .las import LASReader
+from .well_log import Log
 
 
 class Well(object):
@@ -24,25 +25,23 @@ class Well(object):
     ----------
     db_file : string
         the address of database file storing the log data
-    sellSetting : string
+
+    json_file : string
         the address of json file storing well information
 
     Methods
     -------
     add_log(log, name)
         Add an array of log data to the Well object
+
     drop_log(name)
         delete the log named 'name'
+
     logs()
         display existing logs in the database
+
     get_log(name)
         retrieve specific log
-    Notes
-    -----
-
-    Raises
-    ------
-
     """
     def __init__(self, js=None, db=None):
         self.db_file = 'new_db.db' if db is None else db
@@ -61,7 +60,7 @@ class Well(object):
         return "Well Name: {}\n".format(self.name) +\
                "Position: {}\n".format(self.loc) +\
                "Depth range: {} - {} - {}\n".format(
-                self.start, self.stop, self.step)
+                   self.start, self.stop, self.step)
 
     def __str__(self):
         return self._info()
@@ -175,7 +174,7 @@ class Well(object):
                     self.step = 0.1
         except ValueError:
             print("No valid coordination found.")
-        except:
+        else:
             print("cannot open json file")
             pass
 
@@ -256,7 +255,7 @@ class Well(object):
                     cur.execute("UPDATE data \
                                    SET {} = ?\
                                    WHERE dept = {}".format(
-                                   log.name.lower(), de), da)
+                                       log.name.lower(), de), da)
         except Exception as inst:
             print(inst.args[0])
 
