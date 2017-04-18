@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-A straightforward 2D kriging program
+Function to calculate hydrostatic pressure
 
 Created on Fri Nov 11 2016
 """
 import numpy as np
+
+__author__ = "yuhao"
 
 
 def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
