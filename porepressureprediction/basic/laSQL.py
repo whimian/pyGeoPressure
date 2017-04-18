@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
-from __future__ import division, print_function
-import numpy as np
-from las import LASReader
-import json
-import sqlite3
-import os
+from __future__ import division, print_function, absolute_import
+
 import copy
+import json
+import os
+import sqlite3
 from collections import deque
+
+import numpy as np
 from scipy import interpolate
+
+from .las import LASReader
 
 
 class Well(object):

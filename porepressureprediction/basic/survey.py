@@ -4,12 +4,15 @@ Created on Fri Dec 11 20:24:38 2015
 
 @author: yuhao
 """
-from __future__ import division, print_function
-from itertools import product
+from __future__ import absolute_import, division, print_function
+
 import json
+from itertools import product
+
 import numpy as np
-from seiSQL import SeisCube
-from well import Well
+
+from .seiSQL import SeisCube
+from .well import Well
 
 
 class Survey(object):

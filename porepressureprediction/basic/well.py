@@ -4,12 +4,15 @@ a Well class utilizing pandas DataFrame
 
 Created on Tue Dec 27 2016
 """
-from __future__ import division, print_function
+from __future__ import absolute_import, division, print_function
+
 import json
+
 import numpy as np
 import pandas as pd
-from laSQL import Log
+
 from ..pressure.hydrostatic import hydrostatic_pressure
+from .laSQL import Log
 
 
 class Well(object):
