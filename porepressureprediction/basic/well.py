@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 from ..pressure.hydrostatic import hydrostatic_pressure
-from .laSQL import Log
+from .well_log import Log
 
 
 class Well(object):
