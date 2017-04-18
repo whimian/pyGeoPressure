@@ -9,7 +9,7 @@ import json
 import numpy as np
 import pandas as pd
 from laSQL import Log
-from ...pressure.hydrostatic import hydrostatic_pressure
+from ..pressure.hydrostatic import hydrostatic_pressure
 
 
 class Well(object):
