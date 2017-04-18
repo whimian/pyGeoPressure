@@ -1,6 +1,11 @@
-"""routines to assist velocity data processing.
+# -*- coding: utf-8 -*-
 """
-from __future__ import division
+Routines to assist velocity data processing.
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import numpy as np
 
 

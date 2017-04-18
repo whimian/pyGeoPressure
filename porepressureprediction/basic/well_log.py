@@ -4,7 +4,6 @@ class Log for well log data
 
 Created on Fri Apr 18 2017
 """
-
 from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"

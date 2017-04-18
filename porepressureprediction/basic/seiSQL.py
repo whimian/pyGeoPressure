@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
+"""
+class for storing seismic data utilizing sqlite database.
+"""
 from __future__ import division, print_function
+__author__ = "yuhao"
+
 import sqlite3
 import os
 import json
+
 import numpy as np
 
 

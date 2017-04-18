@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Functions related to density and Overburden Pressrue Calculation
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import numpy as np
 
 

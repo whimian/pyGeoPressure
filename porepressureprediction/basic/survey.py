@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Dec 11 20:24:38 2015
+Class for defining a seismic survey
 
-@author: yuhao
+Created on Fri Dec 11 20:24:38 2015
 """
 from __future__ import absolute_import, division, print_function
+
+__author__ = "yuhao"
 
 import json
 from itertools import product

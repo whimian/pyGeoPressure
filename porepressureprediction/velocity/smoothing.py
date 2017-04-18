@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+2-d smoothing
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import numpy as np
 from scipy import ndimage
 

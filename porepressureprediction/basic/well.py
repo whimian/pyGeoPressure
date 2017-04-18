@@ -6,6 +6,8 @@ Created on Tue Dec 27 2016
 """
 from __future__ import absolute_import, division, print_function
 
+__author__ = "yuhao"
+
 import json
 
 import numpy as np

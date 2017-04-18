@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+class for reading test file and writing into sqlite db
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import sqlite3
 
 

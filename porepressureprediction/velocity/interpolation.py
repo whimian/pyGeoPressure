@@ -1,4 +1,11 @@
-from __future__ import division
+# -*- coding: utf-8 -*-
+"""
+2-d interpolation routines
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 from scipy import interpolate
 import numpy as np
 
@@ -62,8 +69,8 @@ def interp_DW(array2d):
                     interp = interp + dis[r] * value[r]
                 try:
                     interp = interp / np.sum(dis)
-                except Exception, e:
-                    print e
+                except Exception as e:
+                    print(e)
                     break
                 array2d[i][j] = float("%.2f" % interp)
 

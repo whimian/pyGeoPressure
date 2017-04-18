@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Functions relating velocity trend extrapolation
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import numpy as np
 
 v0 = 1600  # take values larger than 1500

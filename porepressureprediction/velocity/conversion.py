@@ -1,4 +1,11 @@
-from __future__ import division
+# -*- coding: utf-8 -*-
+"""
+Routines performing velocity type conversion
+"""
+from __future__ import division, print_function, absolute_import
+
+__author__ = "yuhao"
+
 import numpy as np
 from scipy import interpolate
 
