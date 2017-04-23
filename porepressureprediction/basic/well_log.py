@@ -15,7 +15,7 @@ class Log(object):
     """
     class for well log
     """
-    def __init__(self):
+    def __init__(self, file_name=None):
         self.name = ""
         self.units = ""
         self.descr = ""
@@ -27,6 +27,8 @@ class Log(object):
         self.depth_stop = None
         self.log_start_idx = None
         self.log_stop_idx = None
+        if file_name is not None:
+            self.read_od(file_name)
 
     def __len__(self):
         return len(self.data)
