@@ -151,6 +151,17 @@ class Well(object):
         log.data = pres_data
         return log
 
+    def get_pressure_coefficient(self):
+        """
+        Retrieve Pressure Coefficient
+        """
+        depth = self.params["Measured_Pressure"]["depth"]
+        coef = self.params["Measured_Pressure"]["coef"]
+        log = Log()
+        log.depth = depth
+        log.data = coef
+        return log
+
     def get_pressure_normal(self):
         """
         return pressure points within normally pressured zone.
