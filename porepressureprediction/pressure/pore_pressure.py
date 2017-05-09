@@ -103,8 +103,27 @@ def invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
     """
     return ((vel - a_0 + a_1 * phi + a_2 * vsh) / a_3)**(1 / B)
 
+
 def multivariate_virgin(sigma, phi, vsh, a_0, a_1, a_2, a_3, B):
     """
     Calculate velocity using multivariate virgin curve
     """
     return a_0 - a_1 * phi - a_2 * vsh + a_3 * sigma**B
+
+
+def multivariate_unloading(sigma, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax):
+    """
+    Calculate velocity using multivariate unloading curve
+    """
+    sigma_max = invert_multivariate_virgin(vmax, phi, vsh, a_0, a_1, a_2, a_3, B)
+    independent = sigma_max*(sigma/sigma_max)**(1/U)
+    return multivariate_virgin(independent, phi, vsh, a_0, a_1, a_2, a_3, B)
+
+
+def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax):
+    """
+    Calculate effective stress using multivariate unloading curve
+    """
+    sigma_max = invert_multivariate_virgin(vmax, phi, vsh, a_0, a_1, a_2, a_3, B)
+    sigma_vc = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
+    return sigma_max * (sigma_vc/sigma_max)**U
