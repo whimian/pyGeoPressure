@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Routines to assist velocity data processing.
+Routines to calculate pore pressure
 """
 from __future__ import division, print_function, absolute_import
 
@@ -37,10 +37,10 @@ def bowers(v, obp, u, fe_idx, a, b, vmax):
     return obp - ves
 
 
-def virgin_curve(effective_stress, a, b):
+def virgin_curve(sigma, a, b):
     "Virgin curve in Bowers' method."
     v0 = 1524
-    return v0 + a * effective_stress**b
+    return v0 + a * sigma**b
 
 
 def unloading_curve(sigma, a, b, u, v_max):
@@ -80,3 +80,25 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
 
 def fillipino():
     pass
+
+
+def multivariate_virgin(sigma, phi, vsh, a_0, a_1, a_2, a_3, B):
+    """
+    Multivariate virgin curve
+
+    Parameters
+    ----------
+    sigma : 1-d ndarray
+        velocity array whose unit is m/s.
+    phi : 1-d ndarray
+        normal velocity array whose unit is m/s.
+    vsh : 1-d ndarray
+        hydrostatic pressure in mPa
+    a_0, a_1, a_2, a_3 : scalar
+        coefficients
+
+    Returns
+    -------
+    velocity: 1-d ndarray
+    """
+    return a_0 - a_1 * phi - a_2 * vsh + a_3 * sigma**B
