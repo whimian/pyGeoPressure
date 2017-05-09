@@ -82,9 +82,9 @@ def fillipino():
     pass
 
 
-def multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
+def invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
     """
-    Multivariate virgin curve
+    Calculate effective stress using multivariate virgin curve
 
     Parameters
     ----------
@@ -101,4 +101,10 @@ def multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
     -------
     sigma: 1-d ndarray
     """
-    return ((vel-a_0+a_1*phi+a_2*vsh)/a_3)**(1/B)
+    return ((vel - a_0 + a_1 * phi + a_2 * vsh) / a_3)**(1 / B)
+
+def multivariate_virgin(sigma, phi, vsh, a_0, a_1, a_2, a_3, B):
+    """
+    Calculate velocity using multivariate virgin curve
+    """
+    return a_0 - a_1 * phi - a_2 * vsh + a_3 * sigma**B
