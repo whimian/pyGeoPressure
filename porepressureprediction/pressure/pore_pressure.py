@@ -82,23 +82,23 @@ def fillipino():
     pass
 
 
-def multivariate_virgin(sigma, phi, vsh, a_0, a_1, a_2, a_3, B):
+def multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
     """
     Multivariate virgin curve
 
     Parameters
     ----------
-    sigma : 1-d ndarray
+    vel : 1-d ndarray
         velocity array whose unit is m/s.
     phi : 1-d ndarray
-        normal velocity array whose unit is m/s.
+        porosity array
     vsh : 1-d ndarray
-        hydrostatic pressure in mPa
+        shale volume
     a_0, a_1, a_2, a_3 : scalar
         coefficients
 
     Returns
     -------
-    velocity: 1-d ndarray
+    sigma: 1-d ndarray
     """
-    return a_0 - a_1 * phi - a_2 * vsh + a_3 * sigma**B
+    return ((vel-a_0+a_1*phi+a_2*vsh)/a_3)**(1/B)
