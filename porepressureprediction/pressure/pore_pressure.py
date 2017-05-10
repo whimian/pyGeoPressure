@@ -129,8 +129,8 @@ def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     return sigma_max * (sigma_vc/sigma_max)**U
 
 
-def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx):
+def effective_stress_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx):
     ves = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
     unloading = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     ves[start_idx: end_idx] = unloading[start_idx: end_idx]
-    return obp - ves
+    return ves
