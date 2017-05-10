@@ -116,8 +116,8 @@ def multivariate_unloading(sigma, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax):
     Calculate velocity using multivariate unloading curve
     """
     sigma_max = invert_multivariate_virgin(vmax, phi, vsh, a_0, a_1, a_2, a_3, B)
-    independent = sigma_max*(sigma/sigma_max)**(1/U)
-    return multivariate_virgin(independent, phi, vsh, a_0, a_1, a_2, a_3, B)
+    sigma_vc = sigma_max*(sigma/sigma_max)**(1/U)
+    return multivariate_virgin(sigma_vc, phi, vsh, a_0, a_1, a_2, a_3, B)
 
 
 def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax):
@@ -127,3 +127,10 @@ def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     sigma_max = invert_multivariate_virgin(vmax, phi, vsh, a_0, a_1, a_2, a_3, B)
     sigma_vc = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
     return sigma_max * (sigma_vc/sigma_max)**U
+
+
+def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx):
+    ves = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
+    unloading = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
+    ves[start_idx: end_idx] = unloading[start_idx: end_idx]
+    return obp - ves
