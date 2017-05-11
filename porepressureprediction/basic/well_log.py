@@ -57,12 +57,15 @@ class Log(object):
 
     @property
     def start_idx(self):
-        for i, dat in enumerate(self.data):
-            # if dat is not np.nan:
-            if np.isfinite(dat):
-                self.log_start_idx = i
-                break
-        return self.log_start_idx
+        if self.log_start_idx is None:
+            self.data = np.array(self.data)
+            mask = np.isfinite(self.data)
+            index = np.where(mask == True)
+            self.log_start_idx = index[0][0]
+            return self.log_start_idx
+        else:
+            return self.log_start_idx
+
 
     @property
     def stop(self):
@@ -75,12 +78,15 @@ class Log(object):
 
     @property
     def stop_idx(self):
-        for i, dat in reversed(list(enumerate(self.data))):
-            if dat is not np.nan:
-                self.log_stop_idx = i + 1
-                # so when used in slice, +1 will not needed.
-                break
-        return self.log_stop_idx
+        if self.log_stop_idx is None:
+            self.data = np.array(self.data)
+            mask = np.isfinite(self.data)
+            index = np.where(mask == True)
+            self.log_stop_idx = index[0][-1] + 1
+            # so when used in slice, +1 will not needed.
+            return self.log_stop_idx
+        else:
+            return self.log_stop_idx
 
     @property
     def top(self):
