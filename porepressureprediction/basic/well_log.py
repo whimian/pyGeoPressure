@@ -9,6 +9,9 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import numpy as np
+from scipy.interpolate import interp1d
+
+from porepressureprediction.velocity.smoothing import smooth
 
 
 class Log(object):
@@ -163,7 +166,7 @@ def despike(curve, curve_sm, max_clip):
     return out
 
 
-def smooth_log(log, window=3003):
+def smooth_log(log, window=1500):
     """
     Parameter
     ---------
@@ -177,28 +180,24 @@ def smooth_log(log, window=3003):
     smoothed log : Log object
         smoothed log
     """
-    # data2smooth = copy.copy(log.data)
-    # data2smooth = log.data[log.start_idx:log.stop_idx]
-    mask = np.isfinite(log.data)
     data = np.array(log.data)
-    data2smooth = data[mask]
-    print(data2smooth)
-    data_sm = np.median(rolling_window(data2smooth, window), -1)
-    data_sm = np.pad(data_sm, window // 2, mode="edge")
-    print(data_sm)
-    # log_sm = np.array(copy.copy(log.data))
-    # log_sm[log.start_idx:log.stop_idx] = data_sm
-    log_sm = np.full_like(data, np.nan)
-    log_sm[mask] = data_sm
-    print(type(log_sm))
-    print(np.any(data_sm))
-    logSmoothed = Log()
-    logSmoothed.name = log.name + "_sm"
-    logSmoothed.units = log.units
-    logSmoothed.descr = log.descr
-    logSmoothed.depth = log.depth
-    logSmoothed.data = log_sm
-    return logSmoothed
+    depth = np.array(log.depth)
+    mask = np.isfinite(data)
+    func = interp1d(depth[mask], data[mask])
+    interp_data = func(depth[log.start_idx: log.stop_idx])
+    new_data = np.array(data)
+    new_data[log.start_idx: log.stop_idx] = interp_data
+    smoothed = smooth(new_data[log.start_idx: log.stop_idx], window_len=window//2, window='flat')
+    # using half the window length in order to be consistent with opendtect
+    smooth_data = np.array(data)
+    smooth_data[log.start_idx: log.stop_idx] = smoothed
+    log_smooth = Log()
+    log_smooth.name = log.name + "_sm"
+    log_smooth.units = log.units
+    log_smooth.descr = log.descr
+    log_smooth.depth = log.depth
+    log_smooth.data = smooth_data
+    return log_smooth
 
 
 def truncate_log(log, top, bottom):
