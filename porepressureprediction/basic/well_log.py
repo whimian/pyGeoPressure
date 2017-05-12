@@ -201,7 +201,7 @@ def smooth_log(log, window=1500):
     return log_smooth
 
 
-def downscale_log(log, freq=20):
+def upscale_log(log, freq=20):
     """
     downscale a well log with a lowpass butterworth filter
     """
