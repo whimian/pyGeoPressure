@@ -79,7 +79,7 @@ def smooth(x, window_len=11, window='hanning'):
     # return y
 
     # return y[(window_len/2 - 1): -(window_len/2 + 1)]
-    return y[(window_len/2-1): -(window_len/2)]
+    return y[(window_len//2-1): -(window_len//2)]
 
 
 def smooth_2d(m):
