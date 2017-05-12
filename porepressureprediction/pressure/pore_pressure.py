@@ -9,7 +9,7 @@ __author__ = "yuhao"
 import numpy as np
 
 
-def bowers(v, obp, u, fe_idx, a, b, vmax):
+def bowers(v, obp, u, start_idx, a, b, vmax, end_idx=None):
     """
     Compute pressure using Bowers equation.
 
@@ -33,7 +33,7 @@ def bowers(v, obp, u, fe_idx, a, b, vmax):
     sigma_max = ((vmax-1524)/a)**(1/b)
     ves = ((v - 1524) / a)**(1.0 / b)
     ves_fe = sigma_max*(((v-1524)/a)**(1/b)/sigma_max)**u
-    ves[fe_idx:] = ves_fe[fe_idx:]
+    ves[start_idx: end_idx] = ves_fe[start_idx: end_idx]
     return obp - ves
 
 
