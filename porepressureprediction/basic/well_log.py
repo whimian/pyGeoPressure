@@ -282,17 +282,16 @@ def shale(log, vsh_log, thresh=0.35):
 
 
 def interpolate_log(log):
-    "log curve interpolation"
+    """
+    Log curve interpolation
+    """
     depth = np.array(log.depth)
     data = np.array(log.data)
-    # interpolation function
-    mask_finite = np.isfinite(data)
-    func = interpolate.interp1d(depth[mask_finite], data[mask_finite])
-    mask = np.isnan(depth)
-    mask[log.start_idx: log.stop_idx] = True
-    mask_nan = np.isnan(data)
-    mask = mask * mask_nan
-    data[mask] = func(depth[mask])
+    mask = np.isfinite(data)
+    func = interp1d(depth[mask], data[mask])
+    interp_data = func(depth[log.start_idx: log.stop_idx])
+    data[log.start_idx: log.stop_idx] = interp_data
+
     interp_log = Log()
     interp_log.name = log.name + '_interp'
     interp_log.units = log.units
