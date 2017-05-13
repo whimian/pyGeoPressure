@@ -129,14 +129,14 @@ def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     return sigma_max * (sigma_vc/sigma_max)**U
 
 
-def effective_stress_multivariate(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=-1):
+def effective_stress_multivariate(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=None):
     ves = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
     unloading = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     ves[start_idx: end_idx] = unloading[start_idx: end_idx]
     return ves
 
 
-def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=-1):
+def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=None):
     """
     Pressure Prediction using multivariate model
     """
