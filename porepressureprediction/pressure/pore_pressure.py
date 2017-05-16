@@ -43,6 +43,12 @@ def virgin_curve(sigma, a, b):
     return v0 + a * sigma**b
 
 
+def invert_vrigin(v, a, b):
+    "invert of virgin curve."
+    v0 = 1524
+    return ((v-v0)/a)**(1/b)
+
+
 def unloading_curve(sigma, a, b, u, v_max):
     "Unloading curve in Bowers's method."
     sigma_max = ((v_max-1524)/a)**(1/b)
