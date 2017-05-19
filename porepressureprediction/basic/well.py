@@ -181,3 +181,32 @@ class Well(object):
         log.depth = depth
         log.data = pres_data
         return log
+
+    def get_emw(self):
+        """
+        Get Equivalent Mud Weight
+        """
+        obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth)
+        try:
+            depth = self.params["EMW"]["depth"]
+        except KeyError:
+            print("{}: Cannot find EMW Coefficient".format(self.well_name))
+            return Log()
+        coef = None
+        try:
+            coef = self.params["EMW"]["coef"]
+        except KeyError:
+            print("{}: Cannot find EMW Coefficient".format(self.well_name))
+            return Log()
+        obp_depth = obp_log.depth
+        pres_data = list()
+        for dp, co in zip(depth, coef):
+            idx = np.searchsorted(obp_depth, dp)
+            pres_data.append(hydro[idx] * co)
+        log = Log()
+        log.depth = depth
+        log.data = pres_data
+        return log
