@@ -169,7 +169,7 @@ class SeisCube(object):
             data = [d[0] for d in data]
             return np.array(data).reshape((self.nNorth, self.nDepth))
         except Exception as inst:
-            print(inst.message)
+            print(inst)
             return []
 
     def get_crline(self, crline, attr):
@@ -188,7 +188,7 @@ class SeisCube(object):
             data = [d[0] for d in data]
             return np.array(data).reshape((self.nEast, self.nDepth))
         except Exception as inst:
-            print(inst.message)
+            print(inst)
             return []
 
     def get_depth(self, depth, attr):
@@ -204,7 +204,7 @@ class SeisCube(object):
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.message)
+            print(inst)
             return []
 
     def get_cdp(self, CDP, attr):
@@ -225,7 +225,7 @@ class SeisCube(object):
             data = [d[0] for d in data]
             return data
         except Exception as inst:
-            print(inst.message)
+            print(inst)
             return []
 
     def set_inline(self, inline, attr, data):
@@ -285,7 +285,7 @@ class SeisCube(object):
                     attribute REAL
                 )""".format(attr))
         except Exception as inst:
-            print(inst.message)
+            print(inst)
 
     def export_od(self, attr, fname):
         try:
