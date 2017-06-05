@@ -45,7 +45,7 @@ class Reader(object):
             cur.executemany("INSERT INTO position VALUES (?, ?, ?, ?)",
                             po)
 
-            cur.execute("CREATE INDEX IF NOT EXISTS idx_txt ON \
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_twt ON \
                          position(twt)")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_inl ON \
                          position(inline)")
