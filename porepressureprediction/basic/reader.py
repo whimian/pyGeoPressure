@@ -18,7 +18,7 @@ class Reader(object):
 
     def _add_attribute(self, data, attr):
         n = len(data)
-        at = [tuple([i, data[i][3]]) for i in xrange(n)]
+        at = [tuple([i, data[i][3]]) for i in range(n)]
 
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
@@ -31,7 +31,7 @@ class Reader(object):
     def _add_position(self, data):
         n = len(data)
         po = [tuple([i, data[i][0], data[i][1], data[i][2]])
-              for i in xrange(n)]
+              for i in range(n)]
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
             cur.execute('''CREATE TABLE position(
