@@ -353,7 +353,7 @@ class SeisCube(object):
                                 continue
                             else:
                                 x, y = self.line_2_coord(inl, crl)
-                                for i in xrange(self.nDepth):
+                                for i in range(self.nDepth):
                                     tempList = [str(x), str(y), str(self.startDepth+self.stepDepth*i), str(temp[i][0])]
                                     fout.write('\t'.join(tempList) + '\n')
         except Exception as inst:
