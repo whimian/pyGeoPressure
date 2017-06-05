@@ -8,6 +8,8 @@ __author__ = "yuhao"
 
 import sqlite3
 
+from segpy.reader import create_reader
+
 
 class Reader(object):
     """class to create sqlite database with text file
@@ -81,6 +83,27 @@ class Reader(object):
                         float(data[i])])
         return velocity
 
+    def _read_segy(self, bfile):
+        velocity = []
+        with open(bfile, 'rb') as textVel:
+            segy_reader = create_reader(
+                textVel, progress=make_progress_indicator('Importing'))
+            for inline, crline in segy_reader.inline_xline_numbers():
+                trace_index = segy_reader.trace_index((inline, crline))
+
+                trace = segy_reader.trace_samples(trace_index)
+                data = trace.tolist()
+                tr_header = segy_reader.trace_header(trace_index)
+                startTwt = tr_header.delay_recording_time
+                stepTwt = tr_header.sample_interval * 10**(-3)  # in milliseconds
+                nTwt = tr_header.num_samples
+                for i in range(nTwt):
+                    velocity.append([
+                        inline, crline, startTwt + i * stepTwt,
+                        float(data[i])
+                    ])
+        return velocity
+
     def read(self, textfile, attr, filetype="od"):
         """
         Parameters
@@ -103,6 +126,8 @@ class Reader(object):
             velocity = self._read_od(textfile)
         elif filetype == "hrs":
             velocity = self._read_hrs(textfile)
+        elif filetype == "segy":
+            velocity = self._read_segy(textfile)
         else:
             raise Exception("Unkown filetype. (>_<)")
         self._add_position(velocity)
@@ -120,3 +145,17 @@ class Reader(object):
         else:
             raise Exception("Unkown filetype. (>_<)")
         self._add_attribute(velocity, attr)
+
+
+def make_progress_indicator(name):
+    previous_integer_progress = -1
+
+    def progress(p):
+        nonlocal previous_integer_progress
+        percent = p * 100
+        current_integer_progress = int(percent)
+        if current_integer_progress != previous_integer_progress:
+            print('{}: {}%'.format(name, current_integer_progress))
+        previous_integer_progress = current_integer_progress
+
+    return progress
