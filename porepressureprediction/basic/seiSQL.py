@@ -119,10 +119,17 @@ class SeisCube(object):
 
     def inlines(self):
         """
-        Interator for inline numbers
+        Iterator for inline numbers
         """
         for inline in range(self.startInline, self.endInline+1, self.stepInline):
             yield inline
+
+    def crlines(self):
+        """
+        Iterator for crline numbers
+        """
+        for crline in range(self.startCrline, self.endCrline+1, self.stepCrline):
+            yield crline
 
     def coord_2_line(self, coordinate):
         x = coordinate[0]
