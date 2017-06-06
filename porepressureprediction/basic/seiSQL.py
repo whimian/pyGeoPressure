@@ -100,9 +100,6 @@ class SeisCube(object):
                                    decimals=2)
         self.inline_bin = np.round(dist_bc / (self.inline_C - self.inline_B),
                                    decimals=2)
-    @property
-    def depth(self):
-        return np.arange(self.startDepth, self.endDepth+0.001, self.stepDepth)
 
     @property
     def attributes(self):
@@ -141,6 +138,13 @@ class SeisCube(object):
                 range(self.startInline, self.endInline+1, self.stepInline),
                 range(self.startCrline, self.endCrline+1, self.stepCrline)):
             yield (inline, crline)
+
+    def depth(self):
+        """
+        Iterator for z coordinate
+        """
+        for i in range(self.nDepth):
+            yield self.startDepth + i * self.stepDepth
 
     def coord_2_line(self, coordinate):
         x = coordinate[0]
