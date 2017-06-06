@@ -15,9 +15,17 @@ Seismic velocity data are stored using sqlite, and well log data are stored in p
 
 # Data I/O
 
-**Well log**: las file
+**Well log**:
 
-**Seismic Velocity**: Opendtect ascii file
+- las file
+
+- pseudo-las file without proper header
+
+**Seismic Velocity**:
+
+- Opendtect ascii file
+
+- SEG-Y file (require [segpy](https://github.com/sixty-north/segpy))
 
 # Basic Classes
 
@@ -28,3 +36,9 @@ Seismic velocity data are stored using sqlite, and well log data are stored in p
 [**Well**](porepressureprediction/basic/well.py): Well with log data stored in pandas hdf5 file.
 
 [**Log**](porepressureprediction/basic/well_log.py): log data.
+
+## Log curve tools
+
+- Interpolation
+- Smoothing
+- Upscale
