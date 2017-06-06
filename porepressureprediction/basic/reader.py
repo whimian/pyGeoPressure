@@ -90,9 +90,7 @@ class Reader(object):
                 textVel, progress=make_progress_indicator('Importing'))
             for inline, crline in segy_reader.inline_xline_numbers():
                 trace_index = segy_reader.trace_index((inline, crline))
-
-                trace = segy_reader.trace_samples(trace_index)
-                data = trace.tolist()
+                tr_data = segy_reader.trace_samples(trace_index)
                 tr_header = segy_reader.trace_header(trace_index)
                 startTwt = tr_header.delay_recording_time
                 stepTwt = tr_header.sample_interval * 10**(-3)  # in milliseconds
@@ -100,7 +98,7 @@ class Reader(object):
                 for i in range(nTwt):
                     velocity.append([
                         inline, crline, startTwt + i * stepTwt,
-                        float(data[i])
+                        float(tr_data[i])
                     ])
         return velocity
 
