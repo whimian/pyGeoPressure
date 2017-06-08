@@ -6,7 +6,9 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
+import time
 import sqlite3
+from functools import wraps
 
 from segpy.reader import create_reader
 
@@ -36,6 +38,7 @@ class Reader(object):
               for i in range(n)]
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
+            cur.execute("BEGIN TRANSACTION")
             cur.execute('''CREATE TABLE position(
                 id INTEGER PRIMARY KEY,
                 inline INTEGER,
@@ -53,6 +56,7 @@ class Reader(object):
                          position(crline)")
             cur.execute("CREATE INDEX IF NOT EXISTS idx_cdp ON \
                          position(inline, crline)")
+            cur.execute("COMMIT")
 
     def _read_hrs(self, textfile):
         velocity = list()
@@ -87,7 +91,7 @@ class Reader(object):
         velocity = []
         with open(bfile, 'rb') as textVel:
             segy_reader = create_reader(
-                textVel, progress=make_progress_indicator('Importing'))
+                textVel, progress=make_progress_indicator('Scanning'))
             for inline, crline in segy_reader.inline_xline_numbers():
                 trace_index = segy_reader.trace_index((inline, crline))
                 tr_data = segy_reader.trace_samples(trace_index)
@@ -125,11 +129,11 @@ class Reader(object):
         elif filetype == "hrs":
             velocity = self._read_hrs(textfile)
         elif filetype == "segy":
-            velocity = self._read_segy(textfile)
+            velocity = measure(self._read_segy)(textfile)
         else:
             raise Exception("Unkown filetype. (>_<)")
-        self._add_position(velocity)
-        self._add_attribute(velocity, attr)
+        measure(self._add_position)(velocity)
+        measure(self._add_attribute)(velocity, attr)
 
     def add(self, textfile, attr, filetype="od"):
         """
@@ -157,3 +161,14 @@ def make_progress_indicator(name):
         previous_integer_progress = current_integer_progress
 
     return progress
+
+def measure(func):
+    @wraps(func)
+    def measured(*args, **kwargs):
+        t0 = time.time()
+        result = func(*args, **kwargs)
+        elapsed = time.time() - t0
+        name = func.__name__
+        print("[{}] {}".format(elapsed, name))
+        return result
+    return measured
