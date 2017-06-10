@@ -13,6 +13,9 @@ from itertools import product
 
 import numpy as np
 
+from .utils import split_sequence
+from .vawt import wiggles
+
 
 class SeisCube(object):
     def __init__(self, json_file):
@@ -173,19 +176,13 @@ class SeisCube(object):
         return (x, y)
 
     def get_inline(self, inline, attr):
+        "Retrieve data by inline number"
         try:
             if inline < self.startInline or inline > self.endInline:
                 raise Exception("Inline number out of range.")
-            with sqlite3.connect(self.db_file) as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT attribute \
-                             FROM position \
-                             JOIN {table} \
-                             ON position.id = {table}.id \
-                             WHERE inline = {inl}".format(
-                                                    table=attr, inl=inline))
-                data = cur.fetchall()
-            data = [d[0] for d in data]
+
+            samples = list(self.inline_to_indexes(inline))
+            data = self.retrieve_data(samples, attr)
             return np.array(data).reshape((self.nNorth, self.nDepth))
         except Exception as inst:
             print(inst)
@@ -195,16 +192,8 @@ class SeisCube(object):
         try:
             if crline < self.startCrline or crline > self.endCrline:
                 raise Exception("Crossline number out of range.")
-            with sqlite3.connect(self.db_file) as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT attribute \
-                             FROM position \
-                             JOIN {table} \
-                             ON position.id = {table}.id \
-                             WHERE crline = {crl}".format(
-                                                    table=attr, crl=crline))
-                data = cur.fetchall()
-            data = [d[0] for d in data]
+            samples = list(self.crline_to_indexes(crline))
+            data = self.retrieve_data(samples, attr)
             return np.array(data).reshape((self.nEast, self.nDepth))
         except Exception as inst:
             print(inst)
@@ -214,14 +203,9 @@ class SeisCube(object):
         try:
             if depth < self.startDepth or depth > self.endDepth:
                 raise Exception("Depth out of range.")
-            with sqlite3.connect(self.db_file) as conn:
-                cur = conn.cursor()
-                cur.execute("""SELECT attribute FROM position JOIN {table}
-                            ON position.id = {table}.id
-                            WHERE twt = {d}""".format(table=attr, d=depth))
-                data = cur.fetchall()
-            data = [d[0] for d in data]
-            return data
+            samples = list(self.depth_to_indexes(depth))
+            data = self.retrieve_data(samples, attr)
+            return np.array(data).reshape((self.nEast, self.nNorth))
         except Exception as inst:
             print(inst)
             return []
@@ -378,3 +362,69 @@ class SeisCube(object):
         except Exception as inst:
             print(inst)
             print("Failed to export.")
+
+    def inline_to_indexes(self, inline):
+        """
+        Iterator on sample idexes of a given inline
+        """
+        n_samples_per_inline = self.nNorth * self.nDepth
+        shift = ((inline - self.startInline) // self.stepInline) * \
+            n_samples_per_inline
+        for i in range(n_samples_per_inline):
+            yield i + shift
+
+    def crline_to_indexes(self, crline):
+        """
+        Iterator on sample indexes of a given crline
+        """
+        n_samples_per_inline = self.nNorth * self.nDepth
+        deviation = (crline - self.startCrline) // self.stepCrline * self.nDepth
+        for ncl in range(self.nNorth):
+            for sam in range(self.nDepth):
+                yield sam + deviation + ncl*n_samples_per_inline
+
+    def depth_to_indexes(self, depth):
+        """
+        Iterator on sample indexes of a given depth
+        """
+        diff = (depth - self.startDepth) // self.stepDepth
+        n_cdp = self.nNorth * self.nEast
+        n_depth = self.nDepth
+        for ncdp in range(n_cdp):
+            yield diff + ncdp * self.nDepth
+
+    def plot_inline(self, inline, attr, ax, kind='vawt'):
+        data = self.get_inline(inline, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        else:
+            pass
+
+    def plot_crline(self, crline, attr, ax, kind='vawt'):
+        data = self.get_crline(crline, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        else:
+            pass
+
+    def plot_slice(self, depth, attr, ax, kind='vawt'):
+        data = self.get_depth(depth, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        else:
+            pass
+
+    def retrieve_data(self, sample_idx, attr):
+        data = []
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            for sample_transact in split_sequence(sample_idx, 990):
+                cur.execute(
+                    "SELECT {} ".format('attribute') +\
+                    "FROM {table} ".format(table=attr) +\
+                    "WHERE id " +\
+                    "IN ({})".format(', '.join('?'*len(sample_transact))), sample_transact)
+                data_transact = cur.fetchall()
+                data_transact = [d[0] for d in data_transact]
+                data += data_transact
+        return data
