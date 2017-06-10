@@ -9,6 +9,7 @@ __author__ = "yuhao"
 import time
 import sqlite3
 from functools import wraps
+from math import ceil
 
 from segpy.reader import create_reader
 
@@ -21,16 +22,16 @@ class Reader(object):
             else "new_db.db"
 
     def _add_attribute(self, data, attr):
-        n = len(data)
-        at = [tuple([i, data[i][3]]) for i in range(n)]
-
+        at = [(da,) for da in data]
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
-            cur.execute("""CREATE TABLE {}(
-                id INTEGER PRIMARY KEY,
-                attribute REAL
-            )""".format(attr))
-            cur.executemany("INSERT INTO {} VALUES (?, ?)".format(attr), at)
+            cur.execute(
+                "CREATE TABLE IF NOT EXISTS {} ( ".format(attr) +\
+                "id INTEGER PRIMARY KEY, " +\
+                "attribute REAL) ")
+            cur.executemany(
+                "INSERT INTO {} ({}) ".format(attr, 'attribute') +\
+                "VALUES (?)", at)
 
     def _add_position(self, data):
         n = len(data)
@@ -87,24 +88,27 @@ class Reader(object):
                         float(data[i])])
         return velocity
 
-    def _read_segy(self, bfile):
-        velocity = []
+    def _read_segy(self, bfile, attr):
         with open(bfile, 'rb') as textVel:
             segy_reader = create_reader(
                 textVel, progress=make_progress_indicator('Scanning'))
-            for inline, crline in segy_reader.inline_xline_numbers():
-                trace_index = segy_reader.trace_index((inline, crline))
-                tr_data = segy_reader.trace_samples(trace_index)
-                tr_header = segy_reader.trace_header(trace_index)
-                startTwt = tr_header.delay_recording_time
-                stepTwt = tr_header.sample_interval * 10**(-3)  # in milliseconds
-                nTwt = tr_header.num_samples
-                for i in range(nTwt):
-                    velocity.append([
-                        inline, crline, startTwt + i * stepTwt,
-                        float(tr_data[i])
-                    ])
-        return velocity
+            print("Creating database...")
+            nCDP = segy_reader.num_traces()
+            n_per_trace = segy_reader.num_trace_samples(0)
+            n_trace_per_transaction = MAX_SAMPLES_PER_TRANSACTION // n_per_trace
+            n_transactions = ceil(nCDP / n_trace_per_transaction)
+
+            niter = 0
+            for traces_transact in split_sequence(list(range(nCDP)), n_trace_per_transaction):
+                niter += 1
+                data = []
+                for trace_index in traces_transact:
+                    tr_data = segy_reader.trace_samples(trace_index)
+                    tr_data = [float(da) for da in tr_data]
+                    data += tr_data
+                self._add_attribute(data, attr)
+                print("------ {}%".format(int(niter / n_transactions * 100)))
+            print("-"*6 + "{}%".format(100))
 
     def read(self, textfile, attr, filetype="od"):
         """
@@ -129,11 +133,11 @@ class Reader(object):
         elif filetype == "hrs":
             velocity = self._read_hrs(textfile)
         elif filetype == "segy":
-            velocity = measure(self._read_segy)(textfile)
+            measure(self._read_segy)(textfile, attr)
         else:
             raise Exception("Unkown filetype. (>_<)")
-        measure(self._add_position)(velocity)
-        measure(self._add_attribute)(velocity, attr)
+        # measure(self._add_position)(velocity)
+        # measure(self._add_attribute)(velocity, attr)
 
     def add(self, textfile, attr, filetype="od"):
         """
@@ -172,3 +176,6 @@ def measure(func):
         print("[{}] {}".format(elapsed, name))
         return result
     return measured
+
+# MAX_SAMPLES_PER_TRANSACTION = 9990000
+MAX_SAMPLES_PER_TRANSACTION = 990000
