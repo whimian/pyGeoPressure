@@ -16,6 +16,7 @@ import numpy as np
 from .utils import split_sequence, methdispatch
 from .vawt import wiggles, img
 from .indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
+from .well_log import Log
 
 
 class SeisCube(object):
@@ -509,3 +510,10 @@ class SeisCube(object):
     @get_data.register(CdpIndex)
     def _(self, indexes, attr):
         return self.get_cdp(indexes.value, attr)
+
+    def get_pseudo_log(self, cdp, attr):
+        pseudo_log = Log()
+        pseudo_log.depth = list(self.depth())
+        pseudo_log.data = self.get_data(CdpIndex(cdp), attr)
+        pseudo_log.name = "{}_inline_{}_crline_{}".format(attr, cdp[0], cdp[1])
+        return pseudo_log
