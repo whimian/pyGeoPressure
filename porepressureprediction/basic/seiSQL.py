@@ -13,8 +13,9 @@ from itertools import product
 
 import numpy as np
 
-from .utils import split_sequence
-from .vawt import wiggles
+from .utils import split_sequence, methdispatch
+from .vawt import wiggles, img
+from .indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
 
 
 class SeisCube(object):
@@ -218,15 +219,9 @@ class SeisCube(object):
                 raise Exception("Inline out of range.")
             if cl < self.startCrline or cl > self.endCrline:
                 raise Exception("Crossline out of range.")
-            with sqlite3.connect(self.db_file) as conn:
-                cur = conn.cursor()
-                cur.execute("""SELECT attribute FROM position JOIN {table}
-                            ON position.id = {table}.id
-                            WHERE inline = {inl} AND crline = {crl}
-                            """.format(table=attr, inl=il, crl=cl))
-                data = cur.fetchall()
-            data = [d[0] for d in data]
-            return data
+            samples = list(self.cdp_to_indexes(CDP))
+            data = self.retrieve_data(samples, attr)
+            return np.array(data)
         except Exception as inst:
             print(inst)
             return []
@@ -391,7 +386,19 @@ class SeisCube(object):
         n_cdp = self.nNorth * self.nEast
         n_depth = self.nDepth
         for ncdp in range(n_cdp):
-            yield diff + ncdp * self.nDepth
+            yield diff + ncdp * n_depth
+
+    def cdp_to_indexes(self, cdp):
+        """
+        Iterator on sample indexes of a given cdp
+        """
+        inline, crline = cdp
+        diff = ((inline - self.startInline) // self.stepInline) * \
+            self.nNorth * self.nDepth + \
+            (crline - self.startCrline) // self.stepCrline * self.nDepth
+        num = self.nDepth
+        for item in range(num):
+            yield item + diff
 
     def plot_inline(self, inline, attr, ax, kind='vawt'):
         data = self.get_inline(inline, attr)
@@ -414,6 +421,60 @@ class SeisCube(object):
         else:
             pass
 
+    @methdispatch
+    def plot(self, index, attr, ax, kind='vawt'):
+        raise TypeError('Unsupported index type')
+
+    @plot.register(InlineIndex)
+    def _(self, index, attr, ax, kind='vawt'):
+        data = self.get_data(index, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        elif kind == 'img':
+            img(data.T,
+                extent=[
+                    self.startCrline, self.endCrline,
+                    self.startDepth, self.endDepth],
+                ax=ax)
+            ax.set(xlabel='Cross-line', ylabel='Z',
+                   title='In-line Section: {}'.format(index.value))
+            ax.invert_yaxis()
+        else:
+            pass
+
+    @plot.register(CrlineIndex)
+    def _(self, index, attr, ax, kind='vawt'):
+        data = self.get_data(index, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        elif kind == 'img':
+            img(data.T,
+                extent=[
+                    self.startInline, self.endInline,
+                    self.startDepth, self.endDepth],
+                ax=ax)
+            ax.set(xlabel='In-line', ylabel='Z',
+                   title='Cross-line Section: {}'.format(index.value))
+            ax.invert_yaxis()
+        else:
+            pass
+
+    @plot.register(DepthIndex)
+    def _(self, index, attr, ax, kind='vawt'):
+        data = self.get_data(index, attr)
+        if kind == 'vawt':
+            wiggles(data.T, wiggleInterval=1, ax=ax)
+        elif kind == 'img':
+            img(data,
+                extent=[
+                    self.startCrline, self.endCrline,
+                    self.startInline, self.endInline],
+                ax=ax)
+            ax.set(xlabel='Crline', ylabel='Inline',
+                   title='Z Slice: {}'.format(index.value))
+        else:
+            pass
+
     def retrieve_data(self, sample_idx, attr):
         data = []
         with sqlite3.connect(self.db_file) as conn:
@@ -428,3 +489,23 @@ class SeisCube(object):
                 data_transact = [d[0] for d in data_transact]
                 data += data_transact
         return data
+
+    @methdispatch
+    def get_data(self, indexes, attr):
+        raise TypeError("Unsupported Type")
+
+    @get_data.register(InlineIndex)
+    def _(self, indexes, attr):
+        return self.get_inline(indexes.value, attr)
+
+    @get_data.register(CrlineIndex)
+    def _(self, indexes, attr):
+        return self.get_crline(indexes.value, attr)
+
+    @get_data.register(DepthIndex)
+    def _(self, indexes, attr):
+        return self.get_depth(indexes.value, attr)
+
+    @get_data.register(CdpIndex)
+    def _(self, indexes, attr):
+        return self.get_cdp(indexes.value, attr)

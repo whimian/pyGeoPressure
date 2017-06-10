@@ -230,3 +230,13 @@ def wiggles(data, wiggleInterval=10, overlap=1, posFill='black',
     #     yticks=[item[1] for item in ax.transAxes.transform(ticks_list)],
     #     xticks=[item[0] for item in ax.transAxes.transform(ticks_list)]
     # )
+
+def img(data, extent, ax, cm='seismic'):
+    im = ax.imshow(
+        data,
+        interpolation='bicubic',
+        origin='lower',
+        extent=extent,
+        cmap=cm,
+        aspect='auto')
+    ax.tick_params(direction='out')

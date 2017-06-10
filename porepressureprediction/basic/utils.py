@@ -6,6 +6,8 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
+from functools import singledispatch, update_wrapper
+
 import numpy as np
 
 
@@ -27,3 +29,12 @@ def split_sequence(sequence, length):
     n_seq = len(sequence)
     for i in range(0, n_seq, length):
         yield sequence[i: i+length]
+
+
+def methdispatch(func):
+    dispatcher = singledispatch(func)
+    def wrapper(*args, **kw):
+        return dispatcher.dispatch(args[1].__class__)(*args, **kw)
+    wrapper.register = dispatcher.register
+    update_wrapper(wrapper, func)
+    return wrapper
