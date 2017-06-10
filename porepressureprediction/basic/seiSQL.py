@@ -471,7 +471,7 @@ class SeisCube(object):
                     self.startCrline, self.endCrline,
                     self.startInline, self.endInline],
                 ax=ax)
-            ax.set(xlabel='Crline', ylabel='Inline',
+            ax.set(xlabel='Cross-line', ylabel='In-line',
                    title='Z Slice: {}'.format(index.value))
         else:
             pass
