@@ -423,11 +423,11 @@ class SeisCube(object):
             pass
 
     @methdispatch
-    def plot(self, index, attr, ax, kind='vawt'):
+    def plot(self, index, attr, ax, kind='vawt', cm='seismic'):
         raise TypeError('Unsupported index type')
 
     @plot.register(InlineIndex)
-    def _(self, index, attr, ax, kind='vawt'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
@@ -436,15 +436,27 @@ class SeisCube(object):
                 extent=[
                     self.startCrline, self.endCrline,
                     self.startDepth, self.endDepth],
-                ax=ax)
-            ax.set(xlabel='Cross-line', ylabel='Z',
-                   title='In-line Section: {}'.format(index.value))
+                ax=ax, cm=cm)
             ax.invert_yaxis()
         else:
             pass
+        ax.get_figure().suptitle('In-line Section: {}'.format(index.value))
+        from matplotlib.offsetbox import AnchoredText
+        z_text = AnchoredText(
+            r"$\downarrow$Z",
+            loc=2, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(0., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(z_text)
+        inline_text = AnchoredText(
+            r"Cross-line $\rightarrow$ ",
+            loc=1, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(1., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(inline_text)
 
     @plot.register(CrlineIndex)
-    def _(self, index, attr, ax, kind='vawt'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
@@ -453,28 +465,53 @@ class SeisCube(object):
                 extent=[
                     self.startInline, self.endInline,
                     self.startDepth, self.endDepth],
-                ax=ax)
-            ax.set(xlabel='In-line', ylabel='Z',
-                   title='Cross-line Section: {}'.format(index.value))
+                ax=ax, cm=cm)
             ax.invert_yaxis()
         else:
             pass
+        ax.get_figure().suptitle('Cross-line Section: {}'.format(index.value))
+        from matplotlib.offsetbox import AnchoredText
+        z_text = AnchoredText(
+            r"$\downarrow$Z",
+            loc=2, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(0., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(z_text)
+        inline_text = AnchoredText(
+            r"In-line $\rightarrow$ ",
+            loc=1, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(1., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(inline_text)
 
     @plot.register(DepthIndex)
-    def _(self, index, attr, ax, kind='vawt'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
         elif kind == 'img':
-            img(data,
+            img(data.T,
                 extent=[
-                    self.startCrline, self.endCrline,
-                    self.startInline, self.endInline],
-                ax=ax)
-            ax.set(xlabel='Cross-line', ylabel='In-line',
-                   title='Z Slice: {}'.format(index.value))
+                    self.startInline, self.endInline,
+                    self.startCrline, self.endCrline,],
+                ax=ax, cm=cm)
+            ax.invert_yaxis()
         else:
             pass
+        ax.get_figure().suptitle("Z slice: {}".format(index.value))
+        from matplotlib.offsetbox import AnchoredText
+        z_text = AnchoredText(
+            r"$\downarrow$Cross-line",
+            loc=2, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(0., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(z_text)
+        inline_text = AnchoredText(
+            r"In-line $\rightarrow$ ",
+            loc=1, prop=dict(size=10), frameon=False,
+            bbox_to_anchor=(1., 0.),
+            bbox_transform=ax.transAxes)
+        ax.add_artist(inline_text)
 
     def retrieve_data(self, sample_idx, attr):
         data = []
