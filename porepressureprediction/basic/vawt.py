@@ -9,6 +9,7 @@ __author__ = "yuhao"
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import cspline1d, cspline1d_eval
+from matplotlib.colors import LinearSegmentedColormap, Normalize
 
 
 class Wiggles(object):
@@ -172,7 +173,7 @@ def wiggle(values, origin=0, posFill='black', negFill=None, lineColor='black',
         ax.plot(resample_v, newz, color=lineColor, linewidth=.1)
 
 
-def wiggles(data, wiggleInterval=10, overlap=1, posFill='black',
+def wiggles(data, wiggleInterval=10, overlap=5, posFill='black',
             negFill=None, lineColor='black', rescale=True, extent=None, ax=None):
     """
     2-D Wiggle Trace Variable Amplitude Plot
@@ -231,12 +232,60 @@ def wiggles(data, wiggleInterval=10, overlap=1, posFill='black',
     #     xticks=[item[0] for item in ax.transAxes.transform(ticks_list)]
     # )
 
+
 def img(data, extent, ax, cm='seismic'):
+    if cm == 'seismic_od':
+        cm = opendtect_seismic_colormap()
+    if cm in ('seismic', 'seismic_od'):
+        mean_value = np.mean(data)
+        std_value = np.std(data)
+        vmin = mean_value - 2*std_value
+        vmax = mean_value + 2*std_value
+    else:
+        vmin, vmax = None, None
     im = ax.imshow(
         data,
         interpolation='bicubic',
         origin='lower',
         extent=extent,
         cmap=cm,
-        aspect='auto')
+        aspect='auto',
+        vmin=vmin,
+        vmax=vmax)
     ax.tick_params(direction='out')
+    ax.xaxis.set_ticks_position('both')
+    ax.yaxis.set_ticks_position('both')
+    ax.xaxis.set_tick_params(labeltop='on', labelbottom='off')
+
+
+def opendtect_seismic_colormap():
+    normalizer = Normalize(vmin=0, vmax=255)
+
+    cdict = {
+        'red': [
+            (0, float(normalizer(170)), float(normalizer(170))),
+            (0.070352, float(normalizer(255)), float(normalizer(255))),
+            (0.25, float(normalizer(255)), float(normalizer(255))),
+            (0.5, float(normalizer(243)), float(normalizer(243))),
+            (0.88324, float(normalizer(56)), float(normalizer(56))),
+            (1.0, 0.0, 0.0)
+        ],
+        'green': [
+            (0.0, 0.0, 0.0),
+            (0.070352, float(normalizer(28)), float(normalizer(28))),
+            (0.25, float(normalizer(200)), float(normalizer(200))),
+            (0.5, float(normalizer(243)), float(normalizer(243))),
+            (0.88324, float(normalizer(70)), float(normalizer(70))),
+            (1.0, 0.0, 0.0)
+        ],
+        'blue': [
+            (0.0, 0.0, 0.0),
+            (0.070352, 0, 0),
+            (0.25, 0, 0),
+            (0.5, float(normalizer(243)), float(normalizer(243))),
+            (0.88324, float(normalizer(127)), float(normalizer(127))),
+            (1.0, 0.0, 0.0)
+        ]
+    }
+
+    return LinearSegmentedColormap('Seismic_OD', cdict)
