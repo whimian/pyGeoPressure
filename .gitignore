@@ -102,3 +102,6 @@ $RECYCLE.BIN/
 
 # vs code Folder
 .vscode/
+
+# pycharm Folder
+.idea/
