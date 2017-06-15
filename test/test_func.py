@@ -13,7 +13,6 @@ from .context import porepressureprediction
 
 class WellTestSuite(unittest.TestCase):
     """Basic test cases."""
-
     def test_void_log(self):
         "test on boolean value of Log object"
         log = porepressureprediction.Log()
