@@ -21,6 +21,15 @@ def rmse(measure, predict):
     denominator = np.sqrt(np.mean(measure**2))
     return delta/denominator
 
+def nmse(measure, predict):
+    """
+    Normalized Root-Mean-Square Error
+
+    with RMS(y - y*) as nominator, and MEAN(y) as denominator
+    """
+    delta = np.sqrt(np.mean((measure - predict)**2))
+    denominator = np.mean(measure)
+    return delta/denominator
 
 def split_sequence(sequence, length):
     """
