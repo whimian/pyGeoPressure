@@ -50,6 +50,9 @@ class Log(object):
     def __repr__(self):
         return self._info()
 
+    def __bool__(self):
+        return bool(bool(self.depth) and bool(self.data))
+
     @property
     def start(self):
         if self.log_start is None:
