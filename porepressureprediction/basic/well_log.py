@@ -23,8 +23,8 @@ class Log(object):
         self.name = ""
         self.units = ""
         self.descr = ""
-        self.data = list()
-        self.depth = list()
+        self.__data = []
+        self.__depth = []
         self.log_start = None
         self.log_stop = None
         self.depth_start = None
@@ -35,16 +35,16 @@ class Log(object):
             self.read_od(file_name)
 
     def __len__(self):
-        return len(self.data)
+        return len(self.__data)
 
     def _info(self):
-        if len(self.depth) == 0:
+        if len(self.__depth) == 0:
             start, end = (0, 0)
-        elif len(self.depth) == 1:
-            start, end = [self.depth[0]] * 2
+        elif len(self.__depth) == 1:
+            start, end = [self.__depth[0]] * 2
         else:
-            start = self.depth[0]
-            end = self.depth[-1]
+            start = self.__depth[0]
+            end = self.__depth[-1]
         return "Log Name: {}\n".format(self.name) +\
                "Attribute Name: {}\n".format(self.descr) +\
                "Log Units: {}\n".format(self.units) +\
@@ -58,12 +58,28 @@ class Log(object):
         return self._info()
 
     def __bool__(self):
-        return bool(bool(self.depth) and bool(self.data))
+        return bool(bool(self.__depth) and bool(self.__data))
+
+    @property
+    def depth(self):
+        return list(self.__depth)
+
+    @depth.setter
+    def depth(self, values):
+        self.__depth = values
+
+    @property
+    def data(self):
+        return list(self.__data)
+
+    @data.setter
+    def data(self, values):
+        self.__data = values
 
     @property
     def start(self):
         if self.log_start is None:
-            for dep, dat in zip(self.depth, self.data):
+            for dep, dat in zip(self.__depth, self.__data):
                 if dat is not np.nan:
                     self.log_start = dep
                     break
@@ -72,8 +88,8 @@ class Log(object):
     @property
     def start_idx(self):
         if self.log_start_idx is None:
-            self.data = np.array(self.data)
-            mask = np.isfinite(self.data)
+            self.__data = np.array(self.__data)
+            mask = np.isfinite(self.__data)
             index = np.where(mask == True)
             self.log_start_idx = index[0][0]
             return self.log_start_idx
@@ -84,7 +100,7 @@ class Log(object):
     @property
     def stop(self):
         if self.log_stop is None:
-            for dep, dat in zip(reversed(self.depth), reversed(self.data)):
+            for dep, dat in zip(reversed(self.__depth), reversed(self.__data)):
                 if dat is not np.nan:
                     self.log_stop = dep
                     break
@@ -93,8 +109,8 @@ class Log(object):
     @property
     def stop_idx(self):
         if self.log_stop_idx is None:
-            self.data = np.array(self.data)
-            mask = np.isfinite(self.data)
+            self.__data = np.array(self.__data)
+            mask = np.isfinite(self.__data)
             index = np.where(mask == True)
             self.log_stop_idx = index[0][-1] + 1
             # so when used in slice, +1 will not needed.
@@ -104,11 +120,11 @@ class Log(object):
 
     @property
     def top(self):
-        return self.depth[0]
+        return self.__depth[0]
 
     @property
     def bottom(self):
-        return self.depth[-1]
+        return self.__depth[-1]
 
     def read_od(self, file_name):
         try:
@@ -119,11 +135,11 @@ class Log(object):
                 self.units = temp_list[1][:-2]
                 for line in fin:
                     tempList = line.split()
-                    self.depth.append(round(float(tempList[0]), 1))
+                    self.__depth.append(round(float(tempList[0]), 1))
                     if tempList[1] == "1e30":
-                        self.data.append(np.nan)
+                        self.__data.append(np.nan)
                     else:
-                        self.data.append(float(tempList[1]))
+                        self.__data.append(float(tempList[1]))
         except Exception as inst:
             print('{}: '.format(self.name))
             print(inst.args)
@@ -134,7 +150,7 @@ class Log(object):
                 split_list = self.descr.split(' ')
                 description = '_'.join(split_list)
                 fout.write("Depth(m)\t" + description + "(" + self.units + ")\n")
-                for d, v in zip(self.depth, self.data):
+                for d, v in zip(self.__depth, self.__data):
                     d = str(d)
                     v = str(v) if np.isfinite(v) else "1e30"
                     fout.write("\t".join([d, v]) + "\n")
@@ -151,8 +167,8 @@ class Log(object):
         depth_idx = list()
         for de in depth:
             depth_idx.append(self.get_depth_idx(de))
-        log_depth = np.array(self.depth)
-        log_data = np.array(self.data)
+        log_depth = np.array(self.__depth)
+        log_data = np.array(self.__data)
         mask = log_depth < 0
         for idx in depth_idx:
             if idx is not None:
