@@ -309,3 +309,44 @@ def interpolate_log(log):
     interp_log.depth = depth
     interp_log.data = data
     return interp_log
+
+def local_average(log, rad=10):
+    """upscale data using local averaging
+
+    Parameters
+    ----------
+    data : Log()
+        log data to be upscaled
+    rad : int
+        local radius, data within this radius will be represented by a single value
+
+    Returns
+    -------
+    new_log : 1-d ndarray
+        upscaled log data
+    """
+    data = log.data
+    mask = np.isfinite(data)
+    index = np.where(mask)
+    start = index[0][0]
+    end = index[0][-1]+1
+    print(start, end)
+    interval = data[start: end]
+    index_toadd = []
+    data_toadd = []
+
+    step = rad*2+1
+    n = len(interval)
+    for i in range(0, n, step):
+        seg = interval[i: i+step]
+        new_mask = np.isfinite(seg)
+        if len(seg[new_mask]) > rad+1:
+            data_toadd.append(np.mean(seg[new_mask]))
+            index_toadd.append(start+i+rad)
+    data_toadd, index_toadd = np.array(data_toadd), np.array(index_toadd)
+    new_data = np.full_like(data, np.nan)
+    new_data[index_toadd] = data_toadd
+    new_log = Log()
+    new_log.depth = log.depth
+    new_log.data = new_data
+    return new_log
