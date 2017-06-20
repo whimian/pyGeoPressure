@@ -338,15 +338,14 @@ def local_average(log, rad=10):
 
     Returns
     -------
-    new_log : 1-d ndarray
+    new_log : Log()
         upscaled log data
     """
-    data = log.data
+    data = np.array(log.data)
     mask = np.isfinite(data)
     index = np.where(mask)
     start = index[0][0]
     end = index[0][-1]+1
-    print(start, end)
     interval = data[start: end]
     index_toadd = []
     data_toadd = []
