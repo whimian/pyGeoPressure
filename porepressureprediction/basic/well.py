@@ -210,3 +210,28 @@ class Well(object):
         log.depth = depth
         log.data = pres_data
         return log
+
+    def get_dst(self):
+        """
+        Get Drillstem Test Pressure Measurements
+        """
+        obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth)
+        depth = self.params["DST"]["depth"]
+        coef = None
+        try:
+            coef = self.params["DST"]["coef"]
+        except KeyError:
+            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
+            return Log()
+        obp_depth = obp_log.depth
+        pres_data = list()
+        for dp, co in zip(depth, coef):
+            idx = np.searchsorted(obp_depth, dp)
+            pres_data.append(hydro[idx] * co)
+        log = Log()
+        log.depth = depth
+        log.data = pres_data
+        return log
