@@ -219,6 +219,10 @@ class Well(object):
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
+        try:
+            dst = self.params['DST']
+        except KeyError:
+            print("{}: Cannot find DST".format(self.well_name))
         depth = self.params["DST"]["depth"]
         coef = None
         try:
