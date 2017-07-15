@@ -235,3 +235,34 @@ class Well(object):
         log.depth = depth
         log.data = pres_data
         return log
+
+    def get_wft(self):
+        """
+        Get Wireline Formation Test Pressure Measurements
+        (Both MDT and/or RFT)
+        """
+        obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth)
+        try:
+            wft = self.params['MDT']
+        except:
+            print("{}: Cannot finde MDT".format(self.well_name))
+            return Log()
+        depth_mdt = self.params["MDT"]["depth"]
+        coef = None
+        try:
+            coef = self.params["MDT"]["coef"]
+        except KeyError:
+            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
+            return Log()
+        obp_depth = obp_log.depth
+        pres_data = list()
+        for dp, co in zip(depth_mdt, coef):
+            idx = np.searchsorted(obp_depth, dp)
+            pres_data.append(hydro[idx] * co)
+        log = Log()
+        log.depth = depth_mdt
+        log.data = pres_data
+        return log
