@@ -223,6 +223,7 @@ class Well(object):
             dst = self.params['DST']
         except KeyError:
             print("{}: Cannot find DST".format(self.well_name))
+            return Log()
         depth = self.params["DST"]["depth"]
         coef = None
         try:
@@ -240,10 +241,13 @@ class Well(object):
         log.data = pres_data
         return log
 
-    def get_wft(self):
+    def get_wft(self, hydrodynamic=0):
         """
         Get Wireline Formation Test Pressure Measurements
         (Both MDT and/or RFT)
+
+        hydrodynamic : scalar
+            start depth of hydrodynamic interval
         """
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
@@ -263,10 +267,13 @@ class Well(object):
             return Log()
         obp_depth = obp_log.depth
         pres_data = list()
+        depth_new = list()
         for dp, co in zip(depth_mdt, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
+            if dp > hydrodynamic:
+                idx = np.searchsorted(obp_depth, dp)
+                pres_data.append(hydro[idx] * co)
+                depth_new.append(dp)
         log = Log()
-        log.depth = depth_mdt
+        log.depth = depth_new
         log.data = pres_data
         return log
