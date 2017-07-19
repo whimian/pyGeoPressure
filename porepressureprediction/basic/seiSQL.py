@@ -386,7 +386,7 @@ class SeisCube(object):
         n_cdp = self.nNorth * self.nEast
         n_depth = self.nDepth
         for ncdp in range(n_cdp):
-            yield diff + ncdp * n_depth
+            yield diff + ncdp * n_depth + 1
 
     def cdp_to_indexes(self, cdp):
         """
