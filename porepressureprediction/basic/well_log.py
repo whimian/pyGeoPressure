@@ -101,7 +101,7 @@ class Log(object):
     def stop(self):
         if self.log_stop is None:
             for dep, dat in zip(reversed(self.__depth), reversed(self.__data)):
-                if dat is not np.nan:
+                if np.isfinite(dat):
                     self.log_stop = dep
                     break
         return self.log_stop
