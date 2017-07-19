@@ -115,7 +115,6 @@ class SeisCube(object):
                             WHERE type='table' ORDER BY name""")
                 temp = cur.fetchall()
             attributelist = [item[0] for item in temp]
-            attributelist.remove('position')
             return attributelist
         except Exception as inst:
             print(inst.args[0])
