@@ -374,9 +374,9 @@ class SeisCube(object):
         """
         n_samples_per_inline = self.nNorth * self.nDepth
         deviation = (crline - self.startCrline) // self.stepCrline * self.nDepth
-        for ncl in range(self.nNorth):
+        for nil in range(self.nEast):
             for sam in range(self.nDepth):
-                yield sam + deviation + ncl*n_samples_per_inline
+                yield sam + deviation + nil*n_samples_per_inline + 1
 
     def depth_to_indexes(self, depth):
         """
