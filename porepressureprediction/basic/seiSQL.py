@@ -366,7 +366,7 @@ class SeisCube(object):
         shift = ((inline - self.startInline) // self.stepInline) * \
             n_samples_per_inline
         for i in range(n_samples_per_inline):
-            yield i + shift
+            yield i + shift + 1
 
     def crline_to_indexes(self, crline):
         """
