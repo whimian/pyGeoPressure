@@ -80,7 +80,7 @@ class Log(object):
     def start(self):
         if self.log_start is None:
             for dep, dat in zip(self.__depth, self.__data):
-                if dat is not np.nan:
+                if np.isfinite(dat):
                     self.log_start = dep
                     break
         return self.log_start
