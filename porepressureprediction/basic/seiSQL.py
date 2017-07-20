@@ -184,7 +184,7 @@ class SeisCube(object):
 
             samples = list(self.inline_to_indexes(inline))
             data = self.retrieve_data(samples, attr)
-            return np.array(data).reshape((self.nNorth, self.nDepth))
+            return np.array(data, dtype=np.float).reshape((self.nNorth, self.nDepth))
         except Exception as inst:
             print(inst)
             return []
