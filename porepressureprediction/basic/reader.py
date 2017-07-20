@@ -179,3 +179,11 @@ def measure(func):
 
 # MAX_SAMPLES_PER_TRANSACTION = 9990000
 MAX_SAMPLES_PER_TRANSACTION = 990000
+
+def split_sequence(long_list, interval):
+    n = len(long_list) // interval
+    left = len(long_list) % interval
+    result = [long_list[i*interval: (i+1)*interval] for i in range(n)]
+    result.append(long_list[-left:])
+    for item in result:
+        yield item
