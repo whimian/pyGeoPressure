@@ -297,37 +297,55 @@ class SeisCube(object):
         except Exception as inst:
             print(inst)
 
+    # def export_od(self, attr, fname):
+    #     try:
+    #         with open(fname, 'w') as fout:
+    #             fout.write("{}\t{}\t{}\n".format(
+    #                                         self.stepInline, self.stepCrline,
+    #                                         self.stepDepth))
+    #             with sqlite3.connect(self.db_file) as conn:
+    #                 cur = conn.cursor()
+    #                 for inl in range(self.startInline, self.endInline+1,
+    #                                  self.stepInline):
+    #                     for crl in range(self.startCrline, self.endCrline+1,
+    #                                      self.stepCrline):
+    #                         cur.execute(
+    #                             "SELECT attribute \
+    #                              FROM position \
+    #                              JOIN {table} \
+    #                              ON position.id = {table}.id \
+    #                              WHERE inline = {inline} \
+    #                              AND crline = {crline}".format(table=attr,
+    #                                                            inline=inl,
+    #                                                            crline=crl))
+    #                         temp = cur.fetchall()
+    #                         if len(temp) == 0:
+    #                             continue
+    #                         else:
+    #                             tempStr = list()
+    #                             for i in range(len(temp)):
+    #                                 tempStr.append(str(temp[i][0]))
+    #                             data = '\t'.join(tempStr) + '\n'
+    #                             string = str(inl) + '\t' + str(crl) + '\t'
+    #                             fout.write(string + data)
+    #     except Exception as inst:
+    #         print(inst)
+    #         print("failed to export")
     def export_od(self, attr, fname):
         try:
             with open(fname, 'w') as fout:
                 fout.write("{}\t{}\t{}\n".format(
                                             self.stepInline, self.stepCrline,
                                             self.stepDepth))
-                with sqlite3.connect(self.db_file) as conn:
-                    cur = conn.cursor()
-                    for inl in range(self.startInline, self.endInline+1,
-                                     self.stepInline):
-                        for crl in range(self.startCrline, self.endCrline+1,
-                                         self.stepCrline):
-                            cur.execute(
-                                "SELECT attribute \
-                                 FROM position \
-                                 JOIN {table} \
-                                 ON position.id = {table}.id \
-                                 WHERE inline = {inline} \
-                                 AND crline = {crline}".format(table=attr,
-                                                               inline=inl,
-                                                               crline=crl))
-                            temp = cur.fetchall()
-                            if len(temp) == 0:
-                                continue
-                            else:
-                                tempStr = list()
-                                for i in range(len(temp)):
-                                    tempStr.append(str(temp[i][0]))
-                                data = '\t'.join(tempStr) + '\n'
-                                string = str(inl) + '\t' + str(crl) + '\t'
-                                fout.write(string + data)
+                for inl in self.inlines():
+                    data = self.get_inline(inl, attr)
+                    for crl, dlist in zip(self.crlines(), data):
+                        dlist = np.nan_to_num(dlist)
+                        data_string = '\t'.join([str(d) for d in dlist])
+                        tempList = [str(inl), str(crl), data_string]
+                        tempStr = '\t'.join(tempList) + '\n'
+                        fout.write(tempStr)
+
         except Exception as inst:
             print(inst)
             print("failed to export")
