@@ -395,10 +395,10 @@ class SeisCube(object):
         inline, crline = cdp
         diff = ((inline - self.startInline) // self.stepInline) * \
             self.nNorth * self.nDepth + \
-            (crline - self.startCrline) // self.stepCrline * self.nDepth
+            ((crline - self.startCrline) // self.stepCrline) * self.nDepth
         num = self.nDepth
         for item in range(num):
-            yield item + diff
+            yield item + diff + 1
 
     def plot_inline(self, inline, attr, ax, kind='vawt'):
         data = self.get_inline(inline, attr)
