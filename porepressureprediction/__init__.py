@@ -14,3 +14,4 @@ from porepressureprediction.pressure.pore_pressure import virgin_curve, invert_v
 from porepressureprediction.pressure.hydrostatic import hydrostatic_pressure
 from porepressureprediction.basic.utils import rmse, nmse
 from porepressureprediction.basic.indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
+from porepressureprediction.basic.horizon import Horizon
