@@ -234,6 +234,7 @@ def wiggles(data, wiggleInterval=10, overlap=5, posFill='black',
 
 
 def img(data, extent, ax, cm='seismic'):
+    data = np.nan_to_num(data)
     if cm == 'seismic_od':
         cm = opendtect_seismic_colormap()
     if cm in ('seismic', 'seismic_od'):
