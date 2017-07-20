@@ -59,4 +59,4 @@ class Horizon(object):
         inl, crl = cdp
         return self.data_frame[
             (self.data_frame.inline==inl) & \
-            (self.data_frame.crline==4050)].z.values[-1]
+            (self.data_frame.crline==crl)].z.values[-1]
