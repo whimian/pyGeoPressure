@@ -271,6 +271,18 @@ class SeisCube(object):
                            WHERE inlne={inl} AND crline={crl}
                            """.format(table=attr, inl=il, crl=cl), val)
 
+    def write_to_db(self, data, attr):
+        at = [(da,) for da in data]
+        with sqlite3.connect(self.db_file) as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "CREATE TABLE IF NOT EXISTS {} ( ".format(attr) +\
+                "id INTEGER PRIMARY KEY, " +\
+                "attribute REAL) ")
+            cur.executemany(
+                "INSERT INTO {} ({}) ".format(attr, 'attribute') +\
+                "VALUES (?)", at)
+
     def add_attr(self, attr):
         "Add an empty attribute to a SeisCube object"
         try:
