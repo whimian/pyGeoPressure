@@ -221,7 +221,7 @@ class SeisCube(object):
                 raise Exception("Crossline out of range.")
             samples = list(self.cdp_to_indexes(CDP))
             data = self.retrieve_data(samples, attr)
-            return np.array(data)
+            return np.array(data, dtype=np.float)
         except Exception as inst:
             print(inst)
             return []
