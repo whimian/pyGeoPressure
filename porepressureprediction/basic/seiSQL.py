@@ -583,3 +583,16 @@ class SeisCube(object):
         pseudo_log.data = self.get_data(CdpIndex(cdp), attr)
         pseudo_log.name = "{}_inline_{}_crline_{}".format(attr, cdp[0], cdp[1])
         return pseudo_log
+
+    def valid_cdp(self, cdp_num: tuple):
+        inl_num, crl_num = cdp_num
+        n_inline = (inl_num - self.startInline) // self.stepInline
+        in_plus_one = round(((inl_num - self.startInline) % self.stepInline) / \
+                            self.stepInline)
+        inline = self.startInline + (n_inline + in_plus_one) * self.stepInline
+
+        n_crline = (crl_num - self.startCrline) // self.stepCrline
+        cr_plus_one = round(((crl_num - self.startCrline) % self.stepCrline) / \
+                            self.stepCrline)
+        crline = self.startCrline + (n_crline + cr_plus_one) * self.stepCrline
+        return (inline, crline)
