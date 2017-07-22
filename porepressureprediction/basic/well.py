@@ -129,7 +129,7 @@ class Well(object):
         except Exception as inst:
             print(inst)
 
-    def get_pressure_measured(self):
+    def get_pressure_measured(self, ref=None):
         """
         Get Measured Pressure Points
         """
@@ -150,7 +150,10 @@ class Well(object):
             idx = np.searchsorted(obp_depth, dp)
             pres_data.append(hydro[idx] * co)
         log = Log()
-        log.depth = depth
+        if ref == 'sea':
+            log.depth = np.array(depth) - self.kelly_bushing
+        else:
+            log.depth = depth
         log.data = pres_data
         return log
 
