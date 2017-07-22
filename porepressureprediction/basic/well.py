@@ -314,7 +314,7 @@ class Well(object):
         log.data = pres_data
         return log
 
-    def get_unloading_pressure(self):
+    def get_unloading_pressure(self, ref=None):
         """
         Get Pressure Measurements on unloading curve
         """
@@ -340,6 +340,9 @@ class Well(object):
             idx = np.searchsorted(obp_depth, dp)
             pres_data.append(hydro[idx] * co)
         log = Log()
-        log.depth = depth
+        if ref == 'sea':
+            log.depth = np.array(depth) - self.kelly_bushing
+        else:
+            log.depth = depth
         log.data = pres_data
         return log
