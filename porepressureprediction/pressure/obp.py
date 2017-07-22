@@ -105,3 +105,11 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     obp = rho * delta_h * g
     obp = np.cumsum(obp)
     return obp / 1000000  # mPa
+
+def obp_trace(rho, step):
+    """
+    rho : 1-d array
+        density in g/cc
+    """
+    data = np.array(rho)
+    return np.cumsum(data * 9.8 * step * 0.001)
