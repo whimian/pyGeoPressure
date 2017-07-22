@@ -92,5 +92,13 @@ def smooth_2d(m):
 
     return smoothed
 
+def smooth_trace(trace_data, window=120):
+    data = np.array(trace_data)
+    mask = np.isfinite(data)
+    smoothed = smooth(data[mask], window_len=window//2, window='flat')
+    # using half the window length in order to be consistent with opendtect
+    data[mask] = smoothed
+    return data
+
 if __name__ == "__main__":
     pass

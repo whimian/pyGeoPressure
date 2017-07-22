@@ -5,7 +5,7 @@ from porepressureprediction.basic.well_log import smooth_log, truncate_log, inte
 from porepressureprediction.basic.seiSQL import SeisCube
 from porepressureprediction.basic.survey import Survey
 from porepressureprediction.basic.reader import Reader
-from porepressureprediction.velocity.smoothing import smooth, smooth_2d
+from porepressureprediction.velocity.smoothing import smooth, smooth_2d, smooth_trace
 from porepressureprediction.velocity.conversion import rms2int, int2rms, int2avg, avg2int, twt2depth
 from porepressureprediction.velocity.interpolation import interp_DW, spline_1d
 from porepressureprediction.velocity.extrapolate import set_v0, normal, slotnick, normal_dt
