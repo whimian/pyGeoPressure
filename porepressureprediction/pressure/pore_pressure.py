@@ -43,7 +43,7 @@ def virgin_curve(sigma, a, b):
     return v0 + a * sigma**b
 
 
-def invert_vrigin(v, a, b):
+def invert_virgin(v, a, b):
     "invert of virgin curve."
     v0 = 1524
     return ((v-v0)/a)**(1/b)
