@@ -56,6 +56,13 @@ def unloading_curve(sigma, a, b, u, v_max):
     return virgin_curve(independent, a, b)
 
 
+def invert_unloading(v, a, b, u, v_max):
+    "invert of Unloading curve in Bowers's method."
+    sigma_max = invert_virgin(v_max, a, b)
+    sigma_vc = invert_virgin(v, a, b)
+    return sigma_max * (sigma_vc/sigma_max)**u
+
+
 def eaton(v, vn, hydrostatic, lithostatic, n=3):
     """
     Compute pore pressure using Eaton equation.
