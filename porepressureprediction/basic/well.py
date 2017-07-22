@@ -94,7 +94,10 @@ class Well(object):
             new_log.data = np.array(self.data_frame[
                 '{}({})'.format(name, self.unit_dict[name])].values)
             if ref == 'sea':
-                new_log.depth += self.kelly_bushing
+                shift = int(self.kelly_bushing // 0.1)
+                shift_data = np.full_like(new_log.data, np.nan, dtype=np.double)
+                shift_data[:-shift] = new_log.data[shift:]
+                new_log.data = shift_data
             output_list.append(new_log)
         if isinstance(logs, str):
             return output_list[0]
