@@ -175,6 +175,14 @@ class Log(object):
                 mask[idx] = True
         return log_data[mask]
 
+    def get_resampled(self, rate):
+        standard_log_step = 0.1
+        step = int(rate // standard_log_step) + 1
+        log = Log()
+        log.depth = self.depth[::step]
+        log.data = self.data[::step]
+        return log
+
 def rolling_window(a, window):
     a = np.array(a)
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
