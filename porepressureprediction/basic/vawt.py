@@ -233,15 +233,19 @@ def wiggles(data, wiggleInterval=10, overlap=5, posFill='black',
     # )
 
 
-def img(data, extent, ax, cm='seismic'):
+def img(data, extent, ax, cm='seismic', ptype='seis'):
     data = np.nan_to_num(data)
     if cm == 'seismic_od':
         cm = opendtect_seismic_colormap()
     if cm in ('seismic', 'seismic_od'):
-        mean_value = np.mean(data)
-        std_value = np.std(data)
-        vmin = mean_value - 2*std_value
-        vmax = mean_value + 2*std_value
+        if ptype == 'seis':
+            mean_value = np.mean(data)
+            std_value = np.std(data)
+            vmin = mean_value - 2*std_value
+            vmax = mean_value + 2*std_value
+        else:
+            vmin = np.min(data)
+            vmax = np.max(data)
     else:
         vmin, vmax = None, None
     im = ax.imshow(

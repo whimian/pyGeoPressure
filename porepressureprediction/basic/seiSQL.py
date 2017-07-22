@@ -452,11 +452,11 @@ class SeisCube(object):
             pass
 
     @methdispatch
-    def plot(self, index, attr, ax, kind='vawt', cm='seismic'):
+    def plot(self, index, attr, ax, kind='vawt', cm='seismic', ptype='seis'):
         raise TypeError('Unsupported index type')
 
     @plot.register(InlineIndex)
-    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
@@ -465,7 +465,7 @@ class SeisCube(object):
                 extent=[
                     self.startCrline, self.endCrline,
                     self.startDepth, self.endDepth],
-                ax=ax, cm=cm)
+                ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
@@ -485,7 +485,7 @@ class SeisCube(object):
         ax.add_artist(inline_text)
 
     @plot.register(CrlineIndex)
-    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
@@ -494,7 +494,7 @@ class SeisCube(object):
                 extent=[
                     self.startInline, self.endInline,
                     self.startDepth, self.endDepth],
-                ax=ax, cm=cm)
+                ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
@@ -514,7 +514,7 @@ class SeisCube(object):
         ax.add_artist(inline_text)
 
     @plot.register(DepthIndex)
-    def _(self, index, attr, ax, kind='vawt', cm='seismic'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic',  ptype='seis'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
@@ -523,7 +523,7 @@ class SeisCube(object):
                 extent=[
                     self.startInline, self.endInline,
                     self.startCrline, self.endCrline,],
-                ax=ax, cm=cm)
+                ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
