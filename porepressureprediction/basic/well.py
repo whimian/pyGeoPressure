@@ -217,7 +217,7 @@ class Well(object):
         log.data = pres_data
         return log
 
-    def get_dst(self):
+    def get_dst(self, ref=None):
         """
         Get Drillstem Test Pressure Measurements
         """
@@ -243,7 +243,10 @@ class Well(object):
             idx = np.searchsorted(obp_depth, dp)
             pres_data.append(hydro[idx] * co)
         log = Log()
-        log.depth = depth
+        if ref == 'sea':
+            log.depth = np.array(depth) - self.kelly_bushing
+        else:
+            log.depth = depth
         log.data = pres_data
         return log
 
