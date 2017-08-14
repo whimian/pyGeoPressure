@@ -37,6 +37,23 @@ def bowers(v, obp, u, start_idx, a, b, vmax, end_idx=None):
     return obp - ves
 
 
+def bowers_varu(v, obp, u, start_idx, a, b, vmax, buffer=20, end_idx=None, end_buffer=10):
+    """
+    Bowers Method with buffer zone above unloading zone
+    """
+    u_array = np.ones(v.shape)
+    u_array[start_idx: end_idx] = u
+    # start buffer
+    u_buffer = np.linspace(1, u, buffer)
+    u_array[start_idx-buffer+1: start_idx + 1] = u_buffer
+    # end buffer
+    if end_idx is not None:
+        u_array[end_idx: end_idx + end_buffer] = np.linspace(u, 1, end_buffer)
+    sigma_max = ((vmax-1524)/a)**(1/b)
+    ves = sigma_max*(((v-1524)/a)**(1/b)/sigma_max)**u_array
+    return obp - ves
+
+
 def virgin_curve(sigma, a, b):
     "Virgin curve in Bowers' method."
     v0 = 1524
