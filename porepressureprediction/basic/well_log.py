@@ -12,10 +12,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.signal import butter, filtfilt
+from scipy.optimize import curve_fit
 
 
 from porepressureprediction.velocity.smoothing import smooth
-
+from porepressureprediction.velocity.extrapolate import normal_dt
 
 class Log(object):
     """
@@ -25,6 +26,7 @@ class Log(object):
         self.name = ""
         self.units = ""
         self.descr = ""
+        self.p_type = ""
         self.__data = []
         self.__depth = []
         self.log_start = None
@@ -97,7 +99,6 @@ class Log(object):
             return self.log_start_idx
         else:
             return self.log_start_idx
-
 
     @property
     def stop(self):
@@ -201,13 +202,46 @@ class Log(object):
         """
         if ax is None:
             fig, ax = plt.subplots()
-        ax.invert_yaxis()
+            ax.invert_yaxis()
         ax.plot(self.data, self.depth)
         ax.set(xlabel="{}({})".format(self.descr, self.units),
                ylabel="Depth(m)",
                title=self.name)
         return ax
 
+    def fit_normal(self, interval=None):
+        if interval is None:
+            interval = (self.start, self.stop)
+        if self.p_type == 'VEL':
+            start_idx = self.get_depth_idx(interval[0])
+            stop_idx = self.get_depth_idx(interval[1]) + 1
+            depth = np.array(self.depth[start_idx: stop_idx + 1])
+            vel = np.array(self.data[start_idx: stop_idx + 1])
+            dt = vel**(-1)
+            dt_log = np.log(dt)
+            mask = np.isfinite(dt_log)
+            dt_log_finite = dt_log[mask]
+            depth_finite = depth[mask]
+
+            popt, pcov = curve_fit(normal_dt, depth_finite, dt_log_finite)
+            a, b = popt
+
+            new_dt_log = normal_dt(np.array(self.depth), a, b)
+            new_dt = np.exp(new_dt_log)
+            new_vel = new_dt**(-1)
+
+            normal_vel_log = Log()
+            normal_vel_log.depth = self.depth
+            normal_vel_log.data = new_vel
+            normal_vel_log.name = "nct" + self.name[3:]
+            normal_vel_log.descr = "Normal Velocity"
+            normal_vel_log.units = 'm/s'
+            normal_vel_log.p_type = 'VEL'
+            return (a, b), normal_vel_log
+        elif self.p_type == 'DEN':
+            pass
+        else:
+            print("function applied only to VEL or DEN")
 
 def rolling_window(a, window):
     a = np.array(a)
