@@ -14,7 +14,7 @@ from porepressureprediction.pressure.pore_pressure import virgin_curve, \
     invert_virgin, unloading_curve, invert_unloading, bowers, eaton, \
     multivariate_virgin, invert_multivariate_virgin, multivariate_unloading, \
     invert_multivariate_unloading, effective_stress_multivariate, \
-    pressure_multivariate, bowers_varu
+    pressure_multivariate, bowers_varu, pressure_multivariate_varu
 from porepressureprediction.pressure.hydrostatic import hydrostatic_pressure, hydrostatic_trace
 from porepressureprediction.basic.utils import rmse, nmse
 from porepressureprediction.basic.indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex

@@ -173,3 +173,23 @@ def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, st
     ves = effective_stress_multivariate(
         vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx)
     return obp - ves
+
+def pressure_multivariate_varu(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer=20, end_idx=None, end_buffer=10):
+    """
+    Pressure Prediction using multivariate model
+    """
+    ves = effective_stress_multivariate_varu(
+        vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer, end_idx, end_buffer)
+    return obp - ves
+
+def effective_stress_multivariate_varu(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer=20, end_idx=None, end_buffer=10):
+    u_array = np.ones(vel.shape)
+    u_array[start_idx: end_idx] = U
+    # start buffer
+    u_buffer = np.linspace(1, U, buffer)
+    u_array[start_idx-buffer+1: start_idx + 1] = u_buffer
+    # end buffer
+    if end_idx is not None:
+        u_array[end_idx: end_idx + end_buffer] = np.linspace(U, 1, end_buffer)
+    ves = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, u_array, vmax)
+    return ves
