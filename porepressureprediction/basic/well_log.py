@@ -9,8 +9,10 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.signal import butter, filtfilt
+
 
 from porepressureprediction.velocity.smoothing import smooth
 
@@ -182,6 +184,30 @@ class Log(object):
         log.depth = self.depth[::step]
         log.data = self.data[::step]
         return log
+
+    def plot(self, ax=None):
+        """
+        Plot log curve
+
+        Parameters
+        ----------
+        ax : matplotlib.axes._subplots.AxesSubplot
+            axis object to plot on, a new axis will be created if not provided
+
+        Return
+        ------
+        ax : matplotlib.axes._subplots.AxesSubplot
+            axis object on which the curve has been plotted
+        """
+        if ax is None:
+            fig, ax = plt.subplots()
+        ax.invert_yaxis()
+        ax.plot(self.data, self.depth)
+        ax.set(xlabel="{}({})".format(self.descr, self.units),
+               ylabel="Depth(m)",
+               title=self.name)
+        return ax
+
 
 def rolling_window(a, window):
     a = np.array(a)
