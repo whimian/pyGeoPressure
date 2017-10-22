@@ -27,4 +27,4 @@ install:
 
 script:
   # Your test script goes here
-  unittest
+  python -m unittest
