@@ -28,4 +28,4 @@ install:
 
 script:
   # Your test script goes here
-  python -m unittest
+  pytest
