@@ -1,6 +1,7 @@
 # Pore Pressure Prediction
 
 ![](https://img.shields.io/badge/status-alpha-green.svg)
+[![Build Status](https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master)](https://travis-ci.org/whimian/PorePressurePrediction)
 
 Tools for pore pressure prediction using well log data and seismic velocity data.
 
