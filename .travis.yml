@@ -19,7 +19,7 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -n testenv python=$TRAVIS_PYTHON_VERSION  --file requirements.txt
+  - conda create -n testenv python=$TRAVIS_PYTHON_VERSION matplotlib scikit-learn pandas
   - source activate testenv
   - pip install -q segpy
 
