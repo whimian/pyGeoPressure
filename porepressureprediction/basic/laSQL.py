@@ -178,7 +178,6 @@ class Well(object):
             print("No valid coordination found.")
         else:
             print("cannot open json file")
-            pass
 
     def get_log(self, name):
         """retrieve a log from a well object based on name"""
