@@ -24,6 +24,7 @@ install:
   - conda create -n testenv python=$TRAVIS_PYTHON_VERSION matplotlib scikit-learn pandas
   - source activate testenv
   - python -c 'import pandas as pd'
+  - ls
   - pip install -q segpy
 
 script:
