@@ -195,8 +195,8 @@ class Log(object):
         ax : matplotlib.axes._subplots.AxesSubplot
             axis object to plot on, a new axis will be created if not provided
 
-        Return
-        ------
+        Returns
+        -------
         ax : matplotlib.axes._subplots.AxesSubplot
             axis object on which the curve has been plotted
         """
@@ -263,15 +263,15 @@ def despike(curve, curve_sm, max_clip):
 
 def smooth_log(log, window=1500):
     """
-    Parameter
-    ---------
+    Parameters
+    ----------
     log : Log object
         log to smooth
     window : scalar
         window size of the median filter
 
-    Return
-    ------
+    Returns
+    -------
     smoothed log : Log object
         smoothed log
     """

@@ -130,8 +130,8 @@ def wiggle(values, origin=0, posFill='black', negFill=None, lineColor='black',
     ax: (default, current axis)
         The matplotlib axis to plot onto
 
-    Return
-    ------
+    Returns
+    -------
     Plot
     """
     if zmax is None:

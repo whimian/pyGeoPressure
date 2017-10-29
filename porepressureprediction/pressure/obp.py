@@ -10,7 +10,7 @@ import numpy as np
 
 
 def traugott(z, a, b):
-    """
+    r"""
     estimate density with depth
 
     Parameters
@@ -37,7 +37,7 @@ def traugott(z, a, b):
 
 
 def gardner(v, c, d):
-    """
+    r"""
     Estimate density with velocity
 
     Parameters
@@ -60,8 +60,8 @@ def gardner(v, c, d):
 
     typical values for a and b in GOM coast are a=0.31, b=0.25
 
-    [1]G. Gardner, L. Gardner, and A. Gregory, "Formation velocity and density
-       - the diagnostic basics for stratigraphic traps," Geophysics, vol. 39,
+    .. [1] G. Gardner, L. Gardner, and A. Gregory, "Formation velocity and density -
+       the diagnostic basics for stratigraphic traps," Geophysics, vol. 39,
        no. 6, pp. 770-780, 1974.
     """
     return c * v**d
@@ -108,6 +108,8 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
 
 def obp_trace(rho, step):
     """
+    Parameters
+    ----------
     rho : 1-d array
         density in g/cc
     """
