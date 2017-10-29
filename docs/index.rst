@@ -50,6 +50,4 @@ Data I/O
 
 - Opendtect ascii file
 
-- SEG-Y file (require [segpy](https://github.com/sixty-north/segpy))
-
-
+- SEG-Y file (require `segpy <https://github.com/sixty-north/segpy>`_)
