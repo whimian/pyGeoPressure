@@ -23,9 +23,11 @@ install:
   - conda info -a
   - conda create -n testenv python=$TRAVIS_PYTHON_VERSION matplotlib scikit-learn pandas
   - source activate testenv
-  - python -c 'import segpy'
-  - ls
+  - conda install -c conda-forge codecov
   - pip install -q segpy
 
 script:
-  - pytest
+  - py.test --cov-config .coveragerc --cov=porepressureprediction test
+
+after_success:
+  - codecov
