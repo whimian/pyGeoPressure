@@ -11,7 +11,7 @@ from scipy import interpolate
 
 
 def rms2int(twt, rms):
-    """
+    r"""
     Convert rms velocity to interval velocity
 
     Parameters
@@ -30,7 +30,7 @@ def rms2int(twt, rms):
     -----
     This routine uses Dix equation to comput inverval velocity.
 
-    .. math:: V_{int}[i]^2 = \\frac{V_{rms}[i]^2 t_{i} - V_{rms}[i-1]^2 \
+    .. math:: V_{int}[i]^2 = \frac{V_{rms}[i]^2 t_{i} - V_{rms}[i-1]^2 \
                 t_{i-1}}{t_{i}-t_{i-1}}
 
     twt and rms should be of the same length of more than 2.
@@ -74,7 +74,7 @@ def int2rms(twt, v_int):
 
 
 def int2avg(twt, v_int):
-    """
+    r"""
     Parameters
     ----------
     twt : 1-d ndarray
@@ -87,7 +87,8 @@ def int2avg(twt, v_int):
 
     Notes
     -----
-    .. math:: V_{int}[i](t[i] - t[i-1]) = V_{avg}[i] t[i] - V_{avg}[i-1] t[i-1]
+    .. math:: V_{int}[i](t_{i} - t_{i-1}) = V_{avg}[i] t_{i} - \
+              V_{avg}[i-1] t_{i-1}
     """
     v_avg = np.ones((len(twt), ))
     v_avg[0] = v_int[0]
