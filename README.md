@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master)](https://travis-ci.org/whimian/PorePressurePrediction)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c6f8b9c3fb7945469c110bd155bfe649)](https://www.codacy.com/app/whimian/PorePressurePrediction?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/PorePressurePrediction&amp;utm_campaign=Badge_Grade)
 [![Documentation Status](https://readthedocs.org/projects/porepressureprediction/badge/?version=latest)](http://porepressureprediction.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/whimian/PorePressurePrediction/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/PorePressurePrediction)
 
 Tools for pore pressure prediction using well log data and seismic velocity data.
 
