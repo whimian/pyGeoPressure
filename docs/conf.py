@@ -20,8 +20,9 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
-
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -33,26 +34,31 @@
 # ones.
 extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.doctest',
+    # 'sphinx.ext.todo',
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
-    'sphinx.ext.githubpages']
+    'sphinx.ext.napoleon',
+    'sphinx.ext.autosummary']
 
+# numpydoc_class_members_toctree = False
+
+napoleon_use_param = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
+# from recommonmark.parser import CommonMarkParser
 
-from recommonmark.parser import CommonMarkParser
+# source_parsers = {
+#     '.md': CommonMarkParser,
+# }
 
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-source_suffix = ['.rst', '.md']
+# source_suffix = ['.rst', '.md']
 # source_suffix = '.rst'
 
 # The master toctree document.
@@ -95,7 +101,10 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+import sphinx_bootstrap_theme
+html_theme = 'bootstrap'
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
 #
@@ -103,7 +112,17 @@ html_theme = 'default'
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-# html_theme_options = {}
+html_theme_options = dict(
+    bootstrap_version = "3",
+    bootswatch_theme = "readable",
+    navbar_sidebarrel = False,
+    source_link_position = "footer",
+    globaltoc_depth = 2,
+    navbar_links = [
+    ("Cookbook", "cookbook/index"),
+    ("API", "api/api")
+    ],
+)
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

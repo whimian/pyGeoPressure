@@ -3,3 +3,4 @@ scipy
 pandas
 scikit-learn
 matplotlib
+sphinx_bootstrap_theme

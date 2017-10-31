@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+========================
 Pore Pressure Prediction
-====================================================
+========================
 
 .. image:: https://badge.fury.io/gh/whimian%2FPorePressurePrediction.svg
     :target: https://badge.fury.io/gh/whimian%2FPorePressurePrediction
@@ -18,19 +19,23 @@ Pore Pressure Prediction
 .. image:: https://readthedocs.org/projects/porepressureprediction/badge/?version=latest
     :target: http://porepressureprediction.readthedocs.io/en/latest/?badge=latest
     :alt: ReadtheDocs
+.. image:: https://codecov.io/gh/whimian/PorePressurePrediction/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/whimian/PorePressurePrediction
+    :alt: Codecov
 
 .. toctree::
+    :maxdepth: 1
+    :caption: Getting Started:
     :hidden:
-    :maxdepth: 2
-    :caption: Contents:
-    abc
 
-Tools for pore pressure prediction using well log data and seismic velocity data.
+    api/api
 
-Seismic velocity data are stored using sqlite, and well log data are stored in pandas hdf5 file.
+|
+*Tools for pore pressure prediction using well log data and seismic velocity data.*
+
 
 Features
---------
+========
 
 1. Hydrostatic Pressure Calculation
 2. Overburden (or Lithostatic) Pressure Calculation
@@ -38,7 +43,7 @@ Features
 4. Bowers' method
 
 Data I/O
---------
+========
 
 **Well log**:
 
@@ -51,3 +56,8 @@ Data I/O
 - Opendtect ascii file
 
 - SEG-Y file (require `segpy <https://github.com/sixty-north/segpy>`_)
+
+Getting Started
+===============
+
+* :doc:`api/api`
