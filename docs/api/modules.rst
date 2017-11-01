@@ -1,7 +1,7 @@
-porepressureprediction
-======================
+pygeopressure
+=============
 
 .. toctree::
    :maxdepth: 4
 
-   porepressureprediction
+   pygeopressure

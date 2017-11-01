@@ -1,7 +1,7 @@
 API reference
 =============
 
-.. currentmodule:: porepressureprediction
+.. currentmodule:: pygeopressure
 
 Basic data organization/storage class
 -------------------------------------
@@ -19,4 +19,4 @@ Full list of modules
 --------------------
 .. toctree::
 
-    porepressureprediction
+    pygeopressure
