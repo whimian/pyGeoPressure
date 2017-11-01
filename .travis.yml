@@ -15,7 +15,7 @@ install:
   - conda update -q conda
   - conda info -a
   - conda env create --file test/test_env.yml
-  - source activate testenv
+  - source activate test_env
 
 script:
   - py.test --cov-config .coveragerc --cov=porepressureprediction test
