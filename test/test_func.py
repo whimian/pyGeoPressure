@@ -8,14 +8,14 @@ __author__ = "yuhao"
 
 import unittest
 
-from .context import porepressureprediction
+from .context import porepressureprediction as ppp
 
 
 class WellTestSuite(unittest.TestCase):
     """Basic test cases."""
     def test_void_log(self):
         "test on boolean value of Log object"
-        log = porepressureprediction.Log()
+        log = ppp.Log()
         self.assertFalse(log)
 
 if __name__ == '__main__':
