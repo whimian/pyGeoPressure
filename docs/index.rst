@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-========================
-Pore Pressure Prediction
-========================
+=============
+pyGeoPressure
+=============
 
 .. image:: https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release
     :target: https://github.com/whimian/pyGeoPressure/releases
@@ -33,9 +33,10 @@ Pore Pressure Prediction
 
 .. toctree::
     :maxdepth: 1
-    :caption: Getting Started:
+    :caption: pyGeoPressure:
     :hidden:
 
+    install
     api/api
 
 |
@@ -67,5 +68,5 @@ Data I/O
 
 Getting Started
 ===============
-
+* :doc:`install`
 * :doc:`api/api`
