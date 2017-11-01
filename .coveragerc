@@ -1,4 +1,4 @@
 # .coveragerc to control coverage.py
 [run]
-source = porepressureprediction
+source = pygeopressure
 omit = *__init__*

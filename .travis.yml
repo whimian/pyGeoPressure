@@ -18,7 +18,7 @@ install:
   - source activate test_env
 
 script:
-  - py.test --cov-config .coveragerc --cov=porepressureprediction test
+  - py.test --cov-config .coveragerc --cov=pygeopressure test
 
 after_success:
   - codecov

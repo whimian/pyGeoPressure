@@ -16,7 +16,7 @@ import pandas as pd
 # # from scipy.interpolate import interp1d
 # # from scipy.signal import butter, filtfilt
 
-# from porepressureprediction.velocity.smoothing import smooth
+# from pygeopressure.velocity.smoothing import smooth
 
 
 class Horizon(object):

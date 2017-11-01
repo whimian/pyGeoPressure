@@ -9,7 +9,7 @@ __author__ = "yuhao"
 import unittest
 import numpy as np
 
-from .context import porepressureprediction as ppp
+from .context import pygeopressure as ppp
 
 
 class UtilsTestSuite(unittest.TestCase):

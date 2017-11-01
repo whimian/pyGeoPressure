@@ -34,13 +34,13 @@ Seismic velocity data are stored using sqlite, and well log data are stored in p
 
 # Basic Classes
 
-[**Survey**](porepressureprediction/basic/survey.py): join seismic and wells.
+[**Survey**](pygeopressure/basic/survey.py): join seismic and wells.
 
-[**SeisCube**](porepressureprediction/basic/seiSQL.py): seismic velocity stored in sqlite db file.
+[**SeisCube**](pygeopressure/basic/seiSQL.py): seismic velocity stored in sqlite db file.
 
-[**Well**](porepressureprediction/basic/well.py): Well with log data stored in pandas hdf5 file.
+[**Well**](pygeopressure/basic/well.py): Well with log data stored in pandas hdf5 file.
 
-[**Log**](porepressureprediction/basic/well_log.py): log data.
+[**Log**](pygeopressure/basic/well_log.py): log data.
 
 ## Log curve tools
 

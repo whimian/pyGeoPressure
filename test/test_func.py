@@ -8,7 +8,7 @@ __author__ = "yuhao"
 
 import unittest
 
-from .context import porepressureprediction as ppp
+from .context import pygeopressure as ppp
 
 
 class WellTestSuite(unittest.TestCase):

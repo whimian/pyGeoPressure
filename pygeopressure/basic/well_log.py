@@ -15,8 +15,8 @@ from scipy.signal import butter, filtfilt
 from scipy.optimize import curve_fit
 
 
-from porepressureprediction.velocity.smoothing import smooth
-from porepressureprediction.velocity.extrapolate import normal_dt
+from pygeopressure.velocity.smoothing import smooth
+from pygeopressure.velocity.extrapolate import normal_dt
 
 class Log(object):
     """
