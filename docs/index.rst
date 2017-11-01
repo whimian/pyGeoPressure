@@ -10,6 +10,9 @@ Pore Pressure Prediction
 .. image:: https://badge.fury.io/gh/whimian%2FPorePressurePrediction.svg
     :target: https://badge.fury.io/gh/whimian%2FPorePressurePrediction
     :alt: Github
+.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
+    :target: https://github.com/whimian/PorePressurePrediction/blob/master/LICENSE
+    :alt: License
 .. image:: https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master
     :target: https://travis-ci.org/whimian/PorePressurePrediction
     :alt: Travis-CI

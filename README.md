@@ -1,6 +1,7 @@
 # Pore Pressure Prediction
 
 [![GitHub version](https://badge.fury.io/gh/whimian%2FPorePressurePrediction.svg)](https://badge.fury.io/gh/whimian%2FPorePressurePrediction)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/whimian/PorePressurePrediction/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master)](https://travis-ci.org/whimian/PorePressurePrediction)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c6f8b9c3fb7945469c110bd155bfe649)](https://www.codacy.com/app/whimian/PorePressurePrediction?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/PorePressurePrediction&amp;utm_campaign=Badge_Grade)
 [![Documentation Status](https://readthedocs.org/projects/porepressureprediction/badge/?version=latest)](http://porepressureprediction.readthedocs.io/en/latest/?badge=latest)
