@@ -1,11 +1,11 @@
 # Pore Pressure Prediction
 
-[![GitHub version](https://badge.fury.io/gh/whimian%2FPorePressurePrediction.svg)](https://badge.fury.io/gh/whimian%2FPorePressurePrediction)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/whimian/PorePressurePrediction/blob/master/LICENSE)
-[![Build Status](https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master)](https://travis-ci.org/whimian/PorePressurePrediction)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c6f8b9c3fb7945469c110bd155bfe649)](https://www.codacy.com/app/whimian/PorePressurePrediction?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/PorePressurePrediction&amp;utm_campaign=Badge_Grade)
-[![Documentation Status](https://readthedocs.org/projects/porepressureprediction/badge/?version=latest)](http://porepressureprediction.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/whimian/PorePressurePrediction/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/PorePressurePrediction)
+[![GitHub release](https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release)](https://github.com/whimian/pyGeoPressure/releases)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/whimian/pyGeoPressure/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/whimian/pyGeoPressure.svg?branch=master)](https://travis-ci.org/whimian/pyGeoPressure)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f79d873803d4ef1a3c306603fcfd767)](https://www.codacy.com/app/whimian/pyGeoPressure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/pyGeoPressure&amp;utm_campaign=Badge_Grade)
+[![Documentation Status](https://readthedocs.org/projects/pygeopressure/badge/?version=latest)](http://pygeopressure.readthedocs.io/en/latest/?badge=latest)
+[![codecov](https://codecov.io/gh/whimian/pyGeoPressure/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/pyGeoPressure)
 
 Tools for pore pressure prediction using well log data and seismic velocity data.
 

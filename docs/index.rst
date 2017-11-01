@@ -7,23 +7,28 @@
 Pore Pressure Prediction
 ========================
 
-.. image:: https://badge.fury.io/gh/whimian%2FPorePressurePrediction.svg
-    :target: https://badge.fury.io/gh/whimian%2FPorePressurePrediction
-    :alt: Github
+.. image:: https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release
+    :target: https://github.com/whimian/pyGeoPressure/releases
+    :alt: Releases
+
 .. image:: https://img.shields.io/github/license/mashape/apistatus.svg
-    :target: https://github.com/whimian/PorePressurePrediction/blob/master/LICENSE
+    :target: https://github.com/whimian/pyGeoPressure/blob/master/LICENSE
     :alt: License
-.. image:: https://travis-ci.org/whimian/PorePressurePrediction.svg?branch=master
-    :target: https://travis-ci.org/whimian/PorePressurePrediction
+
+.. image:: https://travis-ci.org/whimian/pyGeoPressure.svg?branch=master
+    :target: https://travis-ci.org/whimian/pyGeoPressure
     :alt: Travis-CI
-.. image:: https://api.codacy.com/project/badge/Grade/c6f8b9c3fb7945469c110bd155bfe649
-    :target: https://www.codacy.com/app/whimian/PorePressurePrediction?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/PorePressurePrediction&amp;utm_campaign=Badge_Grade
+
+.. image:: https://api.codacy.com/project/badge/Grade/2f79d873803d4ef1a3c306603fcfd767
+    :target: https://www.codacy.com/app/whimian/pyGeoPressure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/pyGeoPressure&amp;utm_campaign=Badge_Grade
     :alt: Codacy
-.. image:: https://readthedocs.org/projects/porepressureprediction/badge/?version=latest
-    :target: http://porepressureprediction.readthedocs.io/en/latest/?badge=latest
+
+.. image:: https://readthedocs.org/projects/pygeopressure/badge/?version=latest
+    :target: http://pygeopressure.readthedocs.io/en/latest/?badge=latest
     :alt: ReadtheDocs
-.. image:: https://codecov.io/gh/whimian/PorePressurePrediction/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/whimian/PorePressurePrediction
+
+.. image:: https://codecov.io/gh/whimian/pyGeoPressure/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/whimian/pyGeoPressure
     :alt: Codecov
 
 .. toctree::
