@@ -18,6 +18,7 @@ dependencies:
 - IPython
 - pip
 - pip:
+  - segpy
   - nbsphinx
   - sphinx_bootstrap_theme
   - sphinx-issues
