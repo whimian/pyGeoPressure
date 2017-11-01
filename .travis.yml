@@ -1,5 +1,3 @@
-# sudo: required
-
 language: python
 python:
   # We don't actually use the Travis Python, but this keeps it organized.
@@ -16,10 +14,8 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda create -n testenv python=$TRAVIS_PYTHON_VERSION matplotlib scikit-learn pandas pytest pytest-cov
+  - conda env create --file test/test_env.yml
   - source activate testenv
-  - conda install -c conda-forge codecov
-  - pip install -q segpy
 
 script:
   - py.test --cov-config .coveragerc --cov=porepressureprediction test
