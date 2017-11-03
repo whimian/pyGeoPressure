@@ -399,6 +399,6 @@ if __name__ == "__main__":
     print("Parameters ---")
     las.parameters.display()
     print("Other ---")
-    print las.other
+    print(las.other)
     print("Data ---")
-    print las.data2d
+    print(las.data2d)
