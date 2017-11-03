@@ -299,7 +299,7 @@ class LASReader(object):
         Curve section of the file.
         """
         opened_here = False
-        if isinstance(f, basestring):
+        if isinstance(f, str):
             opened_here = True
             f = open(f, 'r')
 
