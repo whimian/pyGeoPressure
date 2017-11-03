@@ -164,8 +164,10 @@ class LASSection(object):
             namestr = name
             if item.units != '':
                 namestr = namestr + (" (%s)" % item.units)
-            print "%-16s %-30s [%s]" % (namestr, "'" + item.data + "'",
-                                        item.descr)
+            # print "%-16s %-30s [%s]" % (namestr, "'" + item.data + "'",
+            #                             item.descr)
+            print("{:10} {:30} {0!s}".format(namestr, "'" + item.data + "'",
+                                        item.descr))
 
 
 class LASReader(object):
@@ -382,21 +384,21 @@ if __name__ == "__main__":
     import sys
 
     las = LASReader(sys.argv[1], null_subs=np.nan)
-    print "wrap? ", las.wrap
-    print "vers? ", las.vers
-    print "null =", las.null
-    print "start =", las.start
-    print "stop  =", las.stop
-    print "step  =", las.step
-    print "Version ---"
+    print("wrap? ", las.wrap)
+    print("vers? ", las.vers)
+    print("null =", las.null)
+    print("start =", las.start)
+    print("stop  =", las.stop)
+    print("step  =", las.step)
+    print("Version ---")
     las.version.display()
-    print "Well ---"
+    print("Well ---")
     las.well.display()
-    print "Curves ---"
+    print("Curves ---")
     las.curves.display()
-    print "Parameters ---"
+    print("Parameters ---")
     las.parameters.display()
-    print "Other ---"
+    print("Other ---")
     print las.other
-    print "Data ---"
+    print("Data ---")
     print las.data2d
