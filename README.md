@@ -1,5 +1,6 @@
-# Pore Pressure Prediction
+# pyGeoPressure
 
+[![Anaconda-Server Badge](https://anaconda.org/whimian/pygeopressure/badges/version.svg)](https://anaconda.org/whimian/pygeopressure)
 [![GitHub release](https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release)](https://github.com/whimian/pyGeoPressure/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/whimian/pyGeoPressure/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/whimian/pyGeoPressure.svg?branch=master)](https://travis-ci.org/whimian/pyGeoPressure)
