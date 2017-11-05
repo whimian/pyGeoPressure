@@ -28,13 +28,13 @@ with open("README.md") as f:
 
 setup(
     name="pyGeoPressure",
-    version="0.1.0",
+    version="0.1.2",
     packages=find_packages(),
     install_requires=[
         'numpy>=1.7',
         'scipy>=0.13',
         'matplotlib',
-        'segpy'
+        'segpy-lite'
     ],
     author="Yu Hao",
     author_email="yuhao@live.cn",
