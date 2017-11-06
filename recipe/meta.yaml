@@ -1,0 +1,43 @@
+package:
+  name: pygeopressure
+  version: {{ GIT_DESCRIBE_TAG[1:] }}
+
+source:
+  # git_rev: v0.1.2
+  # git_url: https://github.com/whimian/pyGeoPressure.git
+  git_url: ../
+  # path: .
+build:
+  number: {{ GIT_DESCRIBE_NUMBER }}
+  # Note that this will override the default build string with the Python
+  # and NumPy versions
+  # string: {{ GIT_BUILD_STR }}
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - scipy
+    - pandas
+    - matplotlib
+    - segpy-lite
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - pandas
+    - matplotlib
+    - segpy-lite
+
+test:
+  imports:
+    - pygeopressure
+
+about:
+  home: https://github.com/whimian/pyGeoPressure
+  license: MIT
+  license_file: LICENSE
+  summary: 'tools for pore pressure prediction.'
