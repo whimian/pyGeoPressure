@@ -35,6 +35,7 @@ setup(
         'matplotlib',
         'segpy-lite'
     ],
+    packages=find_packages(exclude=['test']),
     author="Yu Hao",
     author_email="yuhao@live.cn",
     description="pyGeoPressure: Tools for geopressure prediction",
@@ -45,5 +46,5 @@ setup(
     download_url="https://github.com/whimian/pyGeoPressure",
     classifiers=CLASSIFIERS,
     platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
-    use_2to3=False
+    zip_safe=False
 )
