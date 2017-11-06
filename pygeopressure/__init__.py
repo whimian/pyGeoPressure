@@ -19,3 +19,7 @@ from pygeopressure.pressure.hydrostatic import hydrostatic_pressure, hydrostatic
 from pygeopressure.basic.utils import rmse, nmse
 from pygeopressure.basic.indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
 from pygeopressure.basic.horizon import Horizon
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions

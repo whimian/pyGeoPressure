@@ -2,10 +2,9 @@
 """
 Created on Nov 1st 2017
 """
-
 from distutils.core import setup
 from setuptools import find_packages
-
+import versioneer
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
@@ -28,8 +27,8 @@ with open("README.md") as f:
 
 setup(
     name="pyGeoPressure",
-    version="0.1.2",
-    packages=find_packages(),
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     install_requires=[
         'numpy>=1.7',
         'scipy>=0.13',
