@@ -3,9 +3,9 @@
 [![Anaconda-Server Badge](https://anaconda.org/whimian/pygeopressure/badges/version.svg)](https://anaconda.org/whimian/pygeopressure)
 [![GitHub release](https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release)](https://github.com/whimian/pyGeoPressure/releases)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/whimian/pyGeoPressure/blob/master/LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/pygeopressure/badge/?version=latest)](http://pygeopressure.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/whimian/pyGeoPressure.svg?branch=master)](https://travis-ci.org/whimian/pyGeoPressure)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f79d873803d4ef1a3c306603fcfd767)](https://www.codacy.com/app/whimian/pyGeoPressure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/pyGeoPressure&amp;utm_campaign=Badge_Grade)
-[![Documentation Status](https://readthedocs.org/projects/pygeopressure/badge/?version=latest)](http://pygeopressure.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/whimian/pyGeoPressure/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/pyGeoPressure)
 
 Tools for pore pressure prediction using well log data and seismic velocity data.
