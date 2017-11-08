@@ -1,4 +1,6 @@
 # .coveragerc to control coverage.py
 [run]
 source = pygeopressure
-omit = *__init__*
+omit =
+  *__init__*
+  pygeopressure/_version.py
