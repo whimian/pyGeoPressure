@@ -3,14 +3,12 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-import copy
 import json
 import os
 import sqlite3
-from collections import deque
 
 import numpy as np
-from scipy import interpolate
+# from scipy import interpolate
 
 from .las import LASReader
 from .well_log import Log
@@ -75,12 +73,16 @@ class Well(object):
 
     @property
     def existing_logs(self):
+        """Return names of logs stored in this well
+        """
         temp = list()
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
             cur.execute("PRAGMA table_info('data')")
             temp = cur.fetchall()
-        if len(temp) != 0:
+        # if len(temp) != 0:
+        # empty sequence is false
+        if temp:
             self._existing_logs = [item[1] for item in temp]
         return self._existing_logs
 
@@ -120,7 +122,8 @@ class Well(object):
                                FROM sqlite_master
                                WHERE type='table'""")
                 schema = cur.fetchall()
-            if len(schema) == 0:
+            # if len(schema) == 0:
+            if not schema:
                 raise Exception("No table in database.")
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
@@ -135,7 +138,8 @@ class Well(object):
             print(inst.args[0])
             return False
 
-    def _feet_2_meter(self, item_in_feet):
+    @staticmethod
+    def _feet_2_meter(item_in_feet):
         """converts feet to meters
         """
         # vfunc_model = np.vectorize(spherical)
@@ -144,7 +148,8 @@ class Well(object):
         except TypeError:
             return float(item_in_feet) / 3.28084
 
-    def _rolling_window(self, a, window):
+    @staticmethod
+    def _rolling_window(a, window):
         a = np.array(a)
         shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
         strides = a.strides + (a.strides[-1],)
@@ -152,7 +157,8 @@ class Well(object):
             a, shape=shape, strides=strides)
         return rolled
 
-    def _despike(self, curve, curve_sm, max_clip):
+    @staticmethod
+    def _despike(curve, curve_sm, max_clip):
         spikes = np.where(curve - curve_sm > max_clip)[0]
         spukes = np.where(curve_sm - curve > max_clip)[0]
         out = np.copy(curve)
@@ -165,7 +171,8 @@ class Well(object):
             with open(self.json_file, 'r') as fin:
                 jsStruct = json.load(fin)
                 location = jsStruct['LOC']['data'].split()
-                if len(location) == 0:
+                # if len(location) == 0:
+                if not location:
                     raise ValueError
                 self.loc = (float(location[2]), float(location[5]))
                 self.start = jsStruct['STRT']['data']
@@ -216,7 +223,7 @@ class Well(object):
 
     def update_log(self, log):
         try:
-            if name not in self.existing_logs:
+            if log.name not in self.existing_logs:
                 raise Exception("no log named {}!".format(log.name))
             with sqlite3.connect(self.db_file) as conn:
                 cur = conn.cursor()
@@ -234,7 +241,8 @@ class Well(object):
         try:
             if log.name in self.existing_logs:
                 raise Exception("A log with the name already exists")
-            if len(log) == 0:
+            # if len(log) == 0:
+            if not log:
                 raise Exception("No valid data in log")
             if self.__len__() < len(log):
                 raise Exception("length does not match")
@@ -283,7 +291,7 @@ class Well(object):
 
         json_name = os.path.basename(self.json_file)
         json_folder = os.path.abspath(os.path.dirname(self.json_file))
-        json_name_new = self.well_name + os.path.extsep +\
+        json_name_new = self.name + os.path.extsep +\
             self.json_file.split('.')[1]
 
         os.chdir(json_folder)
@@ -294,7 +302,7 @@ class Well(object):
 
         db_name = os.path.basename(self.db_file)
         db_folder = os.path.abspath(os.path.dirname(self.db_file))
-        db_name_new = self.well_name + os.path.extsep +\
+        db_name_new = self.name + os.path.extsep +\
             self.db_file.split('.')[1]
 
         os.chdir(db_folder)
@@ -308,7 +316,7 @@ class Well(object):
         if self.las_file is None:
             self.las_file = '../data/wells/TWT1.las'
         las = LASReader(self.las_file, null_subs=np.nan)
-        self.well_name = las.well.items['WELL'].data
+        self.name = las.well.items['WELL'].data
 
         self._change_file_name()
         # self.existing_logs = []
@@ -355,7 +363,7 @@ class Well(object):
             nameList.insert(0, "id INTEGER PRIMARY KEY")
             template = (',\n\t\t').join(nameList)
             cur.execute("CREATE TABLE data (\n\t\t{}\n\t)".format(template))
-            for i in xrange(int(las.data2d.shape[0])):
+            for i in range(int(las.data2d.shape[0])):
                 temp = list(las.data2d[i])
                 temp.insert(0, i+1)
                 temp = tuple(temp)

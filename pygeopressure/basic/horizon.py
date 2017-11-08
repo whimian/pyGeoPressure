@@ -8,9 +8,9 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-import json
+# import json
 
-import numpy as np
+# import numpy as np
 import pandas as pd
 
 # # from scipy.interpolate import interp1d
@@ -56,7 +56,14 @@ class Horizon(object):
     #         print(inst)
 
     def get_cdp(self, cdp):
+        """
+        Get value for a CDP point on the horizon.
+
+        Parameter
+        ---------
+        cdp : tuple of int
+        """
         inl, crl = cdp
         return self.data_frame[
-            (self.data_frame.inline==inl) & \
-            (self.data_frame.crline==crl)].z.values[-1]
+            (self.data_frame.inline == inl) & \
+            (self.data_frame.crline == crl)].z.values[-1]

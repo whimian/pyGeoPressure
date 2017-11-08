@@ -51,7 +51,7 @@ class Wiggles(object):
         resample_v = cspline1d_eval(cj, resample_z)
         print(resample_v)
         newz = resample_z
-        if self.origin == None:
+        if self.origin is None:
             self.origin = resample_v.mean()
 
         # Plot
@@ -82,10 +82,10 @@ class Wiggles(object):
             xmin, ymin = 0, self.data.shape[0]
             ymax, xmax = 0, self.data.shape[1]
         else:
-            xmin, xmax, ymin, ymax = extent
+            xmin, xmax, ymin, ymax = self.extent
 
         if self.ax is None:
-            fig, self.ax = plt.subplots()
+            _, self.ax = plt.subplots()
         self.ax.invert_yaxis()
         self.ax.set(xlim=[xmin, xmax], ylim=[ymin, ymax]) # xrange should be larger!!!
         ny, nx = self.data.shape
@@ -154,7 +154,7 @@ def wiggle(values, origin=0, posFill='black', negFill=None, lineColor='black',
     # newz = np.linspace(zmax, zmin, resample_z.size)
     # newz = np.linspace(zmin, zmax, resample_z.size)
     newz = resample_z
-    if origin == None:
+    if origin is None:
         origin = resample_v.mean()
 
     # # Plot
@@ -212,7 +212,7 @@ def wiggles(data, wiggleInterval=10, overlap=5, posFill='black',
         xmin, xmax, ymin, ymax = extent
 
     if ax is None:
-        fig, ax = plt.subplots()
+        _, ax = plt.subplots()
     ax.invert_yaxis()
     ax.set(xlim=[xmin, xmax], ylim=[ymin, ymax]) # xrange should be larger!!!
     ny, nx = data.shape
@@ -248,7 +248,7 @@ def img(data, extent, ax, cm='seismic', ptype='seis'):
             vmax = np.max(data)
     else:
         vmin, vmax = None, None
-    im = ax.imshow(
+    _ = ax.imshow(
         data,
         interpolation='bicubic',
         origin='lower',

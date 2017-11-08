@@ -199,10 +199,10 @@ class Survey(object):
             # print("d = ", d)
             w_inline = self.inl_crl[we.name][0]
             w_crline = self.inl_crl[we.name][1]
-            a = (w_crline - self.seisCube.startCrline) // \
-                self.seisCube.stepCrline
-            b = (w_inline - self.seisCube.startInline) // \
-                self.seisCube.stepInline
+            # a = (w_crline - self.seisCube.startCrline) // \
+            #     self.seisCube.stepCrline
+            # b = (w_inline - self.seisCube.startInline) // \
+            #     self.seisCube.stepInline
             sparse_list.append([w_inline, w_crline, d])
 
         return sparse_list

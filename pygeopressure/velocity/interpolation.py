@@ -32,19 +32,19 @@ def interp_DW(array2d):
                 i_max = np.nan
                 j_min = np.nan
                 j_max = np.nan
-                for p in xrange(i, -1, -1):
+                for p in range(i, -1, -1):
                     if not np.isnan(array2d[p][j]):
                         i_min = p
                         break
-                for p in xrange(i, m, 1):
+                for p in range(i, m, 1):
                     if not np.isnan(array2d[p][j]):
                         i_max = p
                         break
-                for p in xrange(j, -1, -1):
+                for p in range(j, -1, -1):
                     if not np.isnan(array2d[i][p]):
                         j_min = p
                         break
-                for p in xrange(j, n, 1):
+                for p in range(j, n, 1):
                     if not np.isnan(array2d[i][p]):
                         j_max = p
                         break
@@ -58,14 +58,15 @@ def interp_DW(array2d):
                     j_max = n - 1
                 dis = list()
                 value = list()
-                for p in xrange(i_min, i_max + 1, 1):
-                    for q in xrange(j_min, j_max + 1, 1):
+                for p in range(i_min, i_max + 1, 1):
+                    for q in range(j_min, j_max + 1, 1):
                         if not np.isnan(array2d[p][q]):
                             dis.append(
                                 1.0 / (np.abs(p - i)**2 + np.abs(q - j)**2))
                             value.append(array2d[p][q])
                 interp = 0
-                for r in xrange(len(dis)):
+                # for r in range(len(dis)):
+                for r, _ in enumerate(dis):
                     interp = interp + dis[r] * value[r]
                 try:
                     interp = interp / np.sum(dis)

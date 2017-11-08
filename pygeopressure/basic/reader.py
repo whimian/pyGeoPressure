@@ -59,7 +59,8 @@ class Reader(object):
                          position(inline, crline)")
             cur.execute("COMMIT")
 
-    def _read_hrs(self, textfile):
+    @staticmethod
+    def _read_hrs(textfile):
         velocity = list()
         with open(textfile, 'r') as textVel:
             for line in textVel:
@@ -70,7 +71,8 @@ class Reader(object):
                 velocity.append(temp)
         return velocity
 
-    def _read_od(self, textfile):
+    @staticmethod
+    def _read_od(textfile):
         velocity = list()
         with open(textfile, 'r') as textVel:
             info = textVel.readline()
@@ -129,9 +131,9 @@ class Reader(object):
         "Put sampling info in file start    Yes"
         """
         if filetype == "od":
-            velocity = self._read_od(textfile)
+            _ = self._read_od(textfile)
         elif filetype == "hrs":
-            velocity = self._read_hrs(textfile)
+            _ = self._read_hrs(textfile)
         elif filetype == "segy":
             measure(self._read_segy)(textfile, attr)
         else:

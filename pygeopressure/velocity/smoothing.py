@@ -6,6 +6,7 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
+import ast
 import numpy as np
 from scipy import ndimage
 
@@ -73,7 +74,8 @@ def smooth(x, window_len=11, window='hanning'):
     if window == 'flat':  # moving average
         w = np.ones(window_len, 'd')
     else:
-        w = eval('numpy.' + window + '(window_len)')
+        # w = eval('numpy.' + window + '(window_len)')
+        w = ast.literal_eval('numpy.' + window + '(window_len)')
 
     y = np.convolve(w/w.sum(), s, mode='valid')
     # return y

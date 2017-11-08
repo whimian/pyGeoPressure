@@ -66,9 +66,9 @@ def int2rms(twt, v_int):
     v_rms = np.ones((len(twt), ))
     v_rms[0] = v_int[0]
     v_rms[1:] = np.sqrt(
-                    (v_int[1:]**2 * (twt[:-1] - twt[1:]) +
-                     v_rms[:-1]**2 * twt[:-1]) / twt[1:]
-                    )
+        (v_int[1:]**2 * (twt[:-1] - twt[1:]) +
+         v_rms[:-1]**2 * twt[:-1]) / twt[1:]
+        )
 
     return v_rms
 

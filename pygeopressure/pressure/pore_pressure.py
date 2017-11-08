@@ -159,14 +159,16 @@ def invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     return sigma_max * (sigma_vc/sigma_max)**U
 
 
-def effective_stress_multivariate(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=None):
+def effective_stress_multivariate(vel, phi, vsh, a_0, a_1, a_2, a_3,
+                                  B, U, vmax, start_idx, end_idx=None):
     ves = invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B)
     unloading = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax)
     ves[start_idx: end_idx] = unloading[start_idx: end_idx]
     return ves
 
 
-def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx=None):
+def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3,
+                          B, U, vmax, start_idx, end_idx=None):
     """
     Pressure Prediction using multivariate model
     """
@@ -174,15 +176,20 @@ def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, st
         vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx)
     return obp - ves
 
-def pressure_multivariate_varu(obp, vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer=20, end_idx=None, end_buffer=10):
+def pressure_multivariate_varu(obp, vel, phi, vsh, a_0, a_1, a_2, a_3,
+                               B, U, vmax, start_idx, buffer=20,
+                               end_idx=None, end_buffer=10):
     """
     Pressure Prediction using multivariate model
     """
     ves = effective_stress_multivariate_varu(
-        vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer, end_idx, end_buffer)
+        vel, phi, vsh, a_0, a_1, a_2, a_3,
+        B, U, vmax, start_idx, buffer, end_idx, end_buffer)
     return obp - ves
 
-def effective_stress_multivariate_varu(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, buffer=20, end_idx=None, end_buffer=10):
+def effective_stress_multivariate_varu(vel, phi, vsh, a_0, a_1, a_2, a_3,
+                                       B, U, vmax, start_idx, buffer=20,
+                                       end_idx=None, end_buffer=10):
     u_array = np.ones(vel.shape)
     u_array[start_idx: end_idx] = U
     # start buffer
@@ -191,5 +198,6 @@ def effective_stress_multivariate_varu(vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, 
     # end buffer
     if end_idx is not None:
         u_array[end_idx: end_idx + end_buffer] = np.linspace(U, 1, end_buffer)
-    ves = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3, B, u_array, vmax)
+    ves = invert_multivariate_unloading(vel, phi, vsh, a_0, a_1, a_2, a_3,
+                                        B, u_array, vmax)
     return ves

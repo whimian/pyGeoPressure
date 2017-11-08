@@ -42,7 +42,8 @@ class Log(object):
         return len(self.__data)
 
     def _info(self):
-        if len(self.__depth) == 0:
+        # if len(self.__depth) == 0:
+        if not self.__depth:
             start, end = (0, 0)
         elif len(self.__depth) == 1:
             start, end = [self.__depth[0]] * 2
@@ -96,9 +97,10 @@ class Log(object):
             mask = np.isfinite(self.__data)
             index = np.where(mask == True)
             self.log_start_idx = index[0][0]
-            return self.log_start_idx
-        else:
-            return self.log_start_idx
+        #     return self.log_start_idx
+        # else:
+        #     return self.log_start_idx
+        return self.log_start_idx
 
     @property
     def stop(self):
@@ -117,9 +119,10 @@ class Log(object):
             index = np.where(mask == True)
             self.log_stop_idx = index[0][-1] + 1
             # so when used in slice, +1 will not needed.
-            return self.log_stop_idx
-        else:
-            return self.log_stop_idx
+        #     return self.log_stop_idx
+        # else:
+        #     return self.log_stop_idx
+        return self.log_stop_idx
 
     @property
     def top(self):
@@ -201,7 +204,7 @@ class Log(object):
             axis object on which the curve has been plotted
         """
         if ax is None:
-            fig, ax = plt.subplots()
+            _, ax = plt.subplots()
             ax.invert_yaxis()
         ax.plot(self.data, self.depth)
         ax.set(xlabel="{}({})".format(self.descr, self.units),
@@ -223,7 +226,7 @@ class Log(object):
             dt_log_finite = dt_log[mask]
             depth_finite = depth[mask]
 
-            popt, pcov = curve_fit(normal_dt, depth_finite, dt_log_finite)
+            popt, _ = curve_fit(normal_dt, depth_finite, dt_log_finite)
             a, b = popt
 
             new_dt_log = normal_dt(np.array(self.depth), a, b)

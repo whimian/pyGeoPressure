@@ -20,7 +20,7 @@ def set_v0(v):
 
 
 def normal(x, a, b):
-    """
+    r"""
     Extrapolate velocity using normal trend.
 
     Parameters

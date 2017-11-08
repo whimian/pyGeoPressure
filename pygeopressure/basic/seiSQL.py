@@ -335,8 +335,7 @@ class SeisCube(object):
         try:
             with open(fname, 'w') as fout:
                 fout.write("{}\t{}\t{}\n".format(
-                                            self.stepInline, self.stepCrline,
-                                            self.stepDepth))
+                    self.stepInline, self.stepCrline, self.stepDepth))
                 for inl in self.inlines():
                     data = self.get_inline(inl, attr)
                     for crl, dlist in zip(self.crlines(), data):
@@ -377,7 +376,8 @@ class SeisCube(object):
                                                                inline=inl,
                                                                crline=crl))
                             temp = cur.fetchall()
-                            if len(temp) == 0:
+                            # if len(temp) == 0:
+                            if not temp:
                                 continue
                             else:
                                 x, y = self.line_2_coord(inl, crl)
@@ -514,7 +514,7 @@ class SeisCube(object):
         ax.add_artist(inline_text)
 
     @plot.register(DepthIndex)
-    def _(self, index, attr, ax, kind='vawt', cm='seismic',  ptype='seis'):
+    def _(self, index, attr, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.get_data(index, attr)
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)

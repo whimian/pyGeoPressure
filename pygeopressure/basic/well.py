@@ -229,7 +229,7 @@ class Well(object):
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         try:
-            dst = self.params['DST']
+            _ = self.params['DST']
         except KeyError:
             print("{}: Cannot find DST".format(self.well_name))
             return Log()
@@ -266,7 +266,7 @@ class Well(object):
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         try:
-            wft = self.params['MDT']
+            _ = self.params['MDT']
         except:
             print("{}: Cannot finde MDT".format(self.well_name))
             return Log()
@@ -299,7 +299,7 @@ class Well(object):
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         try:
-            loading = self.params['loading']
+            _ = self.params['loading']
         except KeyError:
             print("{}: Cannot find loading pressure data".format(self.well_name))
             return Log()
@@ -332,7 +332,7 @@ class Well(object):
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         try:
-            unloading = self.params['unloading']
+            _ = self.params['unloading']
         except KeyError:
             print("{}: Cannot find unloading pressure data".format(self.well_name))
             return Log()
