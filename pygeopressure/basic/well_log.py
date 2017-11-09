@@ -60,10 +60,14 @@ class Log(object):
         return self._info()
 
     def __repr__(self):
-        return self._info()
+        # return self._info()
+        return "<Well_log:_{}>".format(self.name)
 
     def __bool__(self):
         return bool(bool(self.__depth) and bool(self.__data))
+
+    def __eq__(self, other):
+        return self.depth == other.depth and self.data == other.data
 
     @property
     def depth(self):
