@@ -2,13 +2,9 @@
 """
 Created on Nov. 9th 2017
 """
-import pytest
 import numpy as np
 import pygeopressure as ppp
 
-@pytest.fixture
-def depth():
-    return np.arange(10)
 
 def test_hydrostatic(depth):
     assert (ppp.hydrostatic_pressure(depth) == \
