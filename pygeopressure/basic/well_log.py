@@ -26,7 +26,7 @@ class Log(object):
         self.name = log_name
         self.units = ""
         self.descr = ""
-        self.prop_type = ""
+        self.prop_type = None
         self.__data = []
         self.__depth = []
         self.log_start = None
@@ -41,7 +41,19 @@ class Log(object):
     def __init_from_file(self, file_name):
         self.read_od(file_name)
         try:
-            self.name = self.descr[:3].lower() + "_unk"
+            shorthand = self.descr[:3].lower()
+            self.name = shorthand + "_unk"
+            prop_dict = {
+                'vel': 'VEL',
+                'den': 'DEN',
+                'sha': 'VSH',
+                'ove': 'PRE',
+                'pre': 'PRE'
+            }
+            try:
+                self.prop_type = prop_dict[shorthand]
+            except KeyError:
+                pass
         except IndexError:
             self.name = "unk_unk"
 
