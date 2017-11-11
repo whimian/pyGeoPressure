@@ -22,8 +22,8 @@ class Log(object):
     """
     class for well log
     """
-    def __init__(self, file_name=None):
-        self.name = ""
+    def __init__(self, file_name=None, log_name="unk"):
+        self.name = log_name
         self.units = ""
         self.descr = ""
         self.p_type = ""
