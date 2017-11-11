@@ -26,7 +26,7 @@ class Log(object):
         self.name = log_name
         self.units = ""
         self.descr = ""
-        self.p_type = ""
+        self.prop_type = ""
         self.__data = []
         self.__depth = []
         self.log_start = None
@@ -226,7 +226,7 @@ class Log(object):
     def fit_normal(self, interval=None):
         if interval is None:
             interval = (self.start, self.stop)
-        if self.p_type == 'VEL':
+        if self.prop_type == 'VEL':
             start_idx = self.get_depth_idx(interval[0])
             stop_idx = self.get_depth_idx(interval[1]) + 1
             depth = np.array(self.depth[start_idx: stop_idx + 1])
@@ -250,9 +250,9 @@ class Log(object):
             normal_vel_log.name = "nct" + self.name[3:]
             normal_vel_log.descr = "Normal Velocity"
             normal_vel_log.units = 'm/s'
-            normal_vel_log.p_type = 'VEL'
+            normal_vel_log.prop_type = 'VEL'
             return (a, b), normal_vel_log
-        elif self.p_type == 'DEN':
+        elif self.prop_type == 'DEN':
             pass
         else:
             print("function applied only to VEL or DEN")
