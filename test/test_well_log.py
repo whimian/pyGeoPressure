@@ -18,7 +18,7 @@ def test__log_range(real_well_log):
     assert real_well_log.stop_idx == 9990
 
 def test__log_data(real_well_log):
-    assert real_well_log.name == "unk"
+    assert real_well_log.name == "vel_unk"
     assert real_well_log.depth[6762] == 676.2
     assert real_well_log.data[6762] == 2000.262329
     assert real_well_log.get_depth_idx(676.2) == 6762

@@ -37,6 +37,10 @@ class Log(object):
         self.log_stop_idx = None
         if file_name is not None:
             self.read_od(file_name)
+            try:
+                self.name = self.descr[:3].lower() + "_unk"
+            except IndexError:
+                self.name = "unk_unk"
 
     def __len__(self):
         return len(self.__data)
