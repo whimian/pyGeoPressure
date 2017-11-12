@@ -20,6 +20,31 @@ from .well import Well
 class Survey(object):
     """
     Survey object for combining seismic data and well log data.
+
+    Parameters
+    ----------
+    json_file : str
+        survey information file.
+
+    Attributes
+    ----------
+    seis_json : str
+        associated seismic data information file.
+    well_json : str
+        associated well data information file.
+    wells : dict
+        dictionary holding all Well objects.
+    seisCube : SeisCube
+        SeisCube object holding seismic data.
+    inl_crl : dict
+        well position in reference to seismic survey setting (inl/crl)
+
+    Methods
+    -------
+    add_well(well)
+        add a well to survey
+    get_seis(well_name, attr, radius=0)
+        get seismic data in the vicinity of a given well
     """
     def __init__(self, json_file):
         self.json_file = json_file
