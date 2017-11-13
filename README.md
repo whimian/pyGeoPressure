@@ -1,4 +1,5 @@
-# pyGeoPressure
+<!-- # pyGeoPressure -->
+<img src="docs/img/pygeopressure-logo.png" alt="Logo" height="240">
 
 [![Anaconda-Server Badge](https://anaconda.org/whimian/pygeopressure/badges/version.svg)](https://anaconda.org/whimian/pygeopressure)
 [![GitHub release](https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release)](https://github.com/whimian/pyGeoPressure/releases)
