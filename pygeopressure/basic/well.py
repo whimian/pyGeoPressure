@@ -384,6 +384,13 @@ class Well_Storage(object):
         except KeyError:
             print("No well named {}".format(well_name))
 
+    def remove_well(self, well_name):
+        try:
+            with pd.HDFStore(self.hdf5_file) as store:
+                return store.remove(well_name)
+        except KeyError:
+            print("No well named {}".format(well_name))
+
 #region
     # def read_las(self, las_file=None):
     #     self.las_file = las_file
