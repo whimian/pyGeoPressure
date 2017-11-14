@@ -459,3 +459,22 @@ def local_average(log, rad=10):
     new_log.depth = log.depth
     new_log.data = new_data
     return new_log
+
+
+def write_peudo_las(file_name, logs):
+    try:
+        with open(file_name, 'w') as fout:
+            description = ["Depth(m)"]
+            for log in logs:
+                split_list = log.descr.split(' ')
+                description.append('_'.join(split_list)+"(" + log.units + ")")
+            first_line = '\t'.join(description)
+            fout.write(first_line + "\n")
+            data = [logs[0].depth] + [log.data for log in logs]
+            data = np.stack(data)
+            for ds in np.nditer(data, flags=['external_loop'], order='F'):
+                line = [str(v) if np.isfinite(v) else "1e30" for v in ds]
+                fout.write("\t".join(line) + "\n")
+            return True
+    except Exception as inst:
+        print(inst.args)
