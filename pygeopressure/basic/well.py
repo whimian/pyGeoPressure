@@ -388,9 +388,18 @@ class Well(object):
         return log
 
     def eaton(self, velocity, n=3):
-        return eaton(hydrostatic=self.hydrostatic,
-                     lithostatic=self.lithostatic,
-                     n=n, v=velocity, vn=self.normal_velocity)
+        temp_log = self.get_log("Overburden_Pressure")
+        log = Log()
+        log.depth = temp_log.depth
+        log.data = eaton(hydrostatic=self.hydrostatic,
+                         lithostatic=self.lithostatic,
+                         n=n, v=velocity, vn=self.normal_velocity)
+        log.name = "pressure_eaton_{}".format(
+            self.well_name.lower().replace('-', '_'))
+        log.descr = "Pressure_Eaton"
+        log.units = temp_log.units
+        log.prop_type = "PRE"
+        return log
 
 
 class Well_Storage(object):
