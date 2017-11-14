@@ -88,6 +88,14 @@ class Well(object):
         except KeyError:
             print("No 'Overburden_Pressure' log found.")
 
+    @property
+    def lithostatic(self):
+        try:
+            temp_log = self.get_log('Overburden_Pressure')
+            return np.array(temp_log.data)
+        except KeyError:
+            print("No 'Overburden_Pressure' log found.")
+
     def get_log(self, logs, ref=None):
         log_list = list()
         output_list = list()
