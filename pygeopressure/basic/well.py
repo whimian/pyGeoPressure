@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-a Well class utilizing pandas DataFrame
+a Well class utilizing pandas DataFrame and hdf5 storage
 
 Created on Tue Dec 27 2016
 """
@@ -355,3 +355,94 @@ class Well(object):
             log.depth = depth
         log.data = pres_data
         return log
+
+
+class Well_Storage(object):
+    """
+    interface to hdf5 file storing well logs
+    """
+    def __init__(self, hdf5_file=None):
+        self.hdf5_file = hdf5_file
+
+    @property
+    def wells(self):
+        well_names = None
+        with pd.HDFStore(self.hdf5_file) as store:
+            well_names = [key[1:] for key in store.keys()]
+        return well_names
+
+    def read_pseudo_las(self, las_file, well_name):
+        data = pd.read_csv(las_file, sep='\t')
+        data = data.replace(1.0e30, np.nan)  # replace 1e30 with np.nan
+        data = data.round({'Depth(m)': 1})  # round depth to 1 decimal
+        data.to_hdf(self.hdf5_file, well_name)
+
+    def get_well_data(self, well_name):
+        try:
+            with pd.HDFStore(self.hdf5_file) as store:
+                return store[well_name]
+        except KeyError:
+            print("No well named {}".format(well_name))
+
+#region
+    # def read_las(self, las_file=None):
+    #     self.las_file = las_file
+    #     if self.las_file is None:
+    #         self.las_file = '../data/wells/TWT1.las'
+    #     las = LASReader(self.las_file, null_subs=np.nan)
+    #     self.name = las.well.items['WELL'].data
+
+    #     self._change_file_name()
+    #     # self.existing_logs = []
+    #     jsonDict = las.well.items.copy()
+    #     for key in jsonDict.keys():
+    #         jsonDict[key] = {}
+    #         jsonDict[key]['units'] = las.well.items[key].units
+    #         jsonDict[key]['data'] = las.well.items[key].data
+    #         jsonDict[key]['descr'] = las.well.items[key].descr
+
+    #     with open(self.json_file, 'w') as fout:
+    #         json.dump(jsonDict, fout, indent=4, sort_keys=False)
+
+    #     sqlList = []
+    #     for litem in las.curves.items.values():
+    #         sqlTuple = []
+    #         # tempList = litem.descr.split('=')
+    #         # sqlTuple.append(tempList[0].split()[0])
+    #         sqlTuple.append(las.data.dtype.names.index(litem.name) + 1)
+    #         # giving each entry the right index to match the order of log data.
+    #         sqlTuple.append(litem.name)
+    #         # self.existing_logs.append(litem.name.lower())
+    #         sqlTuple.append(litem.units)
+    #         # sqlTuple.append(tempList[-1][1:])
+    #         sqlTuple.append(litem.descr)
+    #         sqlTuple = tuple(sqlTuple)
+    #         sqlList.append(sqlTuple)
+
+    #     sqlList.sort(key=lambda x: x[0])
+
+    #     with sqlite3.connect(self.db_file) as conn:
+    #         cur = conn.cursor()
+    #         cur.execute("""CREATE TABLE curves (
+    #                  id INTEGER,
+    #                  name TEXT,
+    #                  units TEXT,
+    #                  decr TEXT
+    #             )""")
+
+    #         cur.executemany("INSERT INTO curves VALUES (?, ?, ?, ?)",
+    #                         sqlList)
+    #         template = ""
+    #         nameList = [a[1].lower() + " REAL" for a in sqlList]
+    #         nameList.insert(0, "id INTEGER PRIMARY KEY")
+    #         template = (',\n\t\t').join(nameList)
+    #         cur.execute("CREATE TABLE data (\n\t\t{}\n\t)".format(template))
+    #         for i in range(int(las.data2d.shape[0])):
+    #             temp = list(las.data2d[i])
+    #             temp.insert(0, i+1)
+    #             temp = tuple(temp)
+    #             cur.execute("INSERT INTO data \
+    #                         VALUES (" + ','.join(['?'] * len(temp)) + ")",
+    #                         temp)
+    #         cur.execute("CREATE INDEX IF NOT EXISTS depth_idx ON data(dept)")
+    #     self._read_setting()
