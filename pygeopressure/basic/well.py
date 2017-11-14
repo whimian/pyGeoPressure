@@ -77,6 +77,17 @@ class Well(object):
         return {key: '' if temp_dict[key] == key else temp_dict[key] \
             for key in temp_dict.keys()}
 
+    @property
+    def hydrostatic(self):
+        try:
+            temp_log = self.get_log('Overburden_Pressure')
+            return hydrostatic_pressure(
+                np.array(temp_log.depth),
+                kelly_bushing=self.kelly_bushing,
+                depth_w=self.water_depth)
+        except KeyError:
+            print("No 'Overburden_Pressure' log found.")
+
     def get_log(self, logs, ref=None):
         log_list = list()
         output_list = list()
