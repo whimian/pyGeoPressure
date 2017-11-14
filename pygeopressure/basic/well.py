@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from ..pressure.hydrostatic import hydrostatic_pressure
+from ..velocity.extrapolate import normal
 from .well_log import Log
 
 
@@ -93,6 +94,16 @@ class Well(object):
         try:
             temp_log = self.get_log('Overburden_Pressure')
             return np.array(temp_log.data)
+        except KeyError:
+            print("No 'Overburden_Pressure' log found.")
+
+    @property
+    def normal_velocity(self):
+        try:
+            a = self.params['nct']['a']
+            b = self.params['nct']['b']
+            temp_log = self.get_log('Overburden_Pressure')
+            return normal(x=np.array(temp_log.depth), a=a, b=b)
         except KeyError:
             print("No 'Overburden_Pressure' log found.")
 
