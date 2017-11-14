@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from ..pressure.hydrostatic import hydrostatic_pressure
+from ..pressure.pore_pressure import eaton
 from ..velocity.extrapolate import normal
 from .well_log import Log
 
@@ -385,6 +386,11 @@ class Well(object):
             log.depth = depth
         log.data = pres_data
         return log
+
+    def eaton(self, velocity, n=3):
+        return eaton(hydrostatic=self.hydrostatic,
+                     lithostatic=self.lithostatic,
+                     n=n, v=velocity, vn=self.normal_velocity)
 
 
 class Well_Storage(object):
