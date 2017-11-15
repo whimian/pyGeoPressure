@@ -50,7 +50,7 @@ class Well(object):
                 self.kelly_bushing = self.params['KB']
                 self.water_depth = self.params['WD']
                 self.total_depth = self.params['TD']
-        except Exception as inst:
+        except KeyError as inst:
             print(inst)
 
     def _read_hdf(self):
@@ -160,33 +160,39 @@ class Well(object):
         except Exception as inst:
             print(inst)
 
-    def get_pressure_measured(self, ref=None):
-        """
-        Get Measured Pressure Points
-        """
+    def _get_pressure(self, pres_key, ref=None, hydrodynamic=0):
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
-        depth = self.params["Measured_Pressure"]["depth"]
+        depth = self.params[pres_key]["depth"]
         coef = None
         try:
-            coef = self.params["Measured_Pressure"]["coef"]
+            coef = self.params[pres_key]["coef"]
         except KeyError:
-            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
+            print("{}: Cannot find {}".format(self.well_name, pres_key))
             return Log()
         obp_depth = obp_log.depth
         pres_data = list()
+        pres_depth = list()
         for dp, co in zip(depth, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
+            if dp > hydrodynamic:
+                idx = np.searchsorted(obp_depth, dp)
+                pres_data.append(hydro[idx] * co)
+                pres_depth.append(dp)
         log = Log()
         if ref == 'sea':
-            log.depth = np.array(depth) - self.kelly_bushing
+            log.depth = np.array(pres_depth) - self.kelly_bushing
         else:
-            log.depth = depth
-        log.data = pres_data
+            log.depth = pres_depth
+        log.data = np.round(np.array(pres_data), 3)
         return log
+
+    def get_pressure_measured(self, ref=None):
+        """
+        Get Measured Pressure Points
+        """
+        return self._get_pressure("Measured_Pressure", ref=ref)
 
     def get_pressure_coefficient(self):
         """
@@ -223,171 +229,54 @@ class Well(object):
         """
         Get Equivalent Mud Weight
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        try:
-            depth = self.params["EMW"]["depth"]
-        except KeyError:
-            print("{}: Cannot find EMW Coefficient".format(self.well_name))
-            return Log()
-        coef = None
-        try:
-            coef = self.params["EMW"]["coef"]
-        except KeyError:
-            print("{}: Cannot find EMW Coefficient".format(self.well_name))
-            return Log()
-        obp_depth = obp_log.depth
-        pres_data = list()
-        for dp, co in zip(depth, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
-        log = Log()
-        if ref == 'sea':
-            log.depth = np.array(depth) - self.kelly_bushing
-        else:
-            log.depth = depth
-        log.data = pres_data
-        return log
+        return self._get_pressure("EMW", ref=ref)
 
     def get_dst(self, ref=None):
         """
         Get Drillstem Test Pressure Measurements
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        try:
-            _ = self.params['DST']
-        except KeyError:
-            print("{}: Cannot find DST".format(self.well_name))
-            return Log()
-        depth = self.params["DST"]["depth"]
-        coef = None
-        try:
-            coef = self.params["DST"]["coef"]
-        except KeyError:
-            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
-            return Log()
-        obp_depth = obp_log.depth
-        pres_data = list()
-        for dp, co in zip(depth, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
-        log = Log()
-        if ref == 'sea':
-            log.depth = np.array(depth) - self.kelly_bushing
-        else:
-            log.depth = depth
-        log.data = pres_data
-        return log
+        return self._get_pressure("DST", ref=ref)
 
-    def get_wft(self, hydrodynamic=0):
+    def get_wft(self, hydrodynamic=0, ref=None):
         """
         Get Wireline Formation Test Pressure Measurements
         (Both MDT and/or RFT)
 
+        Paramters
+        ---------
         hydrodynamic : scalar
             start depth of hydrodynamic interval
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        try:
-            _ = self.params['MDT']
-        except:
-            print("{}: Cannot finde MDT".format(self.well_name))
-            return Log()
-        depth_mdt = self.params["MDT"]["depth"]
-        coef = None
-        try:
-            coef = self.params["MDT"]["coef"]
-        except KeyError:
-            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
-            return Log()
-        obp_depth = obp_log.depth
-        pres_data = list()
-        depth_new = list()
-        for dp, co in zip(depth_mdt, coef):
-            if dp > hydrodynamic:
-                idx = np.searchsorted(obp_depth, dp)
-                pres_data.append(hydro[idx] * co)
-                depth_new.append(dp)
-        log = Log()
-        log.depth = depth_new
-        log.data = pres_data
-        return log
+        return self._get_pressure("MDT", hydrodynamic=hydrodynamic, ref=ref)
 
     def get_loading_pressure(self, ref=None):
         """
         Get Pressure Measurements on loading curve
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        try:
-            _ = self.params['loading']
-        except KeyError:
-            print("{}: Cannot find loading pressure data".format(self.well_name))
-            return Log()
-        depth = self.params["loading"]["depth"]
-        coef = None
-        try:
-            coef = self.params["loading"]["coef"]
-        except KeyError:
-            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
-            return Log()
-        obp_depth = obp_log.depth
-        pres_data = list()
-        for dp, co in zip(depth, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
-        log = Log()
-        if ref == 'sea':
-            log.depth = np.array(depth) - self.kelly_bushing
-        else:
-            log.depth = depth
-        log.data = pres_data
-        return log
+        return self._get_pressure("loading", ref=ref)
 
     def get_unloading_pressure(self, ref=None):
         """
         Get Pressure Measurements on unloading curve
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        try:
-            _ = self.params['unloading']
-        except KeyError:
-            print("{}: Cannot find unloading pressure data".format(self.well_name))
-            return Log()
-        depth = self.params["unloading"]["depth"]
-        coef = None
-        try:
-            coef = self.params["unloading"]["coef"]
-        except KeyError:
-            print("{}: Cannot find Pressure Coefficient".format(self.well_name))
-            return Log()
-        obp_depth = obp_log.depth
-        pres_data = list()
-        for dp, co in zip(depth, coef):
-            idx = np.searchsorted(obp_depth, dp)
-            pres_data.append(hydro[idx] * co)
-        log = Log()
-        if ref == 'sea':
-            log.depth = np.array(depth) - self.kelly_bushing
-        else:
-            log.depth = depth
-        log.data = pres_data
-        return log
+        return self._get_pressure("unloading", ref=ref)
 
     def eaton(self, velocity, n=3):
+        """
+        Predict pore pressure using Eaton method
+
+        Parameters
+        ----------
+        velocity : 1-d ndarray
+            velocity data for calculation
+        n : scalar
+            Eaton exponent
+
+        Returns
+        -------
+        Log
+            a Log object containing calculated pressure.
+        """
         temp_log = self.get_log("Overburden_Pressure")
         log = Log()
         log.depth = temp_log.depth
