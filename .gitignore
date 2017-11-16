@@ -53,6 +53,9 @@ docs/_build/
 # PyBuilder
 target/
 
+# jupyter notebook
+.ipynb_checkpoints
+
 # =========================
 # Operating System Files
 # =========================

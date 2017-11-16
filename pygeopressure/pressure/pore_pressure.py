@@ -176,6 +176,7 @@ def pressure_multivariate(obp, vel, phi, vsh, a_0, a_1, a_2, a_3,
         vel, phi, vsh, a_0, a_1, a_2, a_3, B, U, vmax, start_idx, end_idx)
     return obp - ves
 
+
 def pressure_multivariate_varu(obp, vel, phi, vsh, a_0, a_1, a_2, a_3,
                                B, U, vmax, start_idx, buffer=20,
                                end_idx=None, end_buffer=10):
@@ -186,6 +187,7 @@ def pressure_multivariate_varu(obp, vel, phi, vsh, a_0, a_1, a_2, a_3,
         vel, phi, vsh, a_0, a_1, a_2, a_3,
         B, U, vmax, start_idx, buffer, end_idx, end_buffer)
     return obp - ves
+
 
 def effective_stress_multivariate_varu(vel, phi, vsh, a_0, a_1, a_2, a_3,
                                        B, U, vmax, start_idx, buffer=20,

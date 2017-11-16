@@ -14,15 +14,48 @@ from scipy.interpolate import interp1d
 from scipy.signal import butter, filtfilt
 from scipy.optimize import curve_fit
 
-
 from pygeopressure.velocity.smoothing import smooth
 from pygeopressure.velocity.extrapolate import normal_dt
+
 
 class Log(object):
     """
     class for well log
+
+    Attributes
+    ----------
+    name : str
+        log name
+    units : str
+        units of log
+    descr : str
+        description of log
+    prop_type : str {'VEL', 'DEN', 'VSH', 'PRE'}
+        property type of log
+    depth : list
+    data : list
+    top : float
+        minimum depth of log
+    bottom : float
+        maximum depth of log
+    start : float
+        start depth of log data
+    stop : float
+        end depth of log data
+    start_idx : int
+        index of start of log data
+    stop_idx : int
+        index of end of log data
     """
     def __init__(self, file_name=None, log_name="unk"):
+        """
+        Parameters
+        ----------
+        file_name : str
+            pseudo las file path
+        log_name : str
+            log name to create
+        """
         self.name = log_name
         self.units = ""
         self.descr = ""
@@ -115,9 +148,6 @@ class Log(object):
             mask = np.isfinite(self.__data)
             index = np.where(mask == True)
             self.log_start_idx = index[0][0]
-        #     return self.log_start_idx
-        # else:
-        #     return self.log_start_idx
         return self.log_start_idx
 
     @property
@@ -137,9 +167,6 @@ class Log(object):
             index = np.where(mask == True)
             self.log_stop_idx = index[0][-1] + 1
             # so when used in slice, +1 will not needed.
-        #     return self.log_stop_idx
-        # else:
-        #     return self.log_stop_idx
         return self.log_stop_idx
 
     @property
@@ -264,6 +291,7 @@ class Log(object):
         else:
             print("function applied only to VEL or DEN")
 
+
 def rolling_window(a, window):
     a = np.array(a)
     shape = a.shape[:-1] + (a.shape[-1] - window + 1, window)
@@ -338,6 +366,7 @@ def upscale_log(log, freq=20):
     log_downscale.depth = log.depth
     log_downscale.data = downscale_data
     return log_downscale
+
 
 def truncate_log(log, top, bottom):
     """
@@ -415,6 +444,7 @@ def interpolate_log(log):
     interp_log.data = data
     return interp_log
 
+
 def local_average(log, rad=10):
     """upscale data using local averaging
 
@@ -457,6 +487,9 @@ def local_average(log, rad=10):
 
 
 def write_peudo_las(file_name, logs):
+    """
+    Write multiple logs to a pseudo las file.
+    """
     try:
         with open(file_name, 'w') as fout:
             description = ["Depth(m)"]
