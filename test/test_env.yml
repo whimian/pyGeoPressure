@@ -14,6 +14,7 @@ dependencies:
 - numpy
 - scipy
 - pandas
+- pytables
 - matplotlib
 - pytest
 - pytest-cov
