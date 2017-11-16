@@ -60,8 +60,7 @@ class Log(object):
     def __len__(self):
         return len(self.__data)
 
-    def _info(self):
-        # if len(self.__depth) == 0:
+    def __str__(self):
         if not self.__depth:
             start, end = (0, 0)
         elif len(self.__depth) == 1:
@@ -75,11 +74,7 @@ class Log(object):
                "Depth range: {} - {} - {}\n".format(
                    start, end, 0.1)
 
-    def __str__(self):
-        return self._info()
-
     def __repr__(self):
-        # return self._info()
         return "<Well_log:_{}>".format(self.name)
 
     def __bool__(self):
@@ -94,7 +89,7 @@ class Log(object):
 
     @depth.setter
     def depth(self, values):
-        self.__depth = values
+        self.__depth = list(values)
 
     @property
     def data(self):
@@ -102,7 +97,7 @@ class Log(object):
 
     @data.setter
     def data(self, values):
-        self.__data = values
+        self.__data = list(values)
 
     @property
     def start(self):

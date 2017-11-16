@@ -41,7 +41,7 @@ def test__storage_interface(mdf5_file, pseudo_las_file):
     storage.read_pseudo_las(str(pseudo_las_file), 'fake')
     assert storage.wells == ['fake']
     assert storage.get_well_data('fake').columns.tolist() == [
-        'Depth(m)',  'Velocity(Meter/Second)', 'Shale_Volume(Fraction)',
+        'Depth(m)', 'Velocity(Meter/Second)', 'Shale_Volume(Fraction)',
         'Overburden_Pressure(MegaPascal)']
     storage.remove_well('fake')
     assert storage.wells == []
