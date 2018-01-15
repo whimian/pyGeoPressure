@@ -584,7 +584,7 @@ class SeisCube(object):
         pseudo_log.name = "{}_inline_{}_crline_{}".format(attr, cdp[0], cdp[1])
         return pseudo_log
 
-    def valid_cdp(self, cdp_num: tuple):
+    def valid_cdp(self, cdp_num):
         inl_num, crl_num = cdp_num
         n_inline = (inl_num - self.startInline) // self.stepInline
         in_plus_one = round(((inl_num - self.startInline) % self.stepInline) / \
