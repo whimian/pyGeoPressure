@@ -6,7 +6,14 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-from functools import singledispatch, update_wrapper
+import sys
+PY_VER = sys.version_info.major
+
+if PY_VER == 2:
+    from functools import update_wrapper
+    from singledispatch import singledispatch
+else:
+    from functools import singledispatch, update_wrapper
 
 import numpy as np
 
