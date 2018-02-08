@@ -3,6 +3,7 @@ from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.well_log import smooth_log, truncate_log, interpolate_log, shale, upscale_log, local_average
 from pygeopressure.basic.seiSQL import SeisCube
+from pygeopressure.basic.seiSEGY import SeiSEGY
 from pygeopressure.basic.survey import Survey
 from pygeopressure.basic.reader import Reader
 from pygeopressure.velocity.smoothing import smooth, smooth_2d, smooth_trace
