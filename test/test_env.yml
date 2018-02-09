@@ -10,7 +10,7 @@ channels:
 - conda-forge
 
 dependencies:
-- python=3.6
+- python
 - numpy
 - scipy
 - pandas
@@ -21,4 +21,4 @@ dependencies:
 - codecov
 - pip
 - pip:
-  - segpy
+  - segyio
