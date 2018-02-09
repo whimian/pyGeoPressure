@@ -11,7 +11,7 @@ import sqlite3
 from functools import wraps
 from math import ceil
 
-from segpy.reader import create_reader
+# from segpy.reader import create_reader
 
 
 class Reader(object):
@@ -90,27 +90,27 @@ class Reader(object):
                         float(data[i])])
         return velocity
 
-    def _read_segy(self, bfile, attr):
-        with open(bfile, 'rb') as textVel:
-            segy_reader = create_reader(
-                textVel, progress=make_progress_indicator('Scanning'))
-            print("Creating database...")
-            nCDP = segy_reader.num_traces()
-            n_per_trace = segy_reader.num_trace_samples(0)
-            n_trace_per_transaction = MAX_SAMPLES_PER_TRANSACTION // n_per_trace
-            n_transactions = ceil(nCDP / n_trace_per_transaction)
+    # def _read_segy(self, bfile, attr):
+    #     with open(bfile, 'rb') as textVel:
+    #         segy_reader = create_reader(
+    #             textVel, progress=make_progress_indicator('Scanning'))
+    #         print("Creating database...")
+    #         nCDP = segy_reader.num_traces()
+    #         n_per_trace = segy_reader.num_trace_samples(0)
+    #         n_trace_per_transaction = MAX_SAMPLES_PER_TRANSACTION // n_per_trace
+    #         n_transactions = ceil(nCDP / n_trace_per_transaction)
 
-            niter = 0
-            for traces_transact in split_sequence(list(range(nCDP)), n_trace_per_transaction):
-                niter += 1
-                data = []
-                for trace_index in traces_transact:
-                    tr_data = segy_reader.trace_samples(trace_index)
-                    tr_data = [float(da) for da in tr_data]
-                    data += tr_data
-                self._add_attribute(data, attr)
-                print("------ {}%".format(int(niter / n_transactions * 100)))
-            print("-"*6 + "{}%".format(100))
+    #         niter = 0
+    #         for traces_transact in split_sequence(list(range(nCDP)), n_trace_per_transaction):
+    #             niter += 1
+    #             data = []
+    #             for trace_index in traces_transact:
+    #                 tr_data = segy_reader.trace_samples(trace_index)
+    #                 tr_data = [float(da) for da in tr_data]
+    #                 data += tr_data
+    #             self._add_attribute(data, attr)
+    #             print("------ {}%".format(int(niter / n_transactions * 100)))
+    #         print("-"*6 + "{}%".format(100))
 
     def read(self, textfile, attr, filetype="od"):
         """
@@ -155,18 +155,18 @@ class Reader(object):
         self._add_attribute(velocity, attr)
 
 
-def make_progress_indicator(name):
-    previous_integer_progress = -1
+# def make_progress_indicator(name):
+#     previous_integer_progress = -1
 
-    def progress(p):
-        nonlocal previous_integer_progress
-        percent = p * 100
-        current_integer_progress = int(percent)
-        if current_integer_progress != previous_integer_progress:
-            print('{}: {}%'.format(name, current_integer_progress))
-        previous_integer_progress = current_integer_progress
+#     def progress(p):
+#         nonlocal previous_integer_progress
+#         percent = p * 100
+#         current_integer_progress = int(percent)
+#         if current_integer_progress != previous_integer_progress:
+#             print('{}: {}%'.format(name, current_integer_progress))
+#         previous_integer_progress = current_integer_progress
 
-    return progress
+#     return progress
 
 def measure(func):
     @wraps(func)
