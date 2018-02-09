@@ -273,4 +273,3 @@ class SeiSEGY(object):
                             self.stepCrline)
         crline = self.startCrline + (n_crline + cr_plus_one) * self.stepCrline
         return (inline, crline)
-
