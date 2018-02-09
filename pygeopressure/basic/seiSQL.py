@@ -546,12 +546,14 @@ class SeisCube(object):
         data = []
         with sqlite3.connect(self.db_file) as conn:
             cur = conn.cursor()
-            for sample_transact in split_sequence(sample_idx, 990):
+            # due to limitation of sqlite IN clause
+            for sample_transact in split_sequence(sample_idx, 999):
                 cur.execute(
                     "SELECT {} ".format('attribute') +\
                     "FROM {table} ".format(table=attr) +\
                     "WHERE id " +\
-                    "IN ({})".format(', '.join('?'*len(sample_transact))), sample_transact)
+                    "IN ({})".format(', '.join('?'*len(sample_transact))),
+                    sample_transact)
                 data_transact = cur.fetchall()
                 data_transact = [d[0] for d in data_transact]
                 data += data_transact
