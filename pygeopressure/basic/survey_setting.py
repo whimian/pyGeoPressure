@@ -20,41 +20,41 @@ class SurveySetting(object):
     """
     class to hold survey settings and compute additional coordination property
     """
-    def __init__(self, file_path=None):
-        self.startInline = None
-        self.endInline = None
-        self.stepInline = None
-        self.startCrline = None
-        self.endCrline = None
-        self.stepCrline = None
-        self.startDepth = None
-        self.endDepth = None
-        self.stepDepth = None
-        self.zType = None
-        self.inline_A = None
-        self.crline_A = None
-        self.east_A = None
-        self.north_A = None
-        self.inline_B = None
-        self.crline_B = None
-        self.east_B = None
-        self.north_B = None
-        self.inline_C = None
-        self.crline_C = None
-        self.east_C = None
-        self.north_C = None
+    def __init__(self, threepoints):
+        self.startInline = threepoints.startInline
+        self.endInline = threepoints.endInline
+        self.stepInline = threepoints.stepInline
+        self.startCrline = threepoints.startCrline
+        self.endCrline = threepoints.endCrline
+        self.stepCrline = threepoints.stepCrline
+        self.startDepth = threepoints.startDepth
+        self.endDepth = threepoints.endDepth
+        self.stepDepth = threepoints.stepDepth
+        self.zType = threepoints.zType
+        self.inline_A = threepoints.inline_A
+        self.crline_A = threepoints.crline_A
+        self.east_A = threepoints.east_A
+        self.north_A = threepoints.north_A
+        self.inline_B = threepoints.inline_B
+        self.crline_B = threepoints.crline_B
+        self.east_B = threepoints.east_B
+        self.north_B = threepoints.north_B
+        self.inline_C = threepoints.inline_C
+        self.crline_C = threepoints.crline_C
+        self.east_C = threepoints.east_C
+        self.north_C = threepoints.north_C
         #--------------------
         self.inline_bin = None
         self.crline_bin = None
         self.area = None
         self.invertedAxis = None
         self.azimuth = None
-        if file is not None:
-            self._read_from_file(file_path)
-            self._bin_size()
-            self._basic()
-            self._coordinate_conversion()
-            self.azimuth_and_invertedAxis()
+        # if file is not None:
+            # self._read_from_file(file_path)
+        self._bin_size()
+        self._basic()
+        self._coordinate_conversion()
+        self.azimuth_and_invertedAxis()
 
     def _basic(self):
         self.nEast = (self.endInline - self.startInline) // \
@@ -67,26 +67,6 @@ class SurveySetting(object):
         self.stepNorth = math.sqrt(
             (self.north_B - self.north_A)**2 + (self.east_B - self.east_A)**2) / \
                 ((self.crline_B - self.crline_A) / self.stepCrline)
-
-    def _read_from_file(self, file_path):
-        with file_path.open('r') as rf:
-            survey_dict = json.load(rf)
-        self.startInline = survey_dict["inline_range"][0]
-        self.endInline = survey_dict["inline_range"][1]
-        self.stepInline = survey_dict["inline_range"][2]
-        self.startCrline = survey_dict["crline_range"][0]
-        self.endCrline = survey_dict["crline_range"][1]
-        self.stepCrline = survey_dict["crline_range"][2]
-        self.startDepth = survey_dict["z_range"][3]
-        self.endDepth = survey_dict["z_range"][0]
-        self.stepDepth = survey_dict["z_range"][1]
-        self.zType = survey_dict["z_range"][2]
-        self.inline_A, self.crline_A, self.east_A, self.north_A = \
-            survey_dict["point_A"]
-        self.inline_B, self.crline_B, self.east_B, self.north_B = \
-            survey_dict["point_B"]
-        self.inline_C, self.crline_C, self.east_C, self.north_C = \
-            survey_dict["point_C"]
 
     @classmethod
     def angle(x, y):

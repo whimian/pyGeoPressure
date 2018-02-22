@@ -15,9 +15,11 @@ import numpy as np
 
 from .seiSQL import SeisCube
 from .well import Well
+from .survey_setting import SurveySetting
+from .threepoints import ThreePoints
 
 
-class Survey(object):
+class Survey(SurveySetting):
     """
     Survey object for combining seismic data and well log data.
 
@@ -48,12 +50,14 @@ class Survey(object):
     """
     def __init__(self, json_file):
         self.json_file = json_file
+        self.setting_json = None
         self.seis_json = None
         self.well_json = None
         self.wells = dict()
         self.seisCube = None
         self.inl_crl = dict()
         self._parse_json()
+        super(SurveySetting, self).__init__(ThreePoints(self.setting_json))
         self._add_seis_wells()
 
     def _parse_json(self):
@@ -62,6 +66,7 @@ class Survey(object):
                 params = json.load(fin)
                 self.seis_json = params['seis']
                 self.well_json = params['wells']
+                self.setting_json = params['setting']
         except Exception as inst:
             print(inst)
 
@@ -75,46 +80,7 @@ class Survey(object):
             self.inl_crl[well.well_name] = loc
 
     def _tie(self, well):
-        w_east = well.loc[0]
-        w_north = well.loc[1]
-        gamma_x = (self.seisCube.east_B - self.seisCube.east_A) / \
-            (self.seisCube.crline_B - self.seisCube.crline_A)
-        beta_x = (self.seisCube.east_C - self.seisCube.east_B) / \
-            (self.seisCube.inline_C - self.seisCube.inline_B)
-        alpha_x = self.seisCube.east_A - \
-            beta_x * self.seisCube.inline_A - \
-            gamma_x * self.seisCube.crline_A
-        gamma_y = (self.seisCube.north_B - self.seisCube.north_A) / \
-            (self.seisCube.crline_B - self.seisCube.crline_A)
-        beta_y = (self.seisCube.north_C - self.seisCube.north_B) / \
-            (self.seisCube.inline_C - self.seisCube.inline_B)
-        alpha_y = self.seisCube.north_A - \
-            beta_y * self.seisCube.inline_A - \
-            gamma_y * self.seisCube.crline_A
-
-        d = np.matrix([[w_east - alpha_x], [w_north - alpha_y]])
-        G = np.matrix([[beta_x, gamma_x], [beta_y, gamma_y]])
-        m = G.I * d
-
-        m = m.astype(int)
-        # w_inline, w_xline = m[0][0], m[1][0]
-
-        inline, crline = int(m[0][0]), int(m[1][0])
-        param_in = (inline - self.seisCube.startInline) // \
-            self.seisCube.stepInline + \
-            ((inline - self.seisCube.startInline) %
-             self.seisCube.stepInline) // \
-            (self.seisCube.stepInline / 2)
-        inline = self.seisCube.startInline + \
-            self.seisCube.stepInline * param_in
-        param_cr = (crline - self.seisCube.startCrline) // \
-            self.seisCube.stepCrline + \
-            ((inline - self.seisCube.startCrline) %
-             self.seisCube.stepCrline) // \
-            (self.seisCube.stepCrline)
-        crline = self.seisCube.startCrline + \
-            self.seisCube.stepCrline * param_cr
-        return (int(inline), int(crline))
+        return self.coord_2_line(well.loc)
 
     def add_well(self, well):
         loc = self._tie(well)
@@ -231,43 +197,3 @@ class Survey(object):
             sparse_list.append([w_inline, w_crline, d])
 
         return sparse_list
-
-
-# region Store
-    # def _cal_setting(self):
-    #     self.nNorth = (self.endCrline - self.startCrline) // \
-    #         self.stepCrline + 1
-    #     self.nEast = (self.endInline - self.startInline) // \
-    #         self.stepInline + 1
-    #     self.stepEast = np.sqrt((self.north_C - self.north_B)**2 +
-    #                             (self.east_C - east_B)**2) / \
-    #         ((self.inline_C - self.inline_B) //
-    #             self.stepInline)
-    #     self.stepNorth = np.sqrt((self.north_B - self.north_A)**2 +
-    #                              (self.east_B - east_A)**2) / \
-    #         ((self.crline_B - self.crline_A) //
-    #             self.stepCrline)
-    #     # point D helps make ABCD a rectangle
-    #     inline_D = self.inline_C
-    #     crline_D = self.crline_A
-    #     east_D = east_A + east_C - east_B
-    #     north_D = north_A + north_C - north_B
-
-    #     angleNorth = self._angle(east_A, north_A, east_B, north_B)
-    #     angleEast = self._angle(east_A, north_A, east_D, north_D)
-
-    # def _angle(self, x1, y1, x2, y2):
-    #     angle = 0
-    #     x = x2 - x1
-    #     y = y2 - y1
-    #     arctanAngle = np.arctan(y / x)
-    #     if x > 0 and y > 0:
-    #         angle = arctanAngle
-    #     elif x > 0 and y < 0:
-    #         angle = 2 * np.pi + arctanAngle
-    #     elif x < 0 and y > 0:
-    #         angle = np.pi + arctanAngle
-    #     elif x < 0 and y < 0:
-    #         angle = np.pi + arctanAngle
-    #     return angle
-# endregion

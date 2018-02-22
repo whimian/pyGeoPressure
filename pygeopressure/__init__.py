@@ -6,6 +6,8 @@ from pygeopressure.basic.seiSQL import SeisCube
 from pygeopressure.basic.seiSEGY import SeiSEGY
 from pygeopressure.basic.survey import Survey
 from pygeopressure.basic.reader import Reader
+from pygeopressure.basic.survey_setting import SurveySetting
+from pygeopressure.basic.threepoints import ThreePoints
 from pygeopressure.velocity.smoothing import smooth, smooth_2d, smooth_trace
 from pygeopressure.velocity.conversion import rms2int, int2rms, int2avg, avg2int, twt2depth
 from pygeopressure.velocity.interpolation import interp_DW, spline_1d
