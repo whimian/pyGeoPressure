@@ -57,7 +57,7 @@ class Survey(SurveySetting):
         self.seisCube = None
         self.inl_crl = dict()
         self._parse_json()
-        super(SurveySetting, self).__init__(ThreePoints(self.setting_json))
+        super(Survey, self).__init__(ThreePoints(self.setting_json))
         self._add_seis_wells()
 
     def _parse_json(self):

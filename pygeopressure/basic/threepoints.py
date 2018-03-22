@@ -122,14 +122,14 @@ class Not_threepoints_v1_Exception(Exception):
     def __init__(self, message=None):
         self.message = message
         self.message = "Not three points V1 file"
-        super(Exception, self).__init__(self.message)
+        super(Not_threepoints_v1_Exception, self).__init__(self.message)
 
 
 class Not_threepoints_v2_Exception(Exception):
     def __init__(self, message=None):
         self.message = message
         self.message = "Not three points V2 file"
-        super(Exception, self).__init__(self.message)
+        super(Not_threepoints_v2_Exception, self).__init__(self.message)
 
 
 # if __name__ == '__main__':
