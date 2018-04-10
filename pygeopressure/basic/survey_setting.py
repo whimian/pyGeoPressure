@@ -7,11 +7,12 @@ Created on Sat Jan 20 2018
 from __future__ import absolute_import, print_function, division
 from __future__ import unicode_literals, with_statement
 
-import json
 import math
 
-from . import Path
 import numpy as np
+
+from . import Path
+
 
 __author__ = "Yu Hao"
 __copyright__ = "Copyright (C) 2018 Yu Hao"
@@ -68,7 +69,7 @@ class SurveySetting(object):
             (self.north_B - self.north_A)**2 + (self.east_B - self.east_A)**2) / \
                 ((self.crline_B - self.crline_A) / self.stepCrline)
 
-    @classmethod
+    @staticmethod
     def angle(x, y):
         """
         Return angle from 0 to pi

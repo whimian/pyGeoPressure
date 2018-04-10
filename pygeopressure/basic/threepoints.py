@@ -9,7 +9,9 @@ import json
 __author__ = "yuhao"
 
 class ThreePoints(object):
-
+    """
+    inline, crossline and z coordinates of three points in survey
+    """
     def __init__(self, json_file=None):
         # self.json_file = json_file
         self.dict_survey = None
@@ -51,21 +53,21 @@ class ThreePoints(object):
 
     def _read_json(self):
         try:
-            with open(self.json_file, 'r') as file:
-                self.dict_survey = json.load(file)
-        except Exception as inst:
-            print(inst.message)
+            with open(self.json_file, 'r') as fl:
+                self.dict_survey = json.load(fl)
+        except ValueError as e:
+            print(e.message)
 
     def _parse_survey_setting(self, v=None):
         if v == 1:
             try:
                 self._parse_survey_setting_v1()
-            except:
+            except Not_threepoints_v1_Exception:
                 print("cannot parse file")
         elif v == 2:
             try:
                 self._parse_survey_setting_v2()
-            except:
+            except Not_threepoints_v2_Exception:
                 print("cannot parse file")
         else:
             try:
@@ -91,8 +93,8 @@ class ThreePoints(object):
             crline_range = self.dict_survey["crline"]
             self.startCrline, self.endCrline, self.stepCrline = crline_range
             z_range = self.dict_survey["depth"]
-            self.startDepth, self.endDepth,  self.stepDepth = z_range
-        except KeyError as e:
+            self.startDepth, self.endDepth, self.stepDepth = z_range
+        except KeyError:
             raise Not_threepoints_v1_Exception
             # print(e.message)
 
@@ -114,7 +116,7 @@ class ThreePoints(object):
                 self.dict_survey["point_B"]
             self.inline_C, self.crline_C, self.east_C, self.north_C = \
                 self.dict_survey["point_C"]
-        except KeyError as e:
+        except KeyError:
             # print(e.message)
             raise Not_threepoints_v2_Exception
 

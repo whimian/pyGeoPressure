@@ -4,6 +4,8 @@ class for survey index definition
 
 created on Jun 10th 2017
 """
+from __future__ import print_function
+
 __author__ = "yuhao"
 
 

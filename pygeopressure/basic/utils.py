@@ -7,6 +7,9 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import sys
+
+import numpy as np
+
 PY_VER = sys.version_info.major
 
 if PY_VER == 2:
@@ -14,8 +17,6 @@ if PY_VER == 2:
     from singledispatch import singledispatch
 else:
     from functools import singledispatch, update_wrapper
-
-import numpy as np
 
 
 def rmse(measure, predict):

@@ -8,23 +8,21 @@ from __future__ import division, print_function
 
 __author__ = "yuhao"
 
-import sqlite3
-import os
-import json
+
 from shutil import copyfile
 from builtins import range
 from itertools import product
 
-import numpy as np
-
-from . import Path
+# import numpy as np
 
 import segyio
 
-from .utils import split_sequence, methdispatch
+from . import Path
+
+from .utils import  methdispatch
 from .vawt import wiggles, img
 from .indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
-from .well_log import Log
+# from .well_log import Log
 
 
 class SeiSEGY(object):

@@ -18,15 +18,15 @@ def test__unloading_curve():
 
 @pytest.fixture()
 def obp():
-    return np.full((3,), fill_value=100)
+    return np.full((3,), fill_value=100, dtype=np.float32)
 
 @pytest.fixture()
 def vel():
-    return np.full((3,), fill_value=2112)
+    return np.full((3,), fill_value=2112, dtype=np.float32)
 
 def test__bowers(vel, obp):
     assert (ppp.bowers(vel, obp, 1, 1, 98, 0.5, 4000) == \
-        np.full((3,), fill_value=64)).all()
+        np.full((3,), fill_value=64, dtype=np.float32)).all()
     # u = np.array([1,2,3])
     # assert (ppp.bowers_varu(vel, obp, u, 0, 98, 0.5, 4000, buffer=1) == \
     #     np.array([64, 64, 64])).all()
