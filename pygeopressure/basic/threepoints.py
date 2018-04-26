@@ -2,9 +2,11 @@
 """
 Created on Feb. 14th 2018
 """
-from __future__ import division, print_function
+from __future__ import division, print_function, unicode_literals
 
 import json
+
+from builtins import str
 
 __author__ = "yuhao"
 
@@ -13,9 +15,8 @@ class ThreePoints(object):
     inline, crossline and z coordinates of three points in survey
     """
     def __init__(self, json_file=None):
-        # self.json_file = json_file
+        self.json_file = None
         self.dict_survey = None
-
         self.startInline = None
         self.endInline = None
         self.stepInline = None
@@ -38,7 +39,6 @@ class ThreePoints(object):
         self.crline_C = None
         self.east_C = None
         self.north_C = None
-
         if json_file is not None:
             if isinstance(json_file, str):
                 self.json_file = json_file
@@ -46,10 +46,8 @@ class ThreePoints(object):
             elif isinstance(json_file, dict):
                 self.dict_survey = json_file
             self._parse_survey_setting()
-        # if self.json_file is not None:
-        #     self._read_json()
-            # self._parse_survey_setting()
-        # self._parse_survey_setting()
+        else:
+            raise Exception("json_file is None")
 
     def _read_json(self):
         try:
