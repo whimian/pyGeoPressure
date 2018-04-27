@@ -9,6 +9,8 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f79d873803d4ef1a3c306603fcfd767)](https://www.codacy.com/app/whimian/pyGeoPressure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/pyGeoPressure&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/whimian/pyGeoPressure/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/pyGeoPressure)
 
+[![Waffle.io - Columns and their card count](https://badge.waffle.io/whimian/pyGeoPressure.svg?columns=all)](https://waffle.io/whimian/pyGeoPressure)
+
 Tools for pore pressure prediction using well log data and seismic velocity data.
 
 Seismic velocity data are stored using sqlite, and well log data are stored in pandas hdf5 file.
