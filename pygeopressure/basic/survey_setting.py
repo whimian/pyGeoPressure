@@ -265,6 +265,45 @@ class SurveySetting(object):
         y_coord += shift_y
         return x_coord, y_coord
 
+    def draw_survey_line(self, ax):
+        func = self.line_2_coord
+        min_inline = self.startInline
+        max_inline = self.endInline
+        step_inline = self.stepInline
+        if min_inline > max_inline:
+            min_inline, max_inline = max_inline, min_inline
+            step_inline = -step_inline
+
+        min_crline = self.startCrline
+        max_crline = self.endCrline
+        step_crline = self.stepCrline
+        if min_crline > max_crline:
+            min_crline, max_crline = max_crline, min_crline
+            step_crline = -step_crline
+
+        for inl in range(min_inline, max_inline, step_inline):
+
+            x_1, y_1 = func(inl, max_crline)
+            x_2, y_2 = func(inl, min_crline)
+            ax.plot([x_1, x_2],
+                    [y_1, y_2], 'r', alpha=0.5, linewidth=0.1)
+
+        for crl in range(min_crline, max_crline, step_crline):
+            x_1, y_1 = func(min_inline, crl)
+            x_2, y_2 = func(max_inline, crl)
+            ax.plot([x_1, x_2],
+                    [y_1, y_2], 'r', alpha=0.5, linewidth=0.1)
+        ax.set(xlabel="X (Latitude)", ylabel="Y (Longitude)")
+
+        x, y = func(min_inline, min_crline)
+        ax.text(x, y, "{}/{}".format(min_inline, min_crline), color='blue')
+        x, y = func(min_inline, max_crline)
+        ax.text(x, y, "{}/{}".format(min_inline, max_crline), color='blue')
+        x, y = func(max_inline, max_crline)
+        ax.text(x, y, "{}/{}".format(max_inline, max_crline), color='blue')
+        x, y = func(max_inline, min_crline)
+        ax.text(x, y, "{}/{}".format(max_inline, min_crline), color='blue')
+
 if __name__ == '__main__':
     survey_file = Path("C:\\Users", 'yuhao', 'dropbox', 'ui_pygeopressure',
                        'pygeo_root', 'F3', '.survey')
