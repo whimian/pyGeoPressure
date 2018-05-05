@@ -22,6 +22,8 @@ from . import Path
 from .utils import  methdispatch
 from .vawt import wiggles, img
 from .indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
+from pygeopressure.basic.survey_setting import SurveySetting
+from pygeopressure.basic.threepoints import ThreePoints
 # from .well_log import Log
 
 
@@ -74,6 +76,34 @@ class SeiSEGY(object):
             self.nDepth = len(segyfile.samples)
             self.stepDepth = (self.endDepth - self.startDepth) // \
                 (self.nDepth - 1)
+
+            inline_A = self.startInline
+            crline_A = self.startCrline
+            index_A = 0
+            x_A = segyfile.header[index_A][segyio.su.cdpx]
+            y_A = segyfile.header[index_A][segyio.su.cdpy]
+
+            inline_B = inline_A
+            crline_B = self.startCrline + 2 * self.stepCrline
+            index_B = 2
+            x_B = segyfile.header[index_B][segyio.su.cdpx]
+            y_B = segyfile.header[index_B][segyio.su.cdpy]
+
+            inline_C = self.startInline + 2 * self.stepInline
+            crline_C = crline_B
+            index_C = 2 * self.nNorth
+            x_C = segyfile.header[index_C][segyio.su.cdpx]
+            y_C = segyfile.header[index_C][segyio.su.cdpy]
+
+            setting_dict = {
+                "inline_range": [self.startInline, self.endInline, self.stepInline],
+                "crline_range": [self.startCrline, self.endCrline, self.stepCrline],
+                "z_range": [self.startDepth, self.endDepth, self.stepDepth, "unknown"],
+                "point_A": [inline_A, crline_A, x_A, y_A],
+                "point_B": [inline_B, crline_B, x_B, y_B],
+                "point_C": [inline_C, crline_C, x_C, y_C]
+            }
+            self.survey_setting = SurveySetting(ThreePoints(setting_dict))
 
     def inlines(self):
         """
