@@ -68,6 +68,8 @@ class SurveySetting(object):
         self.stepNorth = math.sqrt(
             (self.north_B - self.north_A)**2 + (self.east_B - self.east_A)**2) / \
                 ((self.crline_B - self.crline_A) / self.stepCrline)
+        self.nDepth = (self.endDepth - self.startDepth) // \
+            self.stepDepth + 1
 
     @staticmethod
     def angle(x, y):
