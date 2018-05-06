@@ -93,7 +93,7 @@ class SeiSEGY(object):
 
             inline_C = self.startInline + 2 * self.stepInline
             crline_C = crline_B
-            index_C = 2 * self.nNorth
+            index_C = 2 * self.nNorth + 2
             x_C = segyfile.header[index_C][segyio.su.cdpx]
             y_C = segyfile.header[index_C][segyio.su.cdpy]
 
