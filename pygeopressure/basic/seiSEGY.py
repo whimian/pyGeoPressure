@@ -30,6 +30,8 @@ from pygeopressure.basic.threepoints import ThreePoints
 class SeiSEGY(object):
     def __init__(self, segy_file, like=None):
         self.segy_file = segy_file
+        self.inDepth = False # True if dataset Z is in Depth
+        self.property_type = None
 
         if like is not None:
             if Path(like).exists() and not Path(self.segy_file).exists():
