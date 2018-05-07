@@ -10,7 +10,7 @@ import numpy as np
 from scipy import interpolate
 
 
-def rms2int(twt, rms):
+def rms2int(twt, v_rms):
     r"""
     Convert rms velocity to interval velocity
 
@@ -45,11 +45,16 @@ def rms2int(twt, rms):
             13.        ,  14.73091986])
     """
     v_int = np.ones((len(twt), ))
+    # v_int = np.copy(rms)
     twt = twt*0.001
-    v_int[0] = rms[0]
+    v_int[0] = v_rms[0]
     v_int[1:] = np.sqrt(
-        (rms[1:]**2 * twt[1:] - rms[:-1]**2 * twt[:-1]) / (twt[1:] - twt[:-1])
+        (v_rms[1:]**2 * twt[1:] - v_rms[:-1]**2 * twt[:-1]) / (twt[1:] - twt[:-1])
     )
+    # for i in range(1, v_rms.shape[0]):
+    #     v_int[i] = np.sqrt(
+    #         (v_rms[i]**2 * twt[i] - v_rms[i-1]**2 * twt[i-1]) / (twt[i] - twt[i-1])
+    #     )
 
     return v_int
 
@@ -66,10 +71,13 @@ def int2rms(twt, v_int):
     v_rms : 1-d ndarray
     """
     v_rms = np.ones((len(twt), ))
+    twt = twt*0.001
     v_rms[0] = v_int[0]
-    v_rms[1:] = np.sqrt(
-        (v_int[1:]**2 * (twt[:-1] - twt[1:]) +
-         v_rms[:-1]**2 * twt[:-1]) / twt[1:]
+    # because of the accumulational effect of rms velocity, this func should
+    # not use vectorized notation
+    for i in range(1, v_int.shape[0]):
+        v_rms[i] = np.sqrt(
+            (v_int[i]**2 * (twt[i] - twt[i-1]) + v_rms[i-1]**2 * twt[i-1]) / twt[i]
         )
 
     return v_rms
