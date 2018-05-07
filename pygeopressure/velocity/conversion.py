@@ -17,9 +17,9 @@ def rms2int(twt, rms):
     Parameters
     ----------
     twt : 1-d ndarray
-        input two-way-time array
+        input two-way-time array, in ms
     rms : 1-d nadarray
-        rms velocity array
+        rms velocity array, in m/s
 
     Returns
     -------
@@ -45,9 +45,11 @@ def rms2int(twt, rms):
             13.        ,  14.73091986])
     """
     v_int = np.ones((len(twt), ))
+    twt = twt*0.001
     v_int[0] = rms[0]
-    v_int[1:] = np.sqrt((rms[1:]**2 * twt[1:] - rms[:-1]**2 * twt[:-1]) /
-                        (twt[1:] - twt[:-1]))
+    v_int[1:] = np.sqrt(
+        (rms[1:]**2 * twt[1:] - rms[:-1]**2 * twt[:-1]) / (twt[1:] - twt[:-1])
+    )
 
     return v_int
 
