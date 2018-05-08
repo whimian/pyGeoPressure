@@ -49,11 +49,13 @@ def rms2int(twt, v_rms):
     twt = twt*0.001
     v_int[0] = v_rms[0]
     v_int[1:] = np.sqrt(
-        (v_rms[1:]**2 * twt[1:] - v_rms[:-1]**2 * twt[:-1]) / (twt[1:] - twt[:-1])
+        (v_rms[1:]**2 * twt[1:] - v_rms[:-1]**2 * twt[:-1]) / \
+        (twt[1:] - twt[:-1])
     )
     # for i in range(1, v_rms.shape[0]):
     #     v_int[i] = np.sqrt(
-    #         (v_rms[i]**2 * twt[i] - v_rms[i-1]**2 * twt[i-1]) / (twt[i] - twt[i-1])
+    #         (v_rms[i]**2 * twt[i] - v_rms[i-1]**2 * twt[i-1]) / \
+    #         (twt[i] - twt[i-1])
     #     )
 
     return v_int
@@ -101,10 +103,11 @@ def int2avg(twt, v_int):
               V_{avg}[i-1] t_{i-1}
     """
     v_avg = np.ones((len(twt), ))
+    twt = twt * 0.001
     v_avg[0] = v_int[0]
-    v_avg[1:] = (v_avg[:-1] * twt[:-1] + v_int[1:] * (twt[1:] - twt[:-1])) /\
-        twt[1:]
-
+    for i in range(1, v_int.shape[0]):
+        v_avg[i] = (v_avg[i-1] * twt[i-1] + v_int[i] * (twt[i] - twt[i-1])) / \
+            twt[i]
     return v_avg
 
 
@@ -120,6 +123,7 @@ def avg2int(twt, v_avg):
     v_int : 1-d ndarray
     """
     v_int = np.ones((len(twt), ))
+    twt = twt * 0.001
     v_int[0] = v_avg[0]
     v_int[1:] = (v_avg[1:]*twt[1:] - v_avg[:-1]*twt[:-1]) /\
         (twt[1:] - twt[:-1])
