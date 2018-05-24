@@ -22,6 +22,7 @@ class SurveySetting(object):
     class to hold survey settings and compute additional coordination property
     """
     def __init__(self, threepoints):
+        self.threepoints = threepoints
         self.startInline = threepoints.startInline
         self.endInline = threepoints.endInline
         self.stepInline = threepoints.stepInline
