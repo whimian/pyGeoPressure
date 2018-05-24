@@ -131,12 +131,14 @@ def avg2int(twt, v_avg):
     return v_int
 
 
-def twt2depth(twt, v_avg, stepDepth, startDepth=None, endDepth=None):
+def twt2depth(twt, v_avg, prop_2_convert,
+              stepDepth=4, startDepth=None, endDepth=None):
     """
     Parameters
     ----------
     twt : 1-d ndarray
     v_avg : 1-d ndarray
+    prop_2_convert: 1-d ndarray
     stepDepth : scalar
     startDpeth (optional): scalar
     endDepth (optional): scalar
@@ -145,18 +147,19 @@ def twt2depth(twt, v_avg, stepDepth, startDepth=None, endDepth=None):
     -------
     newDepth : 1-d ndarray
         new depth array
-    new_v_avg : 1-d ndarray
+    new_prop_2_convert : 1-d ndarray
         average velocity in depth domain
     """
     depth = np.ones((len(twt), ))
-    depth[:] = twt[:] * v_avg[:]
+    twt = twt * 0.001
+    depth = twt * v_avg
     startDepth = depth[0] if startDepth is None else startDepth
     endDepth = depth[-1] if endDepth is None else endDepth
-    newDepth = np.arange(startDepth, endDepth, stepDepth)
-    f = interpolate.interp1d(depth, v_avg, kind='cubic')
-    new_v_avg = f(newDepth)
+    newDepth = np.arange(startDepth, endDepth+0.01, stepDepth)
+    f = interpolate.interp1d(depth, prop_2_convert, kind='cubic')
+    new_prop_2_convert = f(newDepth)
 
-    return (newDepth, new_v_avg)
+    return (newDepth, new_prop_2_convert)
 
 if __name__ == "__main__":
     import doctest
