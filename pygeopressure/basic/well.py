@@ -290,40 +290,14 @@ class Well(object):
         log.prop_type = "PRE"
         return log
 
-
-class Well_Storage(object):
-    """
-    interface to hdf5 file storing well logs
-    """
-    def __init__(self, hdf5_file=None):
-        self.hdf5_file = hdf5_file
-
-    @property
-    def wells(self):
-        well_names = None
-        with pd.HDFStore(self.hdf5_file) as store:
-            well_names = [key[1:] for key in store.keys()]
-        return well_names
-
-    def read_pseudo_las(self, las_file, well_name):
-        data = pd.read_csv(las_file, sep='\t')
-        data = data.replace(1.0e30, np.nan)  # replace 1e30 with np.nan
-        data = data.round({'Depth(m)': 1})  # round depth to 1 decimal
-        data.to_hdf(self.hdf5_file, well_name)
-
-    def get_well_data(self, well_name):
+    def save_params(self):
         try:
-            with pd.HDFStore(self.hdf5_file) as store:
-                return store[well_name]
-        except KeyError:
-            print("No well named {}".format(well_name))
+            with open(self.json_file, "w") as fl:
+                json.dump(self.params, fl, indent=4)
+        except KeyError as inst:
+            print(inst)
 
-    def remove_well(self, well_name):
-        try:
-            with pd.HDFStore(self.hdf5_file) as store:
-                return store.remove(well_name)
-        except KeyError:
-            print("No well named {}".format(well_name))
+
 
 #region
     # def read_las(self, las_file=None):
