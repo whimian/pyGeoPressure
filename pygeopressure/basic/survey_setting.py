@@ -296,7 +296,7 @@ class SurveySetting(object):
             x_2, y_2 = func(max_inline, crl)
             ax.plot([x_1, x_2],
                     [y_1, y_2], 'r', alpha=0.5, linewidth=0.1)
-        ax.set(xlabel="X (Latitude)", ylabel="Y (Longitude)")
+        ax.set(xlabel="X (Longitude)", ylabel="Y (Latitude)")
 
         x, y = func(min_inline, min_crline)
         ax.text(x, y, "{}/{}".format(min_inline, min_crline), color='blue')
