@@ -1,6 +1,6 @@
 # from pygeopressure.basic.laSQL import Well
 from pygeopressure.basic.well import Well
-from pygeopressure.basic.well_storage import Well_Storage
+from pygeopressure.basic.well_storage import WellStorage
 from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.well_log import (
     smooth_log, truncate_log, interpolate_log, shale,
@@ -9,6 +9,7 @@ from pygeopressure.basic.seiSQL import SeisCube
 from pygeopressure.basic.seiSEGY import SeiSEGY
 from pygeopressure.basic.survey import Survey
 from pygeopressure.basic.reader import Reader
+from pygeopressure.basic.las import LasData
 from pygeopressure.basic.survey_setting import SurveySetting
 from pygeopressure.basic.threepoints import ThreePoints
 from pygeopressure.velocity.smoothing import smooth, smooth_2d, smooth_trace

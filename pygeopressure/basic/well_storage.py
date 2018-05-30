@@ -21,7 +21,7 @@ from pygeopressure.basic.las_reader import LASReader
 from . import Path
 
 
-class Well_Storage(object):
+class WellStorage(object):
     """
     interface to hdf5 file storing well logs
 
@@ -68,4 +68,13 @@ class Well_Storage(object):
             print("No well named {}".format(well_name))
 
     def add_well(self, well_name, well_data_frame):
+        well_name = well_name.lower().replace('-', '_')
         well_data_frame.to_hdf(self.hdf5_file, well_name)
+
+    def logs_into_well(self, well_name, logs_data_frame):
+        well_name = well_name.lower().replace('-', '_')
+        well_df = self.get_well_data(well_name)
+        new_df = well_df.join(
+            logs_data_frame.set_index("Depth(m)"), on="Depth(m)")
+        self.remove_well(well_name)
+        self.add_well(well_name, new_df)
