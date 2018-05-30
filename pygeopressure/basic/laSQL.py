@@ -10,7 +10,7 @@ import sqlite3
 import numpy as np
 # from scipy import interpolate
 
-from .las import LASReader
+from .las_reader import LASReader
 from .well_log import Log
 
 
