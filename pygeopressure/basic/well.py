@@ -17,6 +17,7 @@ from ..pressure.hydrostatic import hydrostatic_pressure
 from ..pressure.pore_pressure import eaton
 from ..velocity.extrapolate import normal
 from .well_log import Log
+from .well_storage import WellStorage
 
 
 class Well(object):
@@ -56,9 +57,9 @@ class Well(object):
 
     def _read_hdf(self):
         try:
-            with pd.HDFStore(self.hdf_file) as store:
-                self.data_frame = store[
-                    self.well_name.lower().replace('-', '_')]
+            storage = WellStorage(self.hdf_file)
+            self.data_frame = storage.get_well_data(
+                self.well_name.lower().replace('-', '_'))
             self.in_hdf = True
         except Exception as inst:
             print(inst)
@@ -158,9 +159,8 @@ class Well(object):
 
     def save_well(self):
         try:
-            with pd.HDFStore(self.hdf_file) as store:
-                store[self.well_name.lower().replace('-', '_')] =  \
-                    self.data_frame
+            storage = WellStorage(self.hdf_file)
+            storage.update_well(self.well_name, self.data_frame)
         except Exception as inst:
             print(inst)
 
