@@ -144,8 +144,10 @@ class Well(object):
                     'Depth(m)':log.depth,
                     '{}({})'.format(
                         log.descr.replace(' ', '_'), log.units): log.data})
-            self.data_frame = pd.merge(self.data_frame, temp_dataframe,
-                                       how='outer')
+            # self.data_frame = pd.merge(self.data_frame, temp_dataframe,
+            #                            how='outer')
+            self.data_frame = self.data_frame.join(
+                temp_dataframe.set_index("Depth(m)"), on="Depth(m)")
 
     def drop_log(self, log_name):
         if log_name in self.unit_dict.keys():
