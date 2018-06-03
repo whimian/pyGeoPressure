@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-an interface to a hdf5 storage
+an interface to a hdf5 storage file
 
 Created on Thu May 10 2018
 """
@@ -37,22 +37,6 @@ class WellStorage(object):
             well_names = [key[1:] for key in store.keys()]
         return well_names
 
-    # def read_pseudo_las(self, las_file, well_name):
-    #     data = pd.read_csv(las_file, sep='\t')
-    #     data = data.replace(1.0e30, np.nan)  # replace 1e30 with np.nan
-    #     data = data.round({'Depth(m)': 1})  # round depth to 1 decimal
-    #     data.to_hdf(self.hdf5_file, well_name)
-
-    # def read_las(self, las_file):
-    #     if Path(las_file).exists():
-    #         las = LASReader(str(Path(las_file)), null_subs=np.nan)
-    #         well_name = las.well.items['WELL'].data
-    #         import pandas as pd
-    #         df = pd.DataFrame(las.data2d, columns=[c for c in las.curves.names])
-    #         if len(las.curves.names) > 0:
-    #             df = df.set_index(las.curves.names[0])
-    #         return df
-
     def get_well_data(self, well_name):
         try:
             with pd.HDFStore(self.hdf5_file) as store:
@@ -70,6 +54,10 @@ class WellStorage(object):
     def add_well(self, well_name, well_data_frame):
         well_name = well_name.lower().replace('-', '_')
         well_data_frame.to_hdf(self.hdf5_file, well_name)
+
+    def update_well(self, well_name, well_data_frame):
+        with pd.HDFStore(self.hdf5_file) as store:
+            store[well_name.lower().replace('-', '_')] = well_data_frame
 
     def logs_into_well(self, well_name, logs_data_frame):
         well_name = well_name.lower().replace('-', '_')
