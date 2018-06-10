@@ -156,6 +156,14 @@ class Well(object):
         else:
             print("no log named {}".format(log_name))
 
+    def rename_log(self, log_name, new_log_name):
+        if log_name in self.logs:
+            log = self.get_log(log_name)
+            old_str = "{}({})".format(log.descr.replace(' ', '_'), log.units)
+            new_str = "{}({})".format(new_log_name.replace(' ', '_'), log.units)
+            self.data_frame = self.data_frame.rename(index=str,
+                                                     columns={old_str: new_str})
+
     def save_well(self):
         try:
             storage = WellStorage(self.hdf_file)
