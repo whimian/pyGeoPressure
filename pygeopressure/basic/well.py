@@ -150,9 +150,10 @@ class Well(object):
             temp_dataframe.set_index("Depth(m)"), on="Depth(m)")
 
     def drop_log(self, log_name):
-        if log_name in self.unit_dict.keys():
-            column_name = '{}({})'.format(log_name, self.unit_dict[log_name])
-            del self.data_frame[column_name]
+        if log_name in self.logs:
+            log = self.get_log(log_name)
+            col = "{}({})".format(log.descr.replace(' ', '_'), log.units)
+            self.data_frame = self.data_frame.drop(col, 1)
         else:
             print("no log named {}".format(log_name))
 
