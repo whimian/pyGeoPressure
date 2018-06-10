@@ -62,7 +62,14 @@ class WellStorage(object):
     def logs_into_well(self, well_name, logs_data_frame):
         well_name = well_name.lower().replace('-', '_')
         well_df = self.get_well_data(well_name)
-        new_df = well_df.join(
-            logs_data_frame.set_index("Depth(m)"), on="Depth(m)")
-        self.remove_well(well_name)
-        self.add_well(well_name, new_df)
+        logs_in_wells = well_df.columns.tolist()
+        logs_to_add = logs_data_frame.columns.tolist()
+        duplicate_columns = list(set(logs_in_wells).intersection(logs_to_add))
+        duplicate_columns.remove("Depth(m)")
+        if not duplicate_columns:
+            new_df = well_df.join(
+                logs_data_frame.set_index("Depth(m)"), on="Depth(m)")
+            self.remove_well(well_name)
+            self.add_well(well_name, new_df)
+        else:
+            raise Warning("Duplicate logs: {}".format(duplicate_columns))
