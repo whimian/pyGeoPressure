@@ -181,6 +181,19 @@ class Well(object):
         else:
             raise Warning("Mismatch")
 
+    def export(self, file_path, logs_to_export=None, full_las=False,
+               null_value=1e30):
+        if logs_to_export is None:
+            logs_to_export = self.logs
+        keys_to_export = ["Depth(m)"]
+        for log_name in logs_to_export:
+            log = self.get_log(log_name)
+            keys_to_export.append(
+                "{}({})".format(log.descr.replace(' ', '_'), log.units))
+        self.data_frame.to_csv(
+            file_path, sep='\t', na_rep="{}".format(null_value),
+            columns=keys_to_export, index=False)
+
     def save_well(self):
         try:
             storage = WellStorage(self.hdf_file)
