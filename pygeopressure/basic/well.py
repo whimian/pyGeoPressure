@@ -138,16 +138,24 @@ class Well(object):
         else:
             return output_list
 
-    def add_log(self, log):
-        temp_dataframe = pd.DataFrame(
-            data={
-                'Depth(m)':log.depth,
-                '{}({})'.format(
-                    log.descr.replace(' ', '_'), log.units): log.data})
-        # self.data_frame = pd.merge(self.data_frame, temp_dataframe,
-        #                            how='outer')
-        self.data_frame = self.data_frame.join(
-            temp_dataframe.set_index("Depth(m)"), on="Depth(m)")
+    def add_log(self, log, name=None, unit=None):
+        log_name = log.descr.replace(' ', '_')
+        log_unit = log.units
+        if name is not None:
+            log_name = name
+        if unit is not None:
+            log_unit = unit
+        if log_name not in self.logs:
+            temp_dataframe = pd.DataFrame(
+                data={
+                    'Depth(m)':log.depth,
+                    '{}({})'.format(
+                        log_name, log_unit): log.data})
+            self.data_frame = self.data_frame.join(
+                temp_dataframe.set_index("Depth(m)"), on="Depth(m)")
+        else:
+            raise Warning("{} already exists in well {}".format(
+                log_name, self.well_name))
 
     def drop_log(self, log_name):
         if log_name in self.logs:
