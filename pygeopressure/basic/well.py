@@ -173,6 +173,14 @@ class Well(object):
             self.data_frame = self.data_frame.rename(index=str,
                                                      columns={old_str: new_str})
 
+    def update_log(self, log_name, log):
+        old_log = self.get_log(log_name)
+        if old_log.depth == log.depth:
+            self.data_frame["{}({})".format(
+                old_log.descr.replace(' ', '_'), old_log.units)] = log.data
+        else:
+            raise Warning("Mismatch")
+
     def save_well(self):
         try:
             storage = WellStorage(self.hdf_file)
