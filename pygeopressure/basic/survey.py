@@ -6,10 +6,13 @@ Created on Fri Dec 11 20:24:38 2015
 """
 from __future__ import absolute_import, division, print_function
 
+from builtins import str
+
 __author__ = "yuhao"
 
 import json
 from itertools import product
+from . import Path
 
 import numpy as np
 
@@ -25,8 +28,8 @@ class Survey(SurveySetting):
 
     Parameters
     ----------
-    json_file : str
-        survey information file.
+    survey_dir : Path
+        survey directory.
 
     Attributes
     ----------
@@ -48,33 +51,32 @@ class Survey(SurveySetting):
     get_seis(well_name, attr, radius=0)
         get seismic data in the vicinity of a given well
     """
-    def __init__(self, json_file):
-        self.json_file = json_file
+    def __init__(self, survey_dir):
+        self.survey_dir = survey_dir
         self.setting_json = None
-        self.seis_json = None
-        self.well_json = None
+        self._check_dir()
+        super(Survey, self).__init__(ThreePoints(self.setting_json))
         self.wells = dict()
         self.seisCube = None
         self.inl_crl = dict()
-        self._parse_json()
-        super(Survey, self).__init__(ThreePoints(self.setting_json))
         self._add_seis_wells()
 
-    def _parse_json(self):
-        try:
-            with open(self.json_file) as fin:
-                params = json.load(fin)
-                self.seis_json = params['seis']
-                self.well_json = params['wells']
-                self.setting_json = params['setting']
-        except Exception as inst:
-            print(inst)
+    def _check_dir(self):
+        survey_file = Path(self.survey_dir, '.survey')
+        if survey_file.exists():
+            self.setting_json = str(survey_file)
+        else:
+            raise Exception("No survey setting file in folder!")
 
     def _add_seis_wells(self):
-        self.seisCube = SeisCube(self.seis_json)
-        for jsf in self.well_json:
-            temp = Well(jsf)
+        # self.seisCube = SeisCube(self.seis_json)
+        well_dir = self.survey_dir / "Wellinfo"
+        for well_name in get_data_files(well_dir):
+            temp = Well(str(self.survey_dir.absolute() / "Wellinfo" / ".{}".format(well_name)))
             self.wells[temp.well_name] = temp
+        # for jsf in self.well_json:
+        #     temp = Well(jsf)
+        #     self.wells[temp.well_name] = temp
         for well in self.wells.values():
             loc = self._tie(well)
             self.inl_crl[well.well_name] = loc
@@ -197,3 +199,52 @@ class Survey(SurveySetting):
             sparse_list.append([w_inline, w_crline, d])
 
         return sparse_list
+
+# -----------------------------------------------------------------------------
+# Utilities
+# -----------------------------------------------------------------------------
+def create_survey_directory(root_dir, survey_name):
+    """
+    Create survey folder structure
+
+    Parameters
+    ----------
+    root_dir : Path
+        Root directory for storing surveys
+    survey_nam : str
+    """
+    survey_root = root_dir / survey_name
+    try:
+        survey_root.mkdir()
+        dir_to_create = [root_dir / survey_name / 'Seismics',
+                         root_dir / survey_name / 'Wellinfo',
+                         root_dir / survey_name / 'Surfaces']
+        for directory in dir_to_create:
+            directory.mkdir()
+        # new folder structure does not require folder dot file
+        #     file_path = directory / ".{}".format(str(directory.name).lower())
+        #     file_path.touch()
+        return survey_root
+    except WindowsError:
+        raise DuplicateSurveyNameExeption()
+
+
+class DuplicateSurveyNameExeption(Exception):
+    def __init__(self):
+        self.message = ""
+        super(DuplicateSurveyNameExeption, self).__init__(self.message)
+
+
+def get_data_files(dir_path):
+    """
+    get all dot file with given path
+
+    dir_path: Path
+    """
+    fnames = list()
+    # dir_path = Path(dir_path)
+    if dir_path.exists():
+        if list(dir_path.glob('.*')):
+            for item in list(dir_path.glob('.*')):
+                fnames.append(item.name[1:])
+    return fnames
