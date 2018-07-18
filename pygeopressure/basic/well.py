@@ -290,17 +290,21 @@ class Well(object):
             print(inst)
     # Presure -----------------------------------------------------------------
     def _get_pressure(self, pres_key, ref=None, hydrodynamic=0):
-        # obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(self.depth,
-                                     kelly_bushing=self.kelly_bushing,
-                                     depth_w=self.water_depth)
-        depth = self.params[pres_key]["depth"]
-        coef = None
+        pres_to_get = None
         try:
-            coef = self.params[pres_key]["coef"]
+            pres_to_get = self.params[pres_key]
         except KeyError:
             print("{}: Cannot find {}".format(self.well_name, pres_key))
             return Log()
+        hydro = hydrostatic_pressure(self.depth,
+                                     kelly_bushing=self.kelly_bushing,
+                                     depth_w=self.water_depth)
+        depth = pres_to_get["depth"]
+        coef = pres_to_get["coef"]
+        pres = pres_to_get["data"]
+        if not coef:
+            coef = pres
+            hydro = np.ones(hydro.shape)
         obp_depth = self.depth # obp_log.depth
         pres_data = list()
         pres_depth = list()
