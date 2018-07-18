@@ -99,13 +99,14 @@ class Well(object):
     @property
     def hydrostatic(self):
         try:
-            temp_log = self.get_log('Overburden_Pressure')
+            # temp_log = self.get_log('Overburden_Pressure')
             return hydrostatic_pressure(
-                np.array(temp_log.depth),
+                self.depth,
                 kelly_bushing=self.kelly_bushing,
                 depth_w=self.water_depth)
-        except KeyError:
-            print("No 'Overburden_Pressure' log found.")
+        except Exception as ex:
+            print(ex.message)
+            # print("No 'Overburden_Pressure' log found.")
 
     @property
     def lithostatic(self):
@@ -123,8 +124,8 @@ class Well(object):
         try:
             a = self.params['nct']['a']
             b = self.params['nct']['b']
-            temp_log = self.get_log('Overburden_Pressure')
-            return normal(x=np.array(temp_log.depth), a=a, b=b)
+            # temp_log = self.get_log('Overburden_Pressure')
+            return normal(x=self.depth, a=a, b=b)
         except KeyError:
             print("No 'Overburden_Pressure' log found.")
 
@@ -289,8 +290,8 @@ class Well(object):
             print(inst)
     # Presure -----------------------------------------------------------------
     def _get_pressure(self, pres_key, ref=None, hydrodynamic=0):
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+        # obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(self.depth,
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         depth = self.params[pres_key]["depth"]
@@ -300,7 +301,7 @@ class Well(object):
         except KeyError:
             print("{}: Cannot find {}".format(self.well_name, pres_key))
             return Log()
-        obp_depth = obp_log.depth
+        obp_depth = self.depth # obp_log.depth
         pres_data = list()
         pres_depth = list()
         for dp, co in zip(depth, coef):
@@ -358,12 +359,12 @@ class Well(object):
         Log
             Log object containing normally pressured measurements
         """
-        obp_log = self.get_log("Overburden_Pressure")
-        hydro = hydrostatic_pressure(np.array(obp_log.depth),
+        # obp_log = self.get_log("Overburden_Pressure")
+        hydro = hydrostatic_pressure(self.depth,
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         depth = self.params["MP"]
-        obp_depth = obp_log.depth
+        obp_depth = self.depth
         pres_data = list()
         for dp in depth:
             idx = np.searchsorted(obp_depth, dp)
@@ -478,16 +479,16 @@ class Well(object):
         Log
             a Log object containing calculated pressure.
         """
-        temp_log = self.get_log("Overburden_Pressure")
+        # temp_log = self.get_log("Overburden_Pressure")
         log = Log()
-        log.depth = temp_log.depth
+        log.depth = self.depth
         log.data = eaton(hydrostatic=self.hydrostatic,
                          lithostatic=self.lithostatic,
                          n=n, v=velocity, vn=self.normal_velocity)
         log.name = "pressure_eaton_{}".format(
             self.well_name.lower().replace('-', '_'))
         log.descr = "Pressure_Eaton"
-        log.units = temp_log.units
+        log.units = "MPa"
         log.prop_type = "PRE"
         return log
 
