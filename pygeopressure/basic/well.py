@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 __author__ = "yuhao"
 
 import json
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -21,6 +22,12 @@ from .well_storage import WellStorage
 
 
 class Well(object):
+    """
+    Parameters
+    ----------
+    json_file : str
+        path to parameter file
+    """
     def __init__(self, json_file):
         self.json_file = json_file
         self.hdf_file = None
@@ -45,7 +52,7 @@ class Well(object):
     def _parse_json(self):
         try:
             with open(self.json_file) as fin:
-                self.params = json.load(fin)
+                self.params = json.load(fin, object_pairs_hook=OrderedDict)
                 self.hdf_file = self.params['hdf_file']
                 self.well_name = self.params['well_name']
                 self.loc = self.params['loc']
@@ -63,6 +70,13 @@ class Well(object):
             self.in_hdf = True
         except Exception as inst:
             print(inst)
+
+    @property
+    def depth(self):
+        if self.data_frame is not None:
+            return np.around(self.data_frame['Depth(m)'].values, decimals=1)
+        else:
+            raise Exception("No dataframe found.")
 
     @property
     def logs(self):
@@ -103,6 +117,9 @@ class Well(object):
 
     @property
     def normal_velocity(self):
+        """
+        return Normal Velocity calculated using NCT stored in well
+        """
         try:
             a = self.params['nct']['a']
             b = self.params['nct']['b']
@@ -112,6 +129,22 @@ class Well(object):
             print("No 'Overburden_Pressure' log found.")
 
     def get_log(self, logs, ref=None):
+        """
+        Retreive one or several logs in well
+
+        Parameters
+        ----------
+        logs : str or list str
+            names of logs to be retrieved
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            one or a list of Log objects
+        """
         log_list = list()
         output_list = list()
         if isinstance(logs, str):
@@ -139,6 +172,18 @@ class Well(object):
             return output_list
 
     def add_log(self, log, name=None, unit=None):
+        """
+        Add new Log to current well
+
+        Parameters
+        ----------
+        log : Log
+            log to be added
+        name : str, optional
+            name for the newly added log, None, use log.name
+        unit : str, optional
+            unit for the newly added log, None, use log.unit
+        """
         log_name = log.descr.replace(' ', '_')
         log_unit = log.units
         if name is not None:
@@ -158,6 +203,14 @@ class Well(object):
                 log_name, self.well_name))
 
     def drop_log(self, log_name):
+        """
+        delete a Log in current Well
+
+        Parameters
+        ----------
+        log_name : str
+            name of the log to be deleted
+        """
         if log_name in self.logs:
             log = self.get_log(log_name)
             col = "{}({})".format(log.descr.replace(' ', '_'), log.units)
@@ -166,6 +219,13 @@ class Well(object):
             print("no log named {}".format(log_name))
 
     def rename_log(self, log_name, new_log_name):
+        """
+        Parameters
+        ----------
+        log_name : str
+            log name to be replaced
+        new_log_name : str
+        """
         if log_name in self.logs:
             log = self.get_log(log_name)
             old_str = "{}({})".format(log.descr.replace(' ', '_'), log.units)
@@ -174,6 +234,16 @@ class Well(object):
                                                      columns={old_str: new_str})
 
     def update_log(self, log_name, log):
+        """
+        Update well log already in current well with a new Log
+
+        Parameters
+        ----------
+        log_name : str
+            name of the log to be replaced in current well
+        log : Log
+            Log to replace
+        """
         old_log = self.get_log(log_name)
         if old_log.depth == log.depth:
             self.data_frame["{}({})".format(
@@ -183,6 +253,20 @@ class Well(object):
 
     def export(self, file_path, logs_to_export=None, full_las=False,
                null_value=1e30):
+        """
+        Export logs to LAS or pseudo-LAS file
+
+        Parameters
+        ----------
+        file_path : str
+            output file path
+        logs_to_export : list of str
+            Log names to be exported, None export all logs
+        full_las : bool
+            True, export LAS header; False export only data hence psuedo-LAS
+        null_value : scalar
+            Null Value representation in output file.
+        """
         if logs_to_export is None:
             logs_to_export = self.logs
         keys_to_export = ["Depth(m)"]
@@ -195,12 +279,15 @@ class Well(object):
             columns=keys_to_export, index=False)
 
     def save_well(self):
+        """
+        Save current well logs to file
+        """
         try:
             storage = WellStorage(self.hdf_file)
             storage.update_well(self.well_name, self.data_frame)
         except Exception as inst:
             print(inst)
-
+    # Presure -----------------------------------------------------------------
     def _get_pressure(self, pres_key, ref=None, hydrodynamic=0):
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
@@ -231,13 +318,29 @@ class Well(object):
 
     def get_pressure_measured(self, ref=None):
         """
-        Get Measured Pressure Points
+        Get Measured Pressure
+
+        Parameters
+        ----------
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Measured Pressure
         """
         return self._get_pressure("Measured_Pressure", ref=ref)
 
     def get_pressure_coefficient(self):
         """
         Retrieve Pressure Coefficient
+
+        Returns
+        -------
+        Log
+            Log object containing Measured Pressure Coefficients
         """
         depth = self.params["Measured_Pressure"]["depth"]
         coef = self.params["Measured_Pressure"]["coef"]
@@ -249,6 +352,11 @@ class Well(object):
     def get_pressure_normal(self):
         """
         return pressure points within normally pressured zone.
+
+        Returns
+        -------
+        Log
+            Log object containing normally pressured measurements
         """
         obp_log = self.get_log("Overburden_Pressure")
         hydro = hydrostatic_pressure(np.array(obp_log.depth),
@@ -269,12 +377,34 @@ class Well(object):
     def get_emw(self, ref=None):
         """
         Get Equivalent Mud Weight
+
+        Parameters
+        ----------
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Equivalent Mud Weight
         """
         return self._get_pressure("EMW", ref=ref)
 
     def get_dst(self, ref=None):
         """
-        Get Drillstem Test Pressure Measurements
+        Get Drill-Stem Test Pressure Measurements
+
+        Parameters
+        ----------
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Drill-Stem Test Pressure
         """
         return self._get_pressure("DST", ref=ref)
 
@@ -283,22 +413,52 @@ class Well(object):
         Get Wireline Formation Test Pressure Measurements
         (Both MDT and/or RFT)
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         hydrodynamic : scalar
             start depth of hydrodynamic interval
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Wireline Formation Test Pressure
         """
         return self._get_pressure("MDT", hydrodynamic=hydrodynamic, ref=ref)
 
     def get_loading_pressure(self, ref=None):
         """
         Get Pressure Measurements on loading curve
+
+        Parameters
+        ----------
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Pressure on Loading Curve
         """
         return self._get_pressure("loading", ref=ref)
 
     def get_unloading_pressure(self, ref=None):
         """
         Get Pressure Measurements on unloading curve
+
+        Parameters
+        ----------
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+
+        Returns
+        -------
+        Log
+            Log object containing Pressure on Unloading Curve
         """
         return self._get_pressure("unloading", ref=ref)
 
@@ -332,6 +492,9 @@ class Well(object):
         return log
 
     def save_params(self):
+        """
+        Save edited parameters to file
+        """
         try:
             with open(self.json_file, "w") as fl:
                 json.dump(self.params, fl, indent=4)
