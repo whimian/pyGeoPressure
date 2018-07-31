@@ -4,7 +4,10 @@ a Well class utilizing pandas DataFrame and hdf5 storage
 
 Created on Tue Dec 27 2016
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from builtins import str
 
 __author__ = "yuhao"
 
@@ -349,9 +352,23 @@ class Well(object):
         """
         depth = self.params["Measured_Pressure"]["depth"]
         coef = self.params["Measured_Pressure"]["coef"]
-        log = Log()
-        log.depth = depth
-        log.data = coef
+        pres = self.params["Measured_Pressure"]["data"]
+        if depth and not coef and pres:
+            hydro = hydrostatic_pressure(self.depth,
+                                         kelly_bushing=self.kelly_bushing,
+                                         depth_w=self.water_depth)
+            coef_data = list()
+            for dp, pr in zip(depth, pres):
+                idx = np.searchsorted(self.depth, dp)
+                coef_data.append(pr / hydro[idx])
+            log = Log()
+            log.depth = depth
+            log.data = coef_data
+            return log
+        else:
+            log = Log()
+            log.depth = depth
+            log.data = coef
         return log
 
     def get_pressure_normal(self):
@@ -495,6 +512,30 @@ class Well(object):
         log.units = "MPa"
         log.prop_type = "PRE"
         return log
+
+    def plot_horizons(self, ax, color_dict=None):
+        horizon_dict = None
+        try:
+            horizon_dict = self.params['horizon']
+        except KeyError:
+            print("no horizons")
+        for key in horizon_dict.keys():
+            try:
+                color = color_dict[key]
+            except KeyError:
+                color = 'black'
+            except TypeError:
+                color = 'black'
+            ax.axhline(y=horizon_dict[key],
+                       color=color, linewidth=0.5, zorder=0)
+
+            import matplotlib.transforms as transforms
+            trans = transforms.blended_transform_factory(
+                ax.transAxes, ax.transData)
+            ax.text(
+                s=key, x=0.8, y=horizon_dict[key],
+                color=color, transform=trans, size=9)
+        ax.figure.canvas.draw()
 
     def save_params(self):
         """
