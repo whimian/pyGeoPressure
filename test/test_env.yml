@@ -11,6 +11,7 @@ channels:
 
 dependencies:
 - python
+- future
 - numpy
 - scipy
 - pandas
