@@ -22,6 +22,7 @@ install:
   - conda info -a
   - conda env create --file test/test_env.yml
   - source activate test_env
+  - pip install --upgrade pip
 
 script:
   - py.test --cov-config .coveragerc --cov=pygeopressure test
