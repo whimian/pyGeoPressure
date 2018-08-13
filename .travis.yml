@@ -20,7 +20,11 @@ install:
   - conda config --set always_yes yes --set changeps1 no
   - conda update -q conda
   - conda info -a
-  - conda env create --file test/test_env.yml
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      conda env create --file test/test_env_2.yml;
+    else
+      conda env create --file test/test_env_3.yml;
+    fi
   - source activate test_env
 
 script:
