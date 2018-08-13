@@ -4,6 +4,8 @@ Test
 
 Created on Feb. 22nd 2018
 """
+from __future__ import unicode_literals
+
 __author__ = "yuhao"
 
 import pytest

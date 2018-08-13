@@ -35,13 +35,13 @@ def test__well_get_pressure(real_well, measured_log):
     assert real_well.get_loading_pressure(ref='sea') == measured_log
     assert real_well.get_unloading_pressure(ref='sea') == measured_log
 
-def test__storage_interface(mdf5_file, pseudo_las_file):
-    storage = pygeopressure.basic.well.Well_Storage(str(mdf5_file))
-    assert storage.wells == []
-    storage.read_pseudo_las(str(pseudo_las_file), 'fake')
-    assert storage.wells == ['fake']
-    assert storage.get_well_data('fake').columns.tolist() == [
-        'Depth(m)', 'Velocity(Meter/Second)', 'Shale_Volume(Fraction)',
-        'Overburden_Pressure(MegaPascal)']
-    storage.remove_well('fake')
-    assert storage.wells == []
+# def test__storage_interface(mdf5_file, pseudo_las_file):
+#     storage = pygeopressure.basic.well_storage.WellStorage(str(mdf5_file))
+#     assert storage.wells == []
+#     storage.read_pseudo_las(str(pseudo_las_file), 'fake')
+#     assert storage.wells == ['fake']
+#     assert storage.get_well_data('fake').columns.tolist() == [
+#         'Depth(m)', 'Velocity(Meter/Second)', 'Shale_Volume(Fraction)',
+#         'Overburden_Pressure(MegaPascal)']
+#     storage.remove_well('fake')
+#     assert storage.wells == []
