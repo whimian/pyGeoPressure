@@ -1,11 +1,8 @@
-.. Pore Pressure Prediction documentation master file, created by
-   sphinx-quickstart on Thu Oct 26 10:58:51 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. pyGeoPressure documentation master file.
 
-=============
-pyGeoPressure
-=============
+.. image:: img/pygeopressure-logo.png
+    :width: 40%
+|
 
 .. image:: https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release
     :target: https://github.com/whimian/pyGeoPressure/releases
@@ -31,42 +28,52 @@ pyGeoPressure
     :target: https://codecov.io/gh/whimian/pyGeoPressure
     :alt: Codecov
 
-.. toctree::
-    :maxdepth: 1
-    :caption: pyGeoPressure:
-    :hidden:
+Overview
+--------
 
-    install
-    api/api
-
-|
 *Tools for pore pressure prediction using well log data and seismic velocity data.*
 
-
 Features
-========
+--------
 
 1. Hydrostatic Pressure Calculation
 2. Overburden (or Lithostatic) Pressure Calculation
 3. Eaton's method
 4. Bowers' method
 
-Data I/O
-========
-
-**Well log**:
-
-- las file
-
-- pseudo-las file without proper header
-
-**Seismic Velocity**:
-
-- Opendtect ascii file
-
-- SEG-Y file (require `segpy <https://github.com/sixty-north/segpy>`_)
-
 Getting Started
-===============
-* :doc:`install`
-* :doc:`api/api`
+---------------
+- :doc:`install`
+- :doc:`api/api`
+
+Contribute
+----------
+- Issue Tracker: https://github.com/whimian/pyGeoPressure/issues
+- Source Code: https://github.com/whimian/pyGeoPressure
+
+License
+-------
+The project is licensed under the `MIT <https://github.com/whimian/pyGeoPressure/blob/master/LICENSE>`_ license.
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Getting Started:
+    :hidden:
+
+    install
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Manual:
+    :hidden:
+
+    survey
+    data_types
+    data_io
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Help:
+    :hidden:
+
+    api/api

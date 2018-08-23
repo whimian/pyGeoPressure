@@ -32,6 +32,15 @@ pygeopressure\.basic\.las module
 --------------------------------
 
 .. automodule:: pygeopressure.basic.las
+    :attributes:
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygeopressure\.basic\.las\_reader module
+----------------------------------------
+
+.. automodule:: pygeopressure.basic.las_reader
     :members:
     :undoc-members:
     :show-inheritance:
@@ -44,6 +53,14 @@ pygeopressure\.basic\.reader module
     :undoc-members:
     :show-inheritance:
 
+pygeopressure\.basic\.seiSEGY module
+------------------------------------
+
+.. automodule:: pygeopressure.basic.seiSEGY
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pygeopressure\.basic\.seiSQL module
 -----------------------------------
 
@@ -52,10 +69,34 @@ pygeopressure\.basic\.seiSQL module
     :undoc-members:
     :show-inheritance:
 
+pygeopressure\.basic\.seisBase module
+-------------------------------------
+
+.. automodule:: pygeopressure.basic.seisBase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 pygeopressure\.basic\.survey module
 -----------------------------------
 
 .. automodule:: pygeopressure.basic.survey
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygeopressure\.basic\.survey\_setting module
+--------------------------------------------
+
+.. automodule:: pygeopressure.basic.survey_setting
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygeopressure\.basic\.threepoints module
+----------------------------------------
+
+.. automodule:: pygeopressure.basic.threepoints
     :members:
     :undoc-members:
     :show-inheritance:
@@ -80,6 +121,7 @@ pygeopressure\.basic\.well module
 ---------------------------------
 
 .. automodule:: pygeopressure.basic.well
+    :attributes:
     :members:
     :undoc-members:
     :show-inheritance:
@@ -88,6 +130,14 @@ pygeopressure\.basic\.well\_log module
 --------------------------------------
 
 .. automodule:: pygeopressure.basic.well_log
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pygeopressure\.basic\.well\_storage module
+------------------------------------------
+
+.. automodule:: pygeopressure.basic.well_storage
     :members:
     :undoc-members:
     :show-inheritance:
