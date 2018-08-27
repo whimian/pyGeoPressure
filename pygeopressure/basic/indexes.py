@@ -28,5 +28,5 @@ class CdpIndex(SurveyIndex):
         try:
             self.inline, self.crline = [int(_) for _ in cdp]
             self.value = (self.inline, self.crline)
-        except TypeError as inst:
-            print(inst)
+        except TypeError:
+            raise TypeError("Expected tuple, got {}".format(type(cdp)))

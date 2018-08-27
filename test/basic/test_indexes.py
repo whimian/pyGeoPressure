@@ -22,5 +22,6 @@ def test__DepthIndex():
 def test_CdpIndex():
     assert ppp.CdpIndex((1, 2)).value == (1, 2)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError) as excinfo:
         ppp.CdpIndex(1)
+    assert "Expected tuple, got <type 'int'>" in str(excinfo.value)
