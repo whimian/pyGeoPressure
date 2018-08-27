@@ -48,5 +48,8 @@ def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
     hydrostatic = np.cumsum(hydrostatic)
     return hydrostatic
 
-def hydrostatic_trace(depth, rho=1.01, g=9.8):
-    return depth *rho * g *0.001
+def hydrostatic_trace(depth, rho=1.01, g=9.8, shift=0):
+    mask = depth <= shift
+    hydro = (depth - shift) * rho * g * 0.001
+    hydro[mask] = 0
+    return hydro
