@@ -40,6 +40,25 @@ def bowers(v, obp, u, start_idx, a, b, vmax, end_idx=None):
 def bowers_varu(v, obp, u, start_idx, a, b, vmax, buf=20, end_idx=None, end_buffer=10):
     """
     Bowers Method with buffer zone above unloading zone
+    v : 1-d ndarray
+        velocity array whose unit is m/s.
+    obp : 1-d ndarray
+        Overburden pressure whose unit is Pa.
+    u : float
+        coefficient u
+    start_idx : int
+        index of start of fluid expansion
+    a : float, optional
+        coefficient a
+    b : float, optional
+        coefficient b
+    vmax : float
+    buf : int, optional
+        len of buffer interval, buf should be smaller than start_idx
+    end_idx : int
+        end of fluid expasion
+    end_buffer : int
+        len of end buffer interval
     """
     u_array = np.ones(v.shape)
     u_array[start_idx: end_idx] = u
@@ -106,10 +125,6 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
     ves = (lithostatic - hydrostatic) * (v / vn)**n
     pressure = lithostatic - ves
     return pressure
-
-
-def fillipino():
-    pass
 
 
 def invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):

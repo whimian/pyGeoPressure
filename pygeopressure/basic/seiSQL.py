@@ -297,6 +297,7 @@ class SeisCube(object):
         except Exception as inst:
             print(inst)
 
+    # region
     # def export_od(self, attr, fname):
     #     try:
     #         with open(fname, 'w') as fout:
@@ -331,6 +332,8 @@ class SeisCube(object):
     #     except Exception as inst:
     #         print(inst)
     #         print("failed to export")
+    # endregion
+
     def export_od(self, attr, fname):
         try:
             with open(fname, 'w') as fout:

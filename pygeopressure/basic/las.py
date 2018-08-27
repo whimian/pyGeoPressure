@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-an interface to
+an interface for interacting with Las file
 
 Created on Thu May 10 2018
 """

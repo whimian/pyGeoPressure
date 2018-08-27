@@ -8,29 +8,23 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-# import json
-
-# import numpy as np
 import pandas as pd
-
-# # from scipy.interpolate import interp1d
-# # from scipy.signal import butter, filtfilt
-
-# from pygeopressure.velocity.smoothing import smooth
 
 
 class Horizon(object):
     """
-    class for horizon
+    Horizon using excel file as input
+
+    Parameters
+    ----------
+    data_file : str
+        path to excel data file
     """
     def __init__(self, data_file):
-        # self.json_file = json_file
         self.hdf_file = None
         self.horizon_name = None
-        self.data_frame = pd.read_excel(data_file)
-        # self.params = None
-        # self._parse_json()
-        # self._read_hdf()
+        # self.data_frame = pd.read_excel(data_file)
+        self.data_frame = pd.read_csv(data_file, sep='\t')
 
     def __str__(self):
         return "Horizon Object: {}".format(self.horizon_name)
@@ -38,30 +32,13 @@ class Horizon(object):
     def __repr__(self):
         return "Horizon Object: {}".format(self.horizon_name)
 
-    # def _parse_json(self):
-    #     try:
-    #         with open(self.json_file) as fin:
-    #             self.params = json.load(fin)
-    #             self.hdf_file = self.params['hdf_file']
-    #             self.horizon_name = self.params['horizon_name']
-    #     except Exception as inst:
-    #         print(inst)
-
-    # def _read_hdf(self):
-    #     try:
-    #         with pd.HDFStore(self.hdf_file) as store:
-    #             self.data_frame = store[
-    #                 self.horizon_name]
-    #     except Exception as inst:
-    #         print(inst)
-
     def get_cdp(self, cdp):
         """
         Get value for a CDP point on the horizon.
 
-        Parameter
-        ---------
-        cdp : tuple of int
+        Parameters
+        ----------
+        cdp : tuple of int (inline, crossline)
         """
         inl, crl = cdp
         return self.data_frame[
