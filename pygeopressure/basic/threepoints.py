@@ -56,24 +56,15 @@ class ThreePoints(object):
         except ValueError as e:
             print(e.message)
 
-    def _parse_survey_setting(self, v=None):
-        if v == 1:
-            try:
-                self._parse_survey_setting_v1()
-            except Not_threepoints_v1_Exception:
-                print("cannot parse file")
-        elif v == 2:
+    def _parse_survey_setting(self):
+        try:
+            self._parse_survey_setting_v1()
+        except Not_threepoints_v1_Exception:
             try:
                 self._parse_survey_setting_v2()
             except Not_threepoints_v2_Exception:
                 print("cannot parse file")
-        else:
-            try:
-                self._parse_survey_setting_v1()
-            except Not_threepoints_v1_Exception:
-                self._parse_survey_setting_v2()
-            except Not_threepoints_v2_Exception:
-                print("cannot parse file")
+                raise Invalid_threepoints_Exception
 
     def _parse_survey_setting_v1(self):
         # with open(json_file, 'r') as file:
@@ -132,5 +123,8 @@ class Not_threepoints_v2_Exception(Exception):
         super(Not_threepoints_v2_Exception, self).__init__(self.message)
 
 
-# if __name__ == '__main__':
-    # raise Not_threepoints_v1_Exception
+class Invalid_threepoints_Exception(Exception):
+    def __init__(self, message=None):
+        self.message = message
+        self.message = "Not valid three points file"
+        super(Invalid_threepoints_Exception, self).__init__(self.message)
