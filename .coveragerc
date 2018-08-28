@@ -4,3 +4,10 @@ source = pygeopressure
 omit =
   *__init__*
   pygeopressure/_version.py
+  pygeopressure/basic/las_reader.py
+  pygeopressure/basic/laSQL.py
+  pygeopressure/basic/seisBase.py
+  pygeopressure/basic/seiSQL.py
+  pygeopressure/basic/reader.py
+  pygeopressure/basic/vawt.py
+  pygeopressure/basic/plots.py

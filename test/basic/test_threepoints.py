@@ -8,13 +8,33 @@ from __future__ import unicode_literals
 
 __author__ = "yuhao"
 
+import json
 import pytest
 import pygeopressure as ppp
+from pygeopressure.basic.threepoints import (
+    Invalid_threepoints_Exception,
+    Not_threepoints_v1_Exception,
+    Not_threepoints_v2_Exception)
+
 
 def test__threepoints():
+    # init with file
     v1 = ppp.ThreePoints("test/data/v1.survey")
     v2 = ppp.ThreePoints("test/data/v2.survey")
-
+    # init with dict
+    with open("test/data/v1.survey", 'r') as fl:
+        dict_survey = json.load(fl)
+    _ = ppp.ThreePoints(dict_survey)
+    # test wrong version
+    dict_survey.pop('inline')
+    with pytest.raises(Invalid_threepoints_Exception) as excinfo:
+        _ = ppp.ThreePoints(dict_survey)
+    assert "Not valid three points file" in str(excinfo.value)
+    # test None json file
+    with pytest.raises(Exception) as excinfo:
+        _ = ppp.ThreePoints()
+    assert "json_file is None" in str(excinfo.value)
+    # test properties
     assert v1.startInline == v2.startInline
     assert v1.endInline == v2.endInline
     assert v1.stepInline == v2.stepInline

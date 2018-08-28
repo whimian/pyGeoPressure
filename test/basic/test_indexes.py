@@ -3,7 +3,6 @@
 Created on Aug. 27th 2018
 """
 import pytest
-import numpy as np
 import pygeopressure as ppp
 
 
