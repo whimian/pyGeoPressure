@@ -23,4 +23,4 @@ def test_CdpIndex():
 
     with pytest.raises(TypeError) as excinfo:
         ppp.CdpIndex(1)
-    assert "Expected tuple, got <type 'int'>" in str(excinfo.value)
+    assert "Expected tuple" in str(excinfo.value)
