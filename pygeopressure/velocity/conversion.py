@@ -160,7 +160,3 @@ def twt2depth(twt, v_avg, prop_2_convert,
     new_prop_2_convert = f(newDepth)
 
     return (newDepth, new_prop_2_convert)
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
