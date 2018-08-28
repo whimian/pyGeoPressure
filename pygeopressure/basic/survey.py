@@ -16,7 +16,8 @@ from . import Path
 
 import numpy as np
 
-from .seiSQL import SeisCube
+# from .seiSQL import SeisCube
+from .seiSEGY import SeiSEGY
 from .well import Well
 from .survey_setting import SurveySetting
 from .threepoints import ThreePoints
@@ -57,9 +58,11 @@ class Survey(SurveySetting):
         self._check_dir()
         super(Survey, self).__init__(ThreePoints(self.setting_json))
         self.wells = dict()
+        self.seismics = dict()
         self.seisCube = None
         self.inl_crl = dict()
         self._add_seis_wells()
+        # self._add_seismic()  # you have to call it explicitly
 
     def _check_dir(self):
         survey_file = Path(self.survey_dir, '.survey')
@@ -68,11 +71,21 @@ class Survey(SurveySetting):
         else:
             raise Exception("No survey setting file in folder!")
 
+    def add_seismic(self):
+        seis_dir = self.survey_dir / "Seismics"
+        for seis_name in get_data_files(seis_dir):
+            with open(str(self.survey_dir.absolute() / \
+                    "Seismics" / ".{}".format(seis_name)), 'r') as fl:
+                temp_json = json.load(fl)
+            temp = SeiSEGY(temp_json['path'])
+            self.seismics[seis_name] = temp
+
     def _add_seis_wells(self):
         # self.seisCube = SeisCube(self.seis_json)
         well_dir = self.survey_dir / "Wellinfo"
         for well_name in get_data_files(well_dir):
-            temp = Well(str(self.survey_dir.absolute() / "Wellinfo" / ".{}".format(well_name)))
+            temp = Well(str(self.survey_dir.absolute() / \
+                "Wellinfo" / ".{}".format(well_name)))
             self.wells[temp.well_name] = temp
         # for jsf in self.well_json:
         #     temp = Well(jsf)
