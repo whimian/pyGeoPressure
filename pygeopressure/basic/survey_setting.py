@@ -306,9 +306,3 @@ class SurveySetting(object):
         ax.text(x, y, "{}/{}".format(max_inline, max_crline), color='blue')
         x, y = func(max_inline, min_crline)
         ax.text(x, y, "{}/{}".format(max_inline, min_crline), color='blue')
-
-if __name__ == '__main__':
-    survey_file = Path("C:\\Users", 'yuhao', 'dropbox', 'ui_pygeopressure',
-                       'pygeo_root', 'F3', '.survey')
-    new_survey = SurveySetting(survey_file)
-    print(new_survey.invertedAxis)
