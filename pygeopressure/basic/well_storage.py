@@ -42,14 +42,15 @@ class WellStorage(object):
             with pd.HDFStore(self.hdf5_file) as store:
                 return store[well_name]
         except KeyError:
-            print("No well named {}".format(well_name))
+            raise KeyError("No well named {}".format(well_name))
 
     def remove_well(self, well_name):
         try:
             with pd.HDFStore(self.hdf5_file) as store:
                 return store.remove(well_name)
         except KeyError:
-            print("No well named {}".format(well_name))
+            # print("No well named {}".format(well_name))
+            raise KeyError("No well named {}".format(well_name))
 
     def add_well(self, well_name, well_data_frame):
         well_name = well_name.lower().replace('-', '_')
@@ -72,4 +73,4 @@ class WellStorage(object):
             self.remove_well(well_name)
             self.add_well(well_name, new_df)
         else:
-            raise Warning("Duplicate logs: {}".format(duplicate_columns))
+            raise ValueError("Duplicate logs: {}".format(duplicate_columns))
