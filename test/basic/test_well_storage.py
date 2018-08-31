@@ -36,8 +36,8 @@ def test__well_storage(tmpdir, pseudo_las_file):
     assert storage.wells == []
     with pytest.raises(KeyError) as nowell_error:
         storage.remove_well("abc_well")
-    assert "No well named abc_well" in nowell_error.value
+    assert "No well named abc_well" in nowell_error.exconly()
     # get data
     with pytest.raises(KeyError) as nowell_error:
         storage.get_well_data("abc_well")
-    assert "No well named abc_well" in nowell_error.value
+    assert "No well named abc_well" in nowell_error.exconly()
