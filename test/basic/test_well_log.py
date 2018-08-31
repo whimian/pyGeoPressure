@@ -3,9 +3,7 @@
 Created on Nov. 9th 2017
 """
 import pytest
-# from matplotlib.testing.decorators import image_comparison
 import numpy as np
-import matplotlib.pyplot as plt
 import pygeopressure
 
 @pytest.fixture()

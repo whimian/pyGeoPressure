@@ -9,6 +9,8 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import numpy as np
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.signal import butter, filtfilt
