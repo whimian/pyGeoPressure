@@ -238,7 +238,7 @@ def create_survey_directory(root_dir, survey_name):
         #     file_path = directory / ".{}".format(str(directory.name).lower())
         #     file_path.touch()
         return survey_root
-    except WindowsError:
+    except OSError:
         raise DuplicateSurveyNameExeption()
 
 
