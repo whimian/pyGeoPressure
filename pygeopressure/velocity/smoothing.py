@@ -101,6 +101,3 @@ def smooth_trace(trace_data, window=120):
     # using half the window length in order to be consistent with opendtect
     data[mask] = smoothed
     return data
-
-if __name__ == "__main__":
-    pass
