@@ -160,6 +160,7 @@ class SeiSEGY(object):
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
             data = segyfile.gather[cdp]
+            data = data.reshape((data.shape[-1],))
         return data
 
     @methdispatch
