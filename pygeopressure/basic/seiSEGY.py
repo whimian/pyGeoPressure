@@ -150,9 +150,10 @@ class SeiSEGY(object):
         return data
 
     def depth(self, depth):
+        depth_idx = int((depth - self.startDepth) // self.stepDepth)
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
-            data = segyfile.depth_slice[depth]
+            data = segyfile.depth_slice[depth_idx]
         return data
 
     def cdp(self, cdp):
