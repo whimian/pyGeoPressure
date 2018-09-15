@@ -30,10 +30,11 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     install_requires=[
-        'numpy>=1.7',
-        'scipy>=0.13',
+        'scipy',
+        'pandas',
+        'pytables'
         'matplotlib',
-        'segpy-lite'
+        'segpyio'
     ],
     packages=find_packages(exclude=['test']),
     author="Yu Hao",

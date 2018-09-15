@@ -1,6 +1,7 @@
 numpy
 scipy
 pandas
+pytables
 scikit-learn
 matplotlib
-sphinx_bootstrap_theme
+segyio
