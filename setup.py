@@ -22,8 +22,14 @@ CLASSIFIERS = [
     'Natural Language :: English',
 ]
 
-with open("README.md") as f:
-    LONG_DESCRIPTION = ''.join(f.readlines())
+LONG_DESCRIPTION = (
+    "Tools for pore pressure prediction using well log data and seismic velocity data.\n"
+    "\nFeatures:\n"
+    "1. Hydrostatic Pressure Calculation\n"
+    "2. Overburden (or Lithostatic) Pressure Calculation\n"
+    "3. Eaton's method\n"
+    "4. Bowers' method")
+
 
 setup(
     name="pyGeoPressure",
