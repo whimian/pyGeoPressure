@@ -29,12 +29,14 @@ setup(
     name="pyGeoPressure",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
+    python_requires=">=2.7, <3.7",
     install_requires=[
         'scipy',
         'pandas',
-        'pytables',
+        'tables',
         'matplotlib',
-        'segpyio'
+        'jupyter',
+        'segyio'
     ],
     packages=find_packages(exclude=['test']),
     author="Yu Hao",
