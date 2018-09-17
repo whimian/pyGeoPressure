@@ -32,7 +32,7 @@ setup(
     install_requires=[
         'scipy',
         'pandas',
-        'pytables'
+        'pytables',
         'matplotlib',
         'segpyio'
     ],
