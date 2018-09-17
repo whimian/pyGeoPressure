@@ -2,6 +2,7 @@
 
 .. image:: img/pygeopressure-logo.png
     :width: 40%
+
 |
 
 .. image:: https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release
@@ -64,16 +65,16 @@ The project is licensed under the `MIT <https://github.com/whimian/pyGeoPressure
 
 .. toctree::
     :maxdepth: 1
-    :caption: Manual:
+    :caption: Tutorials:
     :hidden:
 
-    survey
-    data_types
-    data_io
+    tutorial/survey
+    tutorial/data_types
+    tutorial/data_io
 
 .. toctree::
     :maxdepth: 1
-    :caption: Help:
+    :caption: References:
     :hidden:
 
     api/api

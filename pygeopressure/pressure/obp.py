@@ -16,20 +16,20 @@ def traugott(z, a, b):
     Parameters
     ----------
     depth : 1-d ndarray
-
     a, b: scalar
 
     Notes
     -----
     .. math:: \overline{\rho (h)}=16.3+{h/3125}^{0.6}
+
     gives the average sediment density in pounds per gallon (ppg) mud weight
     equivalent between the sea floor and depth h (in feet) below the sea floor.
 
-    So, density variation with depth takes the form
+    So, density variation with depth takes the form [2]_:
 
     .. math:: \rho(z) = {\rho}_{0} + a{z}^{b}
 
-    .. [1] Traugott, Martin. "Pore/fracture pressure determinations in deep
+    .. [2] Traugott, Martin. "Pore/fracture pressure determinations in deep
        water." World Oil 218.8 (1997): 68-70.
     """
     # rho0 = 2.65
@@ -58,7 +58,7 @@ def gardner(v, c, d):
     -----
     .. math:: \rho = c{V}^{d}
 
-    typical values for a and b in GOM coast are a=0.31, b=0.25
+    typical values for a and b in GOM coast are a=0.31, b=0.25 [1]_.
 
     .. [1] G. Gardner, L. Gardner, and A. Gregory, "Formation velocity and density -
        the diagnostic basics for stratigraphic traps," Geophysics, vol. 39,
@@ -106,12 +106,20 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     obp = np.cumsum(obp)
     return obp / 1000000  # mPa
 
+
 def obp_trace(rho, step):
     """
+    Compute Overburden Pressure for a trace
+
     Parameters
     ----------
     rho : 1-d array
         density in g/cc
+
+    Returns
+    -------
+    out : 1-d ndarray
+        overburden pressure in mPa
     """
     data = np.array(rho)
     return np.cumsum(data * 9.8 * step * 0.001)

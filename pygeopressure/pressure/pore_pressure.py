@@ -28,7 +28,16 @@ def bowers(v, obp, u, start_idx, a, b, vmax, end_idx=None):
 
     Notes
     -----
-    .. math:: P = OBP - [\\frac{(V-V_{0})}{a}]^{\\frac{1}{b}}
+    .. math:: P = S - \\left[\\frac{(V-V_{0})}{a}\\right]^{\\frac{1}{b}}
+
+    [3]_
+
+    .. [3] Bowers, G. L. (1994). Pore pressure estimation from velocity data:
+       accounting from overpressure mechanisms besides undercompaction:
+       Proceedings of the IADC/SPE drilling conference, Dallas, 1994,
+       (IADC/SPE), 1994, pp 515–530. In International Journal of Rock
+       Mechanics and Mining Sciences & Geomechanics Abstracts (Vol. 31,
+       p. 276). Pergamon.
     """
     sigma_max = ((vmax-1524)/a)**(1/b)
     ves = ((v - 1524) / a)**(1.0 / b)
@@ -40,6 +49,9 @@ def bowers(v, obp, u, start_idx, a, b, vmax, end_idx=None):
 def bowers_varu(v, obp, u, start_idx, a, b, vmax, buf=20, end_idx=None, end_buffer=10):
     """
     Bowers Method with buffer zone above unloading zone
+
+    Parameters
+    ----------
     v : 1-d ndarray
         velocity array whose unit is m/s.
     obp : 1-d ndarray
@@ -120,7 +132,13 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
 
     Notes
     -----
-    .. math:: P = OBP - VES_{n}* a (\\frac{V}{V_{n}})^{b}
+    .. math:: P = S - {\\sigma}_{n}\\left(\\frac{V}{V_{n}}\\right)^{n}
+
+    [4]_
+
+    .. [4] Eaton, B. A., & others. (1975). The equation for geopressure
+       prediction from well logs. In Fall Meeting of the Society of Petroleum
+       Engineers of AIME. Society of Petroleum Engineers.
     """
     ves = (lithostatic - hydrostatic) * (v / vn)**n
     pressure = lithostatic - ves
@@ -152,6 +170,35 @@ def invert_multivariate_virgin(vel, phi, vsh, a_0, a_1, a_2, a_3, B):
 def multivariate_virgin(sigma, phi, vsh, a_0, a_1, a_2, a_3, B):
     """
     Calculate velocity using multivariate virgin curve
+
+    Parameters
+    ----------
+    sigma : 1-d ndarray
+        effective pressure
+    phi : 1-d ndarray
+        effective porosity
+    vsh : 1-d ndarray
+        shale volume
+    a_0, a_1, a_2, a_3 : float
+        coefficients of equation
+    B : float
+        effective pressure exponential
+
+    Returns
+    -------
+    out : 1-d ndarray
+        velocity array
+
+    Notes
+    -----
+    .. math:: V = a_0 + a_1\\phi + a_2{V}_{sh} + a_3 {\\sigma}^{B}
+
+    [5]_
+
+    .. [5] Sayers, C., Smit, T., van Eden, C., Wervelman, R., Bachmann, B.,
+       Fitts, T., et al. (2003). Use of reflection tomography to predict
+       pore pressure in overpressured reservoir sands. In submitted for
+       presentation at the SEG 2003 annual meeting.
     """
     return a_0 - a_1 * phi - a_2 * vsh + a_3 * sigma**B
 
