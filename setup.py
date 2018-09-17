@@ -22,14 +22,8 @@ CLASSIFIERS = [
     'Natural Language :: English',
 ]
 
-LONG_DESCRIPTION = (
-    "Tools for pore pressure prediction using well log data and seismic velocity data.\n"
-    "\nFeatures:\n"
-    "1. Hydrostatic Pressure Calculation\n"
-    "2. Overburden (or Lithostatic) Pressure Calculation\n"
-    "3. Eaton's method\n"
-    "4. Bowers' method")
-
+with open("README.md") as f:
+    LONG_DESCRIPTION = ''.join(f.readlines())
 
 setup(
     name="pyGeoPressure",
@@ -49,6 +43,7 @@ setup(
     author_email="yuhao@live.cn",
     description="pyGeoPressure: Tools for geopressure prediction",
     long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     license="MIT",
     keywords="pore pressure prediction",
     url="https://github.com/whimian/pyGeoPressure",
