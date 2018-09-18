@@ -8,12 +8,11 @@ from __future__ import division, print_function
 
 __author__ = "yuhao"
 
-
 from shutil import copyfile
 from builtins import range
 from itertools import product
 
-# import numpy as np
+import json
 
 import segyio
 
@@ -28,10 +27,13 @@ from pygeopressure.basic.threepoints import ThreePoints
 
 
 class SeiSEGY(object):
-    def __init__(self, segy_file, like=None):
+    def __init__(self, segy_file, json_file=None, like=None):
         self.segy_file = segy_file
         self.inDepth = False # True if dataset Z is in Depth
         self.property_type = None
+        self.json_file = json_file
+        if self.json_file:
+            self._parse_json()
 
         if like is not None:
             if Path(like).exists() and not Path(self.segy_file).exists():
@@ -56,6 +58,13 @@ class SeiSEGY(object):
 
     def __repr__(self):
         return self._info()
+
+    def _parse_json(self):
+        with open(Path(self.json_file), 'r') as fl:
+            json_object = json.load(fl)
+            self.segy_file = json_object["path"]
+            self.inDepth = json_object["inDepth"]
+            self.property_type = json_object["Property_Type"]
 
     def _parse_segy(self):
         with segyio.open(self.segy_file, 'r') as segyfile:
