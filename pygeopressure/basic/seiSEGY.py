@@ -79,11 +79,6 @@ class SeiSEGY(object):
             self.nNorth = len(segyfile.xlines)
             self.stepCrline = (self.endCrline - self.startCrline) // \
                 (self.nNorth - 1)
-            # self.startDepth = segyfile.bin[segyio.BinField.SamplesOriginal]
-            # # in miliseconds
-            # self.stepDepth = segyfile.bin[segyio.BinField.Interval] // 1000
-            # self.nDepth = segyfile.bin[segyio.BinField.Samples]
-            # self.endDepth = self.startDepth + self.stepDepth * (self.nDepth - 1)
             self.startDepth = segyfile.samples[0]
             self.endDepth = segyfile.samples[-1]
             self.nDepth = len(segyfile.samples)
@@ -109,9 +104,12 @@ class SeiSEGY(object):
             y_C = segyfile.header[index_C][segyio.su.cdpy]
 
             setting_dict = {
-                "inline_range": [self.startInline, self.endInline, self.stepInline],
-                "crline_range": [self.startCrline, self.endCrline, self.stepCrline],
-                "z_range": [self.startDepth, self.endDepth, self.stepDepth, "unknown"],
+                "inline_range": [
+                    self.startInline, self.endInline, self.stepInline],
+                "crline_range": [
+                    self.startCrline, self.endCrline, self.stepCrline],
+                "z_range": [
+                    self.startDepth, self.endDepth, self.stepDepth, "unknown"],
                 "point_A": [inline_A, crline_A, x_A, y_A],
                 "point_B": [inline_B, crline_B, x_B, y_B],
                 "point_C": [inline_C, crline_C, x_C, y_C]
@@ -149,18 +147,21 @@ class SeiSEGY(object):
             yield self.startDepth + i * self.stepDepth
 
     def inline(self, inline):
+        "data of a inline section"
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
             data = segyfile.iline[inline]
         return data
 
     def crline(self, crline):
+        "data of a crossline section"
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
             data = segyfile.xline[crline]
         return data
 
     def depth(self, depth):
+        "data of a depth slice"
         depth_idx = int((depth - self.startDepth) // self.stepDepth)
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
@@ -168,6 +169,7 @@ class SeiSEGY(object):
         return data
 
     def cdp(self, cdp):
+        "data of a cdp"
         with segyio.open(self.segy_file, 'r') as segyfile:
             segyfile.mmap()
             data = segyfile.gather[cdp]
@@ -180,21 +182,78 @@ class SeiSEGY(object):
 
     @data.register(InlineIndex)
     def _(self, indexes):
+        """
+        data of a Inline section
+
+        Paramaters
+        ----------
+        indexes : InlineIndex
+
+        Returns
+        -------
+        out : 2-d ndarray
+            of size nCrline * nDepth
+        """
         return self.inline(indexes.value)
 
     @data.register(CrlineIndex)
     def _(self, indexes):
+        """
+        data of a Crossline section
+
+        Paramaters
+        ----------
+        indexes : CrlineIndex
+
+        Returns
+        -------
+        out : 2-d ndarray
+            of size nInline * nDepth
+        """
         return self.crline(indexes.value)
 
     @data.register(DepthIndex)
     def _(self, indexes):
+        """
+        data of a depth slice
+
+        Paramaters
+        ----------
+        indexes : DepthIndex
+
+        Returns
+        -------
+        out : 2-d ndarray
+            of size nInline * nCrline
+        """
         return self.depth(indexes.value)
 
     @data.register(CdpIndex)
     def _(self, indexes):
+        """
+        data of a cdp
+
+        Paramaters
+        ----------
+        indexes : CdpIndex
+
+        Returns
+        -------
+        out : 1-d ndarray
+            of length nDepth
+        """
         return self.cdp(indexes.value)
 
     def update(self, index, data):
+        """
+        Update data with ndarray
+
+        Paramters
+        ---------
+        index : InlineIndex
+        data : 2-d ndarray
+            data for updating Inline
+        """
         try:
             if not isinstance(index, InlineIndex):
                 raise TypeError("has to be InlineIndex")
@@ -305,6 +364,7 @@ class SeiSEGY(object):
     #     return pseudo_log
 
     def valid_cdp(self, cdp_num):
+        "Return valid CDP numbers nearest to cdp_num"
         inl_num, crl_num = cdp_num
         n_inline = (inl_num - self.startInline) // self.stepInline
         in_plus_one = round(((inl_num - self.startInline) % self.stepInline) / \
