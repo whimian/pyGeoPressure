@@ -20,14 +20,6 @@ pygeopressure.basic.indexes module
     :undoc-members:
     :show-inheritance:
 
-pygeopressure.basic.laSQL module
---------------------------------
-
-.. automodule:: pygeopressure.basic.laSQL
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pygeopressure.basic.las module
 ------------------------------
 
@@ -68,18 +60,10 @@ pygeopressure.basic.reader module
     :undoc-members:
     :show-inheritance:
 
-pygeopressure.basic.seiSEGY module
+pygeopressure.basic.seisegy module
 ----------------------------------
 
-.. automodule:: pygeopressure.basic.seiSEGY
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pygeopressure.basic.seiSQL module
----------------------------------
-
-.. automodule:: pygeopressure.basic.seiSQL
+.. automodule:: pygeopressure.basic.seisegy
     :members:
     :undoc-members:
     :show-inheritance:

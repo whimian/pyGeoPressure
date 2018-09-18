@@ -239,8 +239,8 @@ class SeiSEGY(object):
         """
         Update data with ndarray
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         index : InlineIndex
         data : 2-d ndarray
             data for updating Inline

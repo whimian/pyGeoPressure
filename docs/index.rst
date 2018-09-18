@@ -5,6 +5,9 @@
 
 |
 
+.. image:: https://badge.fury.io/py/pyGeoPressure.svg
+    :target: https://badge.fury.io/py/pyGeoPressure
+
 .. image:: https://img.shields.io/github/tag/whimian/pyGeoPressure.svg?label=Release
     :target: https://github.com/whimian/pyGeoPressure/releases
     :alt: Releases
@@ -30,22 +33,66 @@
     :alt: Codecov
 
 Overview
---------
+========
 
-*Tools for pore pressure prediction using well log data and seismic velocity data.*
+*A Python package for pore pressure prediction using well log data and seismic velocity data.*
 
 Features
---------
+========
 
 1. Hydrostatic Pressure Calculation
 2. Overburden (or Lithostatic) Pressure Calculation
-3. Eaton's method
-4. Bowers' method
+3. Eaton's method and Parameter Optimization (Well log)
+4. Eaton's method and Parameter Optimization (Seismic Velocity)
+5. Bowers' method and Parameter Optimization (Well log)
+6. Bowers' method and Parameter Optimization (Seismic Velocity)
+7. Multivariate method and Parameter Optimization (Well log)
 
 Getting Started
----------------
-- :doc:`install`
-- :doc:`api/api`
+===============
+
+Installation
+------------
+
+:code:`pyGeoPressure` is on :code:`PyPI`:
+
+::
+
+    pip install pygeopressure
+
+
+Example
+-------
+
+Pore Pressure Prediction using well log data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+::
+
+    import pygeopressure as ppp
+
+    survey = ppp.Survey("CUG")
+
+    well = survey.wells['CUG1']
+
+    a, b = ppp.optimize_nct(well.get_log("Velocity"),
+                            well.params['horizon']["T16"],
+                            well.params['horizon']["T20"])
+
+    n = ppp.optimize_eaton(well, "Velocity", "Overburden_Pressure", a, b)
+
+    pres_eaton_log = well.eaton(np.array(well.get_log("Velocity").data), n)
+
+    fig, ax = plt.subplots()
+    ax.invert_yaxis()
+
+    pres_eaton_log.plot(ax, color='blue')
+    well.get_log("Overburden_Pressure").plot(ax, 'g')
+    ax.plot(well.hydrostatic, well.depth, 'g', linestyle='--')
+    well.plot_horizons(ax)
+
+.. image:: img/readme_example.svg
+    :width: 40%
 
 Contribute
 ----------
@@ -54,7 +101,7 @@ Contribute
 
 License
 -------
-The project is licensed under the `MIT <https://github.com/whimian/pyGeoPressure/blob/master/LICENSE>`_ license.
+The project is licensed under the MIT license, see the file `MIT <https://github.com/whimian/pyGeoPressure/blob/master/LICENSE>`_ for details.
 
 .. toctree::
     :maxdepth: 1
@@ -77,4 +124,4 @@ The project is licensed under the `MIT <https://github.com/whimian/pyGeoPressure
     :caption: References:
     :hidden:
 
-    api/api
+    api/modules
