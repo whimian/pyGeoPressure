@@ -30,6 +30,8 @@ from pygeopressure.basic.utils import rmse, nmse
 from pygeopressure.basic.indexes import (InlineIndex, CrlineIndex, DepthIndex,
                                          CdpIndex)
 from pygeopressure.basic.horizon import Horizon
+from pygeopressure.basic.optimizer import (
+    optimize_nct, optimize_eaton, optimize_bowers_loading)
 
 from ._version import get_versions
 __version__ = get_versions()['version']
