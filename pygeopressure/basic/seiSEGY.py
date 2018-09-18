@@ -44,20 +44,11 @@ class SeiSEGY(object):
         else:
             raise Exception("File does not exist!")
 
-    def _info(self):
-        return "A seismic Data Cube\n" +\
-               'In-line range: {} - {} - {}\n'.format(
-                   self.startInline, self.endInline, self.stepInline) +\
-               'Cross-line range: {} - {} - {}\n'.format(
-                   self.startCrline, self.endCrline, self.stepCrline) +\
-               'Z range: {} - {} - {}\n'.format(
-                   self.startDepth, self.endDepth, self.stepDepth)
-
     def __str__(self):
-        return self._info()
-
-    def __repr__(self):
-        return self._info()
+        return "SeiSEGY(inl[{},{},{}];crl[{},{},{}];z[{},{},{}])".format(
+            self.startInline, self.endInline, self.stepInline,
+            self.startCrline, self.endCrline, self.stepCrline,
+            self.startDepth, self.endDepth, self.stepDepth)
 
     def _parse_json(self):
         with open(Path(self.json_file), 'r') as fl:
