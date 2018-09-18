@@ -31,6 +31,7 @@ def test__log_data(real_well_log):
 
 def test__log_object(real_well_log):
     assert real_well_log == real_well_log
+    assert str(real_well_log) == "Well_Log:vel_unk(Velocity[Meter/second])"
 
 
 def test__log_plot(real_well_log):

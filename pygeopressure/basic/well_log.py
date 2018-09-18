@@ -96,21 +96,19 @@ class Log(object):
         return len(self.__data)
 
     def __str__(self):
-        if not self.__depth:
-            start, end = (0, 0)
-        elif len(self.__depth) == 1:
-            start, end = [self.__depth[0]] * 2
-        else:
-            start = self.__depth[0]
-            end = self.__depth[-1]
-        return "Log Name: {}\n".format(self.name) +\
-               "Attribute Name: {}\n".format(self.descr) +\
-               "Log Units: {}\n".format(self.units) +\
-               "Depth range: {} - {} - {}\n".format(
-                   start, end, 0.1)
-
-    def __repr__(self):
-        return "<Well_log:_{}>".format(self.name)
+        # if not self.__depth:
+        #     start, end = (0, 0)
+        # elif len(self.__depth) == 1:
+        #     start, end = [self.__depth[0]] * 2
+        # else:
+        #     start = self.__depth[0]
+        #     end = self.__depth[-1]
+        # return "Log Name: {}\n".format(self.name) +\
+        #        "Attribute Name: {}\n".format(self.descr) +\
+        #        "Log Units: {}\n".format(self.units) +\
+        #        "Depth range: {} - {} - {}\n".format(
+        #            start, end, 0.1)
+        return "Well_Log:{}({}[{}])".format(self.name, self.descr, self.units)
 
     def __bool__(self):
         return bool(bool(self.__depth) and bool(self.__data))

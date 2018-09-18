@@ -19,6 +19,7 @@ def test__well_properties(real_well):
         'Overburden_Pressure': 'MegaPascal',
         'Shale_Volume': 'Fraction',
         'Velocity': 'Meter/Second'}
+    assert str(real_well) == "Well-FW1"
 
 @pytest.fixture()
 def measured_log():
