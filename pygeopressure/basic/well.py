@@ -31,7 +31,7 @@ class Well(object):
     json_file : str
         path to parameter file
     """
-    def __init__(self, json_file):
+    def __init__(self, json_file, hdf_path=None):
         self.json_file = json_file
         self.hdf_file = None
         self.well_name = None
@@ -44,6 +44,8 @@ class Well(object):
         self.params = None
         self.in_hdf = False
         self._parse_json()
+        if hdf_path:
+            self.hdf_file = hdf_path
         self._read_hdf()
 
     def __str__(self):
