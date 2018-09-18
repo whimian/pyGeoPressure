@@ -66,5 +66,5 @@ def test__survey(data_root):
     with open(str(seis_file), 'w') as fl:
         json.dump(seis_info, fl)
     survey = ppp.Survey(Path(str(dir_F3)))
-    survey.add_seismic()
+    # survey.add_seismic()
     assert list(survey.seismics.keys()) == ['poststack']

@@ -27,4 +27,5 @@ def test__seisegy():
     assert seis_cube.data(ppp.DepthIndex(1100))[0][0] == \
         first_test_cdp_data[-1]
     assert seis_cube.valid_cdp((199, 400)) == (200, 400)
-    assert str(seis_cube) == repr(seis_cube)
+    assert str(seis_cube) == ("SeiSEGY(inl[200,640,20];crl[700,1200,20];"
+                              "z[400.0,1100.0,20.0])")
