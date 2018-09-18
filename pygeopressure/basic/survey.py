@@ -59,7 +59,6 @@ class Survey(SurveySetting):
         super(Survey, self).__init__(ThreePoints(self.setting_json))
         self.wells = dict()
         self.seismics = dict()
-        self.seisCube = None
         self.inl_crl = dict()
         self._add_seis_wells()
         # self._add_seismic()  # you have to call it explicitly
@@ -105,12 +104,7 @@ class Survey(SurveySetting):
     def _tie(self, well):
         return self.coord_2_line(well.loc)
 
-    def add_well(self, well):
-        loc = self._tie(well)
-        self.wells[well.well_name] = well
-        self.inl_crl[well.well_name] = loc
-
-    def get_seis(self, well_name, attr, radius=0):
+    def get_seis(self, seis_name, well_name, radius=0):
         """
         Get seismic trace data nearest to the well location.
         """
@@ -118,28 +112,28 @@ class Survey(SurveySetting):
         if well_name in self.inl_crl.keys():
             loc = self.inl_crl[well_name]
             if radius == 0:
-                data = self.seisCube.get_cdp(loc, attr)
+                data = self.seismics[seis_name].cdp(loc)
                 return [loc], [data]
             else:
-                inlines, crlines = self._get_traces(radius, loc)
+                inlines, crlines = self._get_traces(seis_name, radius, loc)
                 loc = list()
                 data = list()
                 for inl, crl in product(inlines, crlines):
                     loc.append((inl, crl))
-                    data.append(self.seisCube.get_cdp((inl, crl), attr))
+                    data.append(self.seismics[seis_name].cdp((inl, crl)))
                 return loc, data
         else:
             print("Well not found!")
             return []
 
-    def _get_traces(self, radius, cdp):
+    def _get_traces(self, seis_name, radius, cdp):
         inline, crline = cdp
-        start_inline = self.seisCube.startInline
-        end_inline = self.seisCube.endInline
-        step_inline = self.seisCube.stepInline
-        start_crline = self.seisCube.startCrline
-        end_crline = self.seisCube.endCrline
-        step_crline = self.seisCube.stepCrline
+        start_inline = self.seismics[seis_name].startInline
+        end_inline = self.seismics[seis_name].endInline
+        step_inline = self.seismics[seis_name].stepInline
+        start_crline = self.seismics[seis_name].startCrline
+        end_crline = self.seismics[seis_name].endCrline
+        step_crline = self.seismics[seis_name].stepCrline
 
         inl_min = inline - radius * step_inline
         if inl_min < start_inline:
@@ -157,23 +151,26 @@ class Survey(SurveySetting):
         crlines = np.arange(crl_min, crl_max+1, step_crline)
         return (inlines, crlines)
 
-    def sparse_mesh(self, depth, log_name):
+    def sparse_mesh(self, seis_name, depth, log_name):
         depth_range = range(
-            self.seisCube.startDepth, (self.seisCube.endDepth + 1),
-            self.seisCube.stepDepth)
-        if depth > self.seisCube.endDepth:
+            self.seismics[seis_name].startDepth,
+            (self.seismics[seis_name].endDepth + 1),
+            self.seismics[seis_name].stepDepth)
+        if depth > self.seismics[seis_name].endDepth:
             print("input depth larger than maximum depth")
-            # depth = self.seisCube.endDepth
-        elif depth < self.seisCube.startDepth:
+            # depth = self.seismics[seis_name].endDepth
+        elif depth < self.seismics[seis_name].startDepth:
             print("input depth smaller than minimum depth")
-            # depth = self.seisCube.startDepth
+            # depth = self.seismics[seis_name].startDepth
         elif depth not in depth_range:
             print("return values on nearest depth")
         else:
             pass
         depth = min(depth_range, key=lambda x: abs(x-depth))
-        mesh = np.array([np.nan] * self.seisCube.nNorth * self.seisCube.nEast)
-        mesh.shape = (self.seisCube.nNorth, self.seisCube.nEast)
+        mesh = np.array([np.nan] * self.seismics[seis_name].nNorth * \
+            self.seismics[seis_name].nEast)
+        mesh.shape = (self.seismics[seis_name].nNorth,
+                      self.seismics[seis_name].nEast)
         for we in self.wells.values():
             log_depth = we.get_log("depth")
             log_data = we.get_log(log_name)
@@ -182,23 +179,23 @@ class Survey(SurveySetting):
             # print("d = ", d)
             w_inline = self.inl_crl[we.name][0]
             w_crline = self.inl_crl[we.name][1]
-            a = (w_crline - self.seisCube.startCrline) // \
-                self.seisCube.stepCrline
-            b = (w_inline - self.seisCube.startInline) // \
-                self.seisCube.stepInline
+            a = (w_crline - self.seismics[seis_name].startCrline) // \
+                self.seismics[seis_name].stepCrline
+            b = (w_inline - self.seismics[seis_name].startInline) // \
+                self.seismics[seis_name].stepInline
             mesh[a, b] = d
         return mesh
 
-    def get_sparse_list(self, depth, log_name):
-        depth_range = range(self.seisCube.startDepth,
-                            (self.seisCube.endDepth + 1),
-                            self.seisCube.stepDepth)
-        if depth > self.seisCube.endDepth:
+    def get_sparse_list(self, seis_name, depth, log_name):
+        depth_range = range(self.seismics[seis_name].startDepth,
+                            (self.seismics[seis_name].endDepth + 1),
+                            self.seismics[seis_name].stepDepth)
+        if depth > self.seismics[seis_name].endDepth:
             print("input depth larger than maximum depth")
-            # depth = self.seisCube.endDepth
-        elif depth < self.seisCube.startDepth:
+            # depth = self.seismics[seis_name].endDepth
+        elif depth < self.seismics[seis_name].startDepth:
             print("input depth smaller than minimum depth")
-            # depth = self.seisCube.startDepth
+            # depth = self.seismics[seis_name].startDepth
         elif depth not in depth_range:
             print("return values on nearest depth")
         else:
@@ -210,13 +207,13 @@ class Survey(SurveySetting):
             log_data = we.get_log(log_name)
             log_index = range(len(log_depth))
             d = log_data[min(log_index, key=lambda x: abs(log_depth[x]-depth))]
-            # print("d = ", d)
+
             w_inline = self.inl_crl[we.name][0]
             w_crline = self.inl_crl[we.name][1]
-            # a = (w_crline - self.seisCube.startCrline) // \
-            #     self.seisCube.stepCrline
-            # b = (w_inline - self.seisCube.startInline) // \
-            #     self.seisCube.stepInline
+            # a = (w_crline - self.seismics[seis_name].startCrline) // \
+            #     self.seismics[seis_name].stepCrline
+            # b = (w_inline - self.seismics[seis_name].startInline) // \
+            #     self.seismics[seis_name].stepInline
             sparse_list.append([w_inline, w_crline, d])
 
         return sparse_list
