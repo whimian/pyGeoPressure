@@ -37,8 +37,10 @@ class SeiSEGY(object):
             if Path(like).exists() and not Path(self.segy_file).exists():
                 copyfile(src=like, dst=self.segy_file)
 
-        if self.segy_file is not None:
+        if Path(self.segy_file).exists():
             self._parse_segy()
+        else:
+            raise Exception("File does not exist!")
 
     def _info(self):
         return "A seismic Data Cube\n" +\
