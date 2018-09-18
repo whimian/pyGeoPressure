@@ -2,6 +2,7 @@
 """
 Created on Nov 1st 2017
 """
+from os import path
 from distutils.core import setup
 from setuptools import find_packages
 import versioneer
@@ -22,8 +23,9 @@ CLASSIFIERS = [
     'Natural Language :: English',
 ]
 
-with open("README.md") as f:
-    LONG_DESCRIPTION = ''.join(f.readlines())
+FILE_DIR = path.abspath(path.dirname(__file__))
+with open(path.join(FILE_DIR, 'README.md'), encoding='utf-8') as f:
+    LONG_DESCRIPTION = f.read()
 
 setup(
     name="pyGeoPressure",
@@ -31,6 +33,8 @@ setup(
     cmdclass=versioneer.get_cmdclass(),
     python_requires=">=2.7, <3.7",
     install_requires=[
+        'future',
+        'pathlib2;python_version=="2.7"',
         'scipy',
         'pandas',
         'tables',
