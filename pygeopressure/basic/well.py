@@ -515,6 +515,10 @@ class Well(object):
     def plot_horizons(self, ax, color_dict=None):
         horizon_dict = None
         try:
+            color_dict = self.params['color_dict']
+        except:
+            pass
+        try:
             horizon_dict = self.params['horizon']
         except KeyError:
             print("no horizons")
