@@ -1,4 +1,3 @@
-# from pygeopressure.basic.laSQL import Well
 from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_storage import WellStorage
 from pygeopressure.basic.well_log import Log
