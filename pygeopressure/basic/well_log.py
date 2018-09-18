@@ -234,7 +234,7 @@ class Log(object):
         log.data = self.data[::step]
         return log
 
-    def plot(self, ax=None, color='gray', linewidth=0.5):
+    def plot(self, ax=None, color='gray', linewidth=0.5, label=None):
         """
         Plot log curve
 
@@ -251,7 +251,10 @@ class Log(object):
         if ax is None:
             _, ax = plt.subplots()
             ax.invert_yaxis()
-        ax.plot(self.data, self.depth, linewidth=linewidth, color=color)
+        if label is None:
+            label = self.descr
+        ax.plot(self.data, self.depth, linewidth=linewidth, color=color,
+                label=label)
         ax.set(xlabel="{}({})".format(self.descr, self.units),
                ylabel="Depth(m)",
                title=self.name)
