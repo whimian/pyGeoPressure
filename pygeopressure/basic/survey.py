@@ -16,8 +16,7 @@ from . import Path
 
 import numpy as np
 
-# from .seiSQL import SeisCube
-from .seiSEGY import SeiSEGY
+from .seisegy import SeiSEGY
 from .well import Well
 from .survey_setting import SurveySetting
 from .threepoints import ThreePoints
