@@ -61,7 +61,7 @@ class Survey(SurveySetting):
         self.seismics = dict()
         self.inl_crl = dict()
         self._add_seis_wells()
-        # self._add_seismic()  # you have to call it explicitly
+        self._add_seismic()
 
     def _check_dir(self):
         survey_file = Path(self.survey_dir, '.survey')
@@ -70,7 +70,7 @@ class Survey(SurveySetting):
         else:
             raise Exception("No survey setting file in folder!")
 
-    def add_seismic(self):
+    def _add_seismic(self):
         seis_dir = self.survey_dir / "Seismics"
         for seis_name in get_data_files(seis_dir):
             with open(str(self.survey_dir.absolute() / \
