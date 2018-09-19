@@ -24,7 +24,7 @@ CLASSIFIERS = [
 ]
 
 FILE_DIR = path.abspath(path.dirname(__file__))
-with open(path.join(FILE_DIR, 'README.md'), encoding='utf-8') as f:
+with open(path.join(FILE_DIR, 'README.md')) as f:
     LONG_DESCRIPTION = f.read()
 
 setup(
