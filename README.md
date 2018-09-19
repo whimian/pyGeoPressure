@@ -71,6 +71,10 @@ https://pygeopressure.readthedocs.io/en/latest/
 - Issue Tracker: https://github.com/whimian/pyGeoPressure/issues
 - Source Code: https://github.com/whimian/pyGeoPressure
 
+# Support
+
+If you have any questions, please open an issue.
+
 # License
 
 The project is licensed under the MIT license, see the file [LICENSE](<https://github.com/whimian/pyGeoPressure/blob/master/LICENSE>) for details.
