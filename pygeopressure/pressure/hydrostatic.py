@@ -10,6 +10,8 @@ __author__ = "yuhao"
 
 import numpy as np
 
+from pygeopressure.basic.well_log import Log
+
 
 def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
     """
@@ -31,6 +33,7 @@ def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
     pressure : scalar or 1-d ndarray
         unit: mPa
     """
+    depth = np.array(depth)
     rho_f *= 1000  # kg/m3
     rho_w *= 1000  # kg/m3
     acceleration = 9.80665  # m/s2
@@ -46,7 +49,29 @@ def hydrostatic_pressure(depth, kelly_bushing=0, depth_w=0, rho_f=1., rho_w=1.):
     delta_depth[0] = 0
     hydrostatic = delta_depth * density * acceleration / 1000000  # mPa
     hydrostatic = np.cumsum(hydrostatic)
+
     return hydrostatic
+
+
+def hydrostatic_well(depth, kb=0, wd=0, rho_f=1., rho_w=1.):
+    """
+    Returns
+    -------
+    Log
+        Hydrostatic pressure as a Log
+    """
+    hydrostatic = hydrostatic_pressure(
+        depth, kelly_bushing=kb, depth_w=wd, rho_f=rho_f, rho_w=rho_w)
+
+    hydro_log = Log()
+    hydro_log.depth = np.array(depth)
+    hydro_log.data = hydrostatic
+    hydro_log.name = 'log_hydro'
+    hydro_log.descr = "Hydrostatic_Pressure"
+    hydro_log.units = "MPa"
+
+    return hydro_log
+
 
 def hydrostatic_trace(depth, rho=1.01, g=9.8, shift=0):
     mask = depth <= shift
