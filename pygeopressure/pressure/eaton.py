@@ -8,8 +8,7 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-import numpy as np
-
+# import numpy as np
 
 def eaton(v, vn, hydrostatic, lithostatic, n=3):
     """
@@ -30,6 +29,10 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
     n : float, optional
         eaton exponent
 
+    Returns
+    -------
+    ndarray
+
     Notes
     -----
     .. math:: P = S - {\\sigma}_{n}\\left(\\frac{V}{V_{n}}\\right)^{n}
@@ -43,3 +46,11 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
     ves = (lithostatic - hydrostatic) * (v / vn)**n
     pressure = lithostatic - ves
     return pressure
+
+
+def sigma_eaton(es_norm, v_ratio, n):
+    return es_norm * (v_ratio)**n
+
+
+def ratio_eaton(v_ratio, n):
+    return (v_ratio)**n
