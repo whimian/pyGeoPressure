@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.pore_pressure import eaton
+from ..pressure.eaton import eaton
 from ..velocity.extrapolate import normal
 from .well_log import Log
 from pygeopressure.basic.las_reader import LASReader

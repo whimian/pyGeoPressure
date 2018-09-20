@@ -17,7 +17,7 @@ from collections import OrderedDict
 import numpy as np
 from scipy.optimize import curve_fit
 
-from pygeopressure.pressure.pore_pressure import virgin_curve, invert_virgin
+from pygeopressure.pressure.bowers import virgin_curve, invert_virgin
 from pygeopressure.velocity.extrapolate import normal, normal_dt
 from pygeopressure.pressure.obp import traugott
 from pygeopressure.basic.well import Well

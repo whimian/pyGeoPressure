@@ -24,7 +24,8 @@ from pygeopressure.velocity.extrapolate import (
     set_v0, normal, slotnick, normal_dt)
 
 from pygeopressure.pressure.obp import (
-    overburden_pressure, gardner, traugott, obp_well, obp_trace)
+    overburden_pressure, obp_well, obp_trace, gardner,
+    traugott, traugott_trend)
 from pygeopressure.pressure.bowers import (
     virgin_curve, invert_virgin, unloading_curve, invert_unloading,
     bowers, bowers_varu)

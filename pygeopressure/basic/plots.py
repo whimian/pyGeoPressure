@@ -22,9 +22,9 @@ from scipy.interpolate import interp1d
 
 import matplotlib as mpl
 from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.pore_pressure import eaton
+from ..pressure.eaton import eaton
 from ..velocity.extrapolate import normal
-from ..pressure.pore_pressure import virgin_curve
+from ..pressure.bowers import virgin_curve
 from .well_log import Log
 from .well_storage import WellStorage
 
