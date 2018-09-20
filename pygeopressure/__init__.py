@@ -6,7 +6,6 @@ from pygeopressure.basic.log_tools import (
     shale, extrapolate_log_traugott)
 from pygeopressure.basic.seisegy import SeiSEGY
 from pygeopressure.basic.survey import Survey
-from pygeopressure.basic.reader import Reader
 from pygeopressure.basic.las import LasData
 from pygeopressure.basic.survey_setting import SurveySetting
 from pygeopressure.basic.threepoints import ThreePoints
