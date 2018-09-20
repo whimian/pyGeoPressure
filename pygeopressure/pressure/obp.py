@@ -7,6 +7,7 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import numpy as np
+from pygeopressure.basic.well_log import Log
 
 
 def traugott(z, a, b):
@@ -34,6 +35,14 @@ def traugott(z, a, b):
     """
     # rho0 = 2.65
     return 1.70 + a * z**b
+
+
+def traugott_trend(depth, a, b, kb=0, wd=0):
+    depth_shift = np.array(depth) - kb - wd
+    density = traugott(depth_shift, a, b)
+    mask = depth_shift < 0
+    density[mask] = np.nan
+    return density
 
 
 def gardner(v, c, d):
@@ -105,6 +114,42 @@ def overburden_pressure(depth, rho, kelly_bushing=41, depth_w=82, rho_w=1.01):
     obp = rho * delta_h * g
     obp = np.cumsum(obp)
     return obp / 1000000  # mPa
+
+
+def obp_well(den_log, kb=41, wd=82, rho_w=1.01):
+    """
+    Compute Overburden Pressure for a Log
+
+    Parameters
+    ----------
+    den_log : Log
+        density log (extrapolated)
+    kb : scalar
+        kelly bushing elevation in meter
+    wd : scalar
+        from sea level to sea bottom (a.k.a mudline) in meter
+    rho_w : scalar
+        density of sea water - depending on the salinity of sea water
+        (1.01-1.05g/cm3)
+
+    Returns
+    -------
+    out : Log
+        Log containing overburden pressure in mPa
+    """
+    depth = np.array(den_log.depth)
+    rho = np.array(den_log.data)
+    obp = overburden_pressure(
+        depth, rho, kelly_bushing=kb, depth_w=wd, rho_w=rho_w)
+
+    obp_log = Log()
+    obp_log.depth = depth
+    obp_log.data = obp
+    obp_log.name = "log_obp"
+    obp_log.descr = "Overburden_Pressure"
+    obp_log.units = "MPa"
+
+    return obp_log
 
 
 def obp_trace(rho, step):
