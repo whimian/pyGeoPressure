@@ -19,6 +19,7 @@ from scipy.optimize import curve_fit
 
 from pygeopressure.pressure.pore_pressure import virgin_curve, invert_virgin
 from pygeopressure.velocity.extrapolate import normal, normal_dt
+from pygeopressure.pressure.obp import traugott
 from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.utils import rmse
@@ -241,6 +242,43 @@ def optimize_nct(vel_log, fit_start, fit_stop):
     depth_finite = depth[mask]
 
     popt, _ = curve_fit(normal_dt, depth_finite, dt_log_finite)
+    a, b = popt
+
+    return a, b
+
+
+def optimize_traugott(den_log, fit_start, fit_stop, kb=0, wd=0):
+    """
+    Fit density variation against depth with Traugott equation
+
+    Parameters
+    ----------
+    den_log : Log
+        Density log
+    fit_start, fit_stop : float
+        start and end depth for fitting
+    kb : float
+        kelly bushing height in meters
+    wd : float
+        water depth in meters
+
+    Returns
+    -------
+    a, b : float
+        Traugott equation coefficients
+    """
+    start_idx = den_log.get_depth_idx(fit_start)
+    stop_idx = den_log.get_depth_idx(fit_stop) + 1
+    depth = np.array(den_log.depth[start_idx: stop_idx + 1])
+    den = np.array(den_log.data[start_idx: stop_idx + 1])
+
+    mask = np.isfinite(den)
+    den_finite = den[mask]
+    depth_finite = depth[mask]
+
+    depth_finite_shift = depth_finite - kb - wd
+
+    popt, _ = curve_fit(traugott, depth_finite, den_finite)
     a, b = popt
 
     return a, b
