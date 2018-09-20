@@ -1,9 +1,9 @@
 from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_storage import WellStorage
 from pygeopressure.basic.well_log import Log
-from pygeopressure.basic.well_log import (
+from pygeopressure.basic.log_tools import (
     smooth_log, truncate_log, interpolate_log, upscale_log, local_average,
-    shale)
+    shale, extrapolate_log_traugott)
 from pygeopressure.basic.seisegy import SeiSEGY
 from pygeopressure.basic.survey import Survey
 from pygeopressure.basic.reader import Reader
@@ -26,7 +26,7 @@ from pygeopressure.velocity.extrapolate import (
 
 from pygeopressure.pressure.obp import (
     overburden_pressure, gardner, traugott, obp_well, obp_trace)
-from pygeopressure.pressure.pore_pressure import (
+from pygeopressure.pressure.bowers import (
     virgin_curve, invert_virgin, unloading_curve, invert_unloading,
     bowers, bowers_varu)
 from pygeopressure.pressure.eaton import eaton
