@@ -234,7 +234,7 @@ class Log(object):
         log.data = self.data[::step]
         return log
 
-    def plot(self, ax=None, color='gray', linewidth=0.5,
+    def plot(self, ax=None, color='gray', linewidth=0.5, linestyle='-',
              label=None, zorder=1):
         """
         Plot log curve
@@ -255,7 +255,7 @@ class Log(object):
         if label is None:
             label = self.descr
         ax.plot(self.data, self.depth, linewidth=linewidth, color=color,
-                label=label, zorder=zorder)
+                linestyle=linestyle, label=label, zorder=zorder)
         ax.set(xlabel="{}({})".format(self.descr, self.units),
                ylabel="Depth(m)",
                title=self.name)
