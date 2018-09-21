@@ -110,6 +110,22 @@ class Well(object):
             print(ex.message)
             # print("No 'Overburden_Pressure' log found.")
 
+    def hydro_log(self):
+        """
+        Returns
+        -------
+        Log
+            Hydrostatic Pressure
+        """
+        hydro_log = Log()
+        hydro_log.depth = np.array(self.depth)
+        hydro_log.data = self.hydrostatic
+        hydro_log.name = '{}_hydro'.format(self.well_name)
+        hydro_log.descr = "Hydrostatic_Pressure"
+        hydro_log.units = "MPa"
+
+        return hydro_log
+
     @property
     def lithostatic(self):
         try:
@@ -483,7 +499,7 @@ class Well(object):
         """
         return self._get_pressure("unloading", ref=ref)
 
-    def eaton(self, velocity, n=3):
+    def eaton(self, velocity, obp=None, n=None, a=None, b=None):
         """
         Predict pore pressure using Eaton method
 
@@ -502,8 +518,18 @@ class Well(object):
         # temp_log = self.get_log("Overburden_Pressure")
         log = Log()
         log.depth = self.depth
+
+        if obp is None:
+            obp = self.lithostatic
+        if n is None:
+            try:
+                n = self.params['n']
+            except:
+                n = 3
+        if a is None or b is None:
+            a, b = self.params['nct']
         log.data = eaton(hydrostatic=self.hydrostatic,
-                         lithostatic=self.lithostatic,
+                         lithostatic=obp,
                          n=n, v=velocity, vn=self.normal_velocity)
         log.name = "pressure_eaton_{}".format(
             self.well_name.lower().replace('-', '_'))
