@@ -8,6 +8,8 @@ __author__ = "yuhao"
 
 import numpy as np
 
+from pygeopressure.basic.well_log import Log
+# from ..well_log import Log
 v0 = 1600  # take values larger than 1500
 
 
@@ -54,6 +56,27 @@ def normal(x, a, b):
 
     """
     return np.exp(x*b - a)
+
+
+def normal_log(vel_log, a, b):
+    """
+    Returns
+    -------
+    Log
+        normal velocity log
+    """
+
+    normal_vel = normal(np.array(vel_log.depth), a, b)
+    mask = np.isnan(np.array(vel_log.data))
+    normal_vel[mask] = np.nan
+    log = Log()
+    log.depth = np.array(vel_log.depth)
+    log.data = normal_vel
+    log.name = 'normal_vel_log'
+    log.descr = "Velocity_normal"
+    log.units = "m/s"
+
+    return log
 
 
 def slotnick(x, k):
