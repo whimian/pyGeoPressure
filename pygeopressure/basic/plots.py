@@ -27,7 +27,7 @@ from ..velocity.extrapolate import normal
 from ..pressure.bowers import virgin_curve
 from .well_log import Log
 # from .well_storage import WellStorage
-from pygeopressure.basic.utils import rmse
+from pygeopressure.basic.utils import rmse, pick_sparse
 from pygeopressure.pressure.eaton import sigma_eaton, ratio_eaton
 
 
@@ -128,36 +128,73 @@ class LoadingPlot(object):
         return (predict_es - es) / es * 100
 
 
-def loading_plot(ax_virgin, obp_log, vel_log, pres_log):
-    handles = []
-    ax_virgin.cla()
-    # well = xihu_survey.wells[log_select.value[0]]
-    ax_virgin.set(title="{}".format("Well"),
-                  xlabel="Effective Stress(MPa)",
-                  ylabel="Velocity(m/s)",
-                  xlim=(0, 80), ylim=(1500, 6000))
+def plot_bowers_loading(ax, a, b, well, vel_log, obp_log, upper, lower,
+                        pres_log='loading', mode='nc', nnc=5):
+    if isinstance(upper, str):
+        depth_upper = well.params['horizon'][upper]
+    else:
+        depth_upper = upper
+    if isinstance(upper, str):
+        depth_lower = well.params['horizon'][lower]
+    else:
+        depth_lower = lower
+    if isinstance(vel_log, str):
+        vel_log = well.get_log(vel_log)
+    if isinstance(obp_log, str):
+        obp_log = well.get_log(obp_log)
+    if isinstance(pres_log, str):
+        pres_log = well.get_loading_pressure()
 
-    # obp_log = well.get_log('Overburden_Pressure')
-    # try:
-    #     vel_log = well.get_log('Velocity_trunc_filter20_sm1500')
-    # except:
-    #     vel_log = well.get_log("Velocity_filter20_sm1500")
+    depth = np.array(obp_log.depth)
 
-    # # Plot Normal Compaction Points
-    # pres_log = well.get_pressure_normal()
+    nct_vel_to_fit = []
+    nct_es_to_fit = []
+    pres_vel_to_fit = []
+    pres_es_to_fit = []
+    if mode == 'nct' or mode == 'both':
+        nct_es_data = np.array(obp_log.data) - np.array(well.hydrostatic)
+        nct_mask = depth < depth_lower
+        nct_mask *= depth > depth_upper
+        nct_mask *= depth < vel_log.stop
 
-    vel = list()
-    obp = list()
-    pres = list()
-    depth = np.array(vel_log.depth)
-    for dp in pres_log.depth:
-        idx = np.searchsorted(depth, dp)
-        vel.append(vel_log.data[idx])
-        obp.append(obp_log.data[idx])
-    vel, obp, pres = np.array(vel), np.array(obp), np.array(pres_log.data)
-    es = obp - pres
-    handles.append(ax_virgin.scatter(es, vel, color='blue', marker='d', label='NCP'))
-    # # Plot LOADING points -----------------------------
+        nct_vel_interval = np.array(vel_log.data)[nct_mask]
+        nct_es_interval = nct_es_data[nct_mask]
+
+        nct_vel_to_fit = np.array(pick_sparse(nct_vel_interval, nnc))
+        nct_es_to_fit = np.array(pick_sparse(nct_es_interval, nnc))
+        ax.scatter(
+            nct_es_to_fit, nct_vel_to_fit, color='blue', marker='d',
+            label='NCP')
+    if mode == 'pres' or mode == 'both':
+        vel = list()
+        obp = list()
+        pres = list()
+        for dp in pres_log.depth:
+            idx = np.searchsorted(depth, dp)
+            vel.append(vel_log.data[idx])
+            obp.append(obp_log.data[idx])
+        vel, obp, pres = np.array(vel), np.array(obp), np.array(pres_log.data)
+        es = obp - pres
+
+        pres_vel_to_fit = vel
+        pres_es_to_fit = es
+        ax.scatter(
+            pres_es_to_fit, pres_vel_to_fit, color='purple', marker='s',
+            label='NCP')
+
+    es_curve = np.arange(0, 80, 1)
+    vel_curve = virgin_curve(es_curve, a, b)
+    ax.plot(es_curve, vel_curve, color='black', zorder=1, label="Loading")
+
+    ax.set(title="Loading Curve - {}".format(well.well_name),
+           xlabel="Effective Stress(MPa)",
+           ylabel="Velocity(m/s)")
+    ax.set_xlim(left=0)
+    ax.set_ylim(bottom=1500)
+
+    ax.legend(loc=4)
+
+# # Plot LOADING points -----------------------------
     # vel_loading = list()
     # obp_loading = list()
     # pres_log_loading = well.get_loading_pressure()
@@ -186,8 +223,6 @@ def loading_plot(ax_virgin, obp_log, vel_log, pres_log):
     # sc_normal = ax_virgin.scatter([], [], marker='o', color='grey')
     # sc_unloading = ax_virgin.scatter([], [], marker='*', color='grey')
     # sc_loading = ax_virgin.scatter([], [], marker='d', color='grey')
-    ax_virgin.legend(loc=4)
-    ax_virgin.figure.canvas.draw()
 
 
 def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
