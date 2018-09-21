@@ -9,13 +9,7 @@ from __future__ import division, print_function, absolute_import
 __author__ = "yuhao"
 
 import numpy as np
-import matplotlib
-matplotlib.use('agg')
 import matplotlib.pyplot as plt
-
-from scipy.optimize import curve_fit
-
-from pygeopressure.velocity.extrapolate import normal_dt
 
 
 class Log(object):
@@ -258,37 +252,3 @@ class Log(object):
                ylabel="Depth(m)",
                title=self.name)
         return ax
-
-    def fit_normal(self, interval=None):
-        if interval is None:
-            interval = (self.start, self.stop)
-        if self.prop_type == 'VEL':
-            start_idx = self.get_depth_idx(interval[0])
-            stop_idx = self.get_depth_idx(interval[1]) + 1
-            depth = np.array(self.depth[start_idx: stop_idx + 1])
-            vel = np.array(self.data[start_idx: stop_idx + 1])
-            dt = vel**(-1)
-            dt_log = np.log(dt)
-            mask = np.isfinite(dt_log)
-            dt_log_finite = dt_log[mask]
-            depth_finite = depth[mask]
-
-            popt, _ = curve_fit(normal_dt, depth_finite, dt_log_finite)
-            a, b = popt
-
-            new_dt_log = normal_dt(np.array(self.depth), a, b)
-            new_dt = np.exp(new_dt_log)
-            new_vel = new_dt**(-1)
-
-            normal_vel_log = Log()
-            normal_vel_log.depth = self.depth
-            normal_vel_log.data = new_vel
-            normal_vel_log.name = "nct" + self.name[3:]
-            normal_vel_log.descr = "Normal Velocity"
-            normal_vel_log.units = 'm/s'
-            normal_vel_log.prop_type = 'VEL'
-            return (a, b), normal_vel_log
-        elif self.prop_type == 'DEN':
-            pass
-        else:
-            print("function applied only to VEL or DEN")
