@@ -26,7 +26,9 @@ from ..pressure.eaton import eaton
 from ..velocity.extrapolate import normal
 from ..pressure.bowers import virgin_curve
 from .well_log import Log
-from .well_storage import WellStorage
+# from .well_storage import WellStorage
+from pygeopressure.basic.utils import rmse
+from pygeopressure.pressure.eaton import sigma_eaton, ratio_eaton
 
 
 class LoadingPlot(object):
@@ -125,6 +127,7 @@ class LoadingPlot(object):
         predict_es = f(vel)
         return (predict_es - es) / es * 100
 
+
 def loading_plot(ax_virgin, obp_log, vel_log, pres_log):
     handles = []
     ax_virgin.cla()
@@ -178,10 +181,63 @@ def loading_plot(ax_virgin, obp_log, vel_log, pres_log):
     # es_unloading = obp_unloading - pres_unloading
     # handles.append(ax_virgin.scatter(es_unloading, vel_unloading, color='darkgreen', marker='*', label='Unloading', zorder=10))
     #plot a empty scatter for legend
-#         handles_wells.append(ax_virgin.scatter([], [], color=co2))
+    # handles_wells.append(ax_virgin.scatter([], [], color=co2))
 
-#         sc_normal = ax_virgin.scatter([], [], marker='o', color='grey')
-#         sc_unloading = ax_virgin.scatter([], [], marker='*', color='grey')
-#         sc_loading = ax_virgin.scatter([], [], marker='d', color='grey')
+    # sc_normal = ax_virgin.scatter([], [], marker='o', color='grey')
+    # sc_unloading = ax_virgin.scatter([], [], marker='*', color='grey')
+    # sc_loading = ax_virgin.scatter([], [], marker='d', color='grey')
     ax_virgin.legend(loc=4)
     ax_virgin.figure.canvas.draw()
+
+
+def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
+    if isinstance(vel_log, str):
+        vel_log = well.get_log(vel_log)
+    if isinstance(obp_log, str):
+        obp_log = well.get_log(obp_log)
+    if isinstance(pres_log, str):
+        pres_log = well.get_loading_pressure()
+
+    depth = np.array(obp_log.depth)
+
+    hydrostatic = np.array(well.hydrostatic)
+    es_normal = np.array(obp_log.data) - hydrostatic
+    v_normal = normal(depth, a, b)
+
+    vel = list()
+    vel_norm = list()
+    es_norm = list()
+    obp = list()
+    pres = list()
+    for dp in pres_log.depth:
+        idx = np.searchsorted(depth, dp)
+        vel.append(vel_log.data[idx])
+        vel_norm.append(v_normal[idx])
+        es_norm.append(es_normal[idx])
+        obp.append(obp_log.data[idx])
+    vel, vel_norm = np.array(vel), np.array(vel_norm)
+    vel_ratio = vel / vel_norm
+
+    obp, pres = np.array(obp), np.array(pres_log.data)
+    es = obp - pres
+    es_norm = np.array(es_norm)
+    es_ratio = es / es_norm
+
+    popt, _ = curve_fit(ratio_eaton, vel_ratio, es_ratio)
+    n, = popt
+
+    rms_err = rmse(es, sigma_eaton(es_norm, vel_ratio, n))
+
+    n_array = np.arange(n-2, n+2, 0.01)
+    err_array = []
+    for ni in n_array:
+        predict_sigma = sigma_eaton(es_norm, vel_ratio, ni)
+        err_array.append(rmse(es, predict_sigma))
+
+    ax.plot(n_array, err_array, color='black')
+    ax.axvline(x=n, color='g')
+    ax.set(title='Optimize Eaton', xlabel="n", ylabel="RMS Error")
+    info_string = "n:{}\nRMS:{}".format(n, rms_err)
+    ax.text(
+        s="{}".format(info_string), x=0.1, y=0.1, color='b',
+        transform=ax.transAxes, size=9)
