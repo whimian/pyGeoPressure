@@ -55,3 +55,29 @@ def methdispatch(func):
     wrapper.register = dispatcher.register
     update_wrapper(wrapper, func)
     return wrapper
+
+
+def pick_sparse(a_array, n):
+    """
+    Pick n equally spaced samples from array
+
+    Parameters
+    ----------
+    a_array : 1-d ndarray
+    n : int
+        number of samples to pick
+    """
+    length = a_array.shape[0]
+    if length < n:
+        raise Exception("length of array smaller than n")
+    step = length // (n - 1)
+    if step == 0:
+        step = 1
+    new_list = []
+    for i in range(0, n, step):
+        new_list.append(a_array[i])
+    new_array = a_array[::step]
+    if length % (n - 1) != 0:
+        return np.append(new_array, [a_array[-1]])
+    else:
+        return new_array
