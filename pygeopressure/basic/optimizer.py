@@ -23,7 +23,7 @@ from pygeopressure.pressure.obp import traugott
 from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.utils import rmse, pick_sparse
-from pygeopressure.pressure.eaton import ratio_eaton
+from pygeopressure.pressure.eaton import power_eaton
 
 
 def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
@@ -175,7 +175,7 @@ def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):
     es_norm = np.array(es_norm)
     es_ratio = es / es_norm
 
-    popt, _ = curve_fit(ratio_eaton, vel_ratio, es_ratio)
+    popt, _ = curve_fit(power_eaton, vel_ratio, es_ratio)
     n, = popt
 
     return n

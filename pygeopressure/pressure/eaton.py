@@ -8,7 +8,6 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
-# import numpy as np
 
 def eaton(v, vn, hydrostatic, lithostatic, n=3):
     """
@@ -49,8 +48,23 @@ def eaton(v, vn, hydrostatic, lithostatic, n=3):
 
 
 def sigma_eaton(es_norm, v_ratio, n):
+    """
+    calculate effective pressure with the ratio of velocity and normal velocity
+
+    Notes
+    -----
+    .. math:: {\\sigma}={\\sigma}_{n}\\left(\\frac{V}{V_{n}}\\right)^{n}
+
+    """
     return es_norm * (v_ratio)**n
 
 
-def ratio_eaton(v_ratio, n):
+def power_eaton(v_ratio, n):
+    """
+    Notes
+    -----
+    .. math:: \\frac{\\sigma}{{\\sigma}_{n}}=
+        \\left(\\frac{V}{V_{n}}\\right)^{n}
+
+    """
     return (v_ratio)**n

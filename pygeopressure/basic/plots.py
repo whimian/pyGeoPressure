@@ -28,7 +28,7 @@ from ..pressure.bowers import virgin_curve
 from .well_log import Log
 # from .well_storage import WellStorage
 from pygeopressure.basic.utils import rmse, pick_sparse
-from pygeopressure.pressure.eaton import sigma_eaton, ratio_eaton
+from pygeopressure.pressure.eaton import sigma_eaton, power_eaton
 
 
 class LoadingPlot(object):
@@ -258,7 +258,7 @@ def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
     es_norm = np.array(es_norm)
     es_ratio = es / es_norm
 
-    popt, _ = curve_fit(ratio_eaton, vel_ratio, es_ratio)
+    popt, _ = curve_fit(power_eaton, vel_ratio, es_ratio)
     n, = popt
 
     rms_err = rmse(es, sigma_eaton(es_norm, vel_ratio, n))
