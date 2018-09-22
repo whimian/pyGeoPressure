@@ -24,7 +24,7 @@ import matplotlib as mpl
 from ..pressure.hydrostatic import hydrostatic_pressure
 from ..pressure.eaton import eaton
 from ..velocity.extrapolate import normal
-from ..pressure.bowers import virgin_curve
+from ..pressure.bowers import virgin_curve, invert_virgin, unloading_curve
 from .well_log import Log
 # from .well_storage import WellStorage
 from pygeopressure.basic.utils import rmse, pick_sparse
@@ -180,7 +180,7 @@ def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
         pres_es_to_fit = es
         ax.scatter(
             pres_es_to_fit, pres_vel_to_fit, color='purple', marker='s',
-            label='NCP')
+            label='measured')
 
     es_curve = np.arange(0, 80, 1)
     vel_curve = virgin_curve(es_curve, a, b)
@@ -194,35 +194,42 @@ def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
 
     ax.legend(loc=4)
 
-# # Plot LOADING points -----------------------------
-    # vel_loading = list()
-    # obp_loading = list()
-    # pres_log_loading = well.get_loading_pressure()
-    # for dp in pres_log_loading.depth:
-    #     index = np.searchsorted(depth, dp)
-    #     vel_loading.append(vel_log.data[index])
-    #     obp_loading.append(obp_log.data[index])
-    # vel_loading, obp_loading, pres_loading = np.array(vel_loading), np.array(obp_loading), np.array(pres_log_loading.data)
-    # es_loading = obp_loading - pres_loading
-    # handles.append(ax_virgin.scatter(es_loading, vel_loading, marker='o', color = 'red', label='Loading'))
-    # # get UNLOADING points ----------------------------------------------------------------------------------
-    # vel_unloading = list()
-    # obp_unloading = list()
-    # pres_log_unloading = well.get_unloading_pressure()
-    # print(len(pres_log_unloading.data), len(pres_log_unloading.depth))
-    # for dp in pres_log_unloading.depth:
-    #     index = np.searchsorted(depth, dp)
-    #     vel_unloading.append(vel_log.data[index])
-    #     obp_unloading.append(obp_log.data[index])
-    # vel_unloading, obp_unloading, pres_unloading = np.array(vel_unloading), np.array(obp_unloading), np.array(pres_log_unloading.data)
-    # es_unloading = obp_unloading - pres_unloading
-    # handles.append(ax_virgin.scatter(es_unloading, vel_unloading, color='darkgreen', marker='*', label='Unloading', zorder=10))
-    #plot a empty scatter for legend
-    # handles_wells.append(ax_virgin.scatter([], [], color=co2))
 
-    # sc_normal = ax_virgin.scatter([], [], marker='o', color='grey')
-    # sc_unloading = ax_virgin.scatter([], [], marker='*', color='grey')
-    # sc_loading = ax_virgin.scatter([], [], marker='d', color='grey')
+def plot_bowers_unloading(ax, a, b, u, vmax, well, vel_log, obp_log,
+                          pres_log='unloading'):
+    """
+    plot bowers unloading plot
+    """
+    if isinstance(vel_log, str):
+        vel_log = well.get_log(vel_log)
+    if isinstance(obp_log, str):
+        obp_log = well.get_log(obp_log)
+    if isinstance(pres_log, str):
+        pres_log = well._get_pressure(pres_log)
+
+    depth = np.array(obp_log.depth)
+
+    vel = list()
+    obp = list()
+    pres = list()
+    for dp in pres_log.depth:
+        idx = np.searchsorted(depth, dp)
+        vel.append(vel_log.data[idx])
+        obp.append(obp_log.data[idx])
+    vel, obp, pres = np.array(vel), np.array(obp), np.array(pres_log.data)
+    es = obp - pres
+
+    ax.scatter(es, vel, marker="^", color='r', label='meassured')
+
+    sigma_max = invert_virgin(vmax, a, b)
+
+    es_curve = np.arange(0, sigma_max+1, 1)
+
+
+    vel_curve = unloading_curve(es_curve, a, b, u, vmax)
+
+    ax.plot(es_curve, vel_curve, label='unloading')
+    ax.legend(loc='lower right')
 
 
 def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):

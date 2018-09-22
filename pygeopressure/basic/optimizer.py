@@ -17,7 +17,8 @@ from collections import OrderedDict
 import numpy as np
 from scipy.optimize import curve_fit
 
-from pygeopressure.pressure.bowers import virgin_curve, invert_virgin
+from pygeopressure.pressure.bowers import (
+    virgin_curve, invert_virgin, power_bowers)
 from pygeopressure.velocity.extrapolate import normal, normal_dt
 from pygeopressure.pressure.obp import traugott
 from pygeopressure.basic.well import Well
@@ -115,6 +116,61 @@ def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
     rms_err = rmse(es_to_fit, es_predicted)
 
     return a, b, rms_err
+
+
+def optimize_bowers_unloading(well, vel_log, obp_log, a, b,
+                              vmax, pres_log='unloading'):
+    """
+    Optimize for Bowers Unloading curve parameter U
+
+    Parameters
+    ----------
+    well : Well
+    vel_log : Log or str
+        Log object or well log name stored in well
+    obp_log : Log or str
+        Log object or well log name stored in well
+    vmax : float
+        vmax in bowers unloading curve
+    pres_log : Log or str
+        Log object storing measured pressure value or Pressure name
+        stored in well
+
+    Returns
+    -------
+    u : float
+        unloading curve cofficient U
+    error : float
+        Relative RMS error
+    """
+    if isinstance(vel_log, str):
+        vel_log = well.get_log(vel_log)
+    if isinstance(obp_log, str):
+        obp_log = well.get_log(obp_log)
+    if isinstance(pres_log, str):
+        pres_log = well._get_pressure(pres_log)
+
+    depth = np.array(obp_log.depth)
+
+    vel = list()
+    obp = list()
+    pres = list()
+    for dp in pres_log.depth:
+        idx = np.searchsorted(depth, dp)
+        vel.append(vel_log.data[idx])
+        obp.append(obp_log.data[idx])
+    vel, obp, pres = np.array(vel), np.array(obp), np.array(pres_log.data)
+    es = obp - pres
+
+    sigma_max = invert_virgin(vmax, a, b)
+
+    sigma_vc = invert_virgin(vel, a, b)
+
+    popt, pcov = curve_fit(power_bowers, sigma_vc/sigma_max, es/sigma_max)
+
+    u, = popt
+
+    return u
 
 
 def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):

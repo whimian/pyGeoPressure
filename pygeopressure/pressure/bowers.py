@@ -110,3 +110,6 @@ def invert_unloading(v, a, b, u, v_max):
     sigma_vc = invert_virgin(v, a, b)
     return sigma_max * (sigma_vc/sigma_max)**u
 
+
+def power_bowers(sigma_vc_ratio, u):
+    return sigma_vc_ratio**u
