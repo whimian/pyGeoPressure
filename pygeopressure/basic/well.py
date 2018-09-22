@@ -19,6 +19,7 @@ import pandas as pd
 
 from ..pressure.hydrostatic import hydrostatic_pressure
 from ..pressure.eaton import eaton
+from pygeopressure.pressure.bowers import bowers_varu
 from ..velocity.extrapolate import normal
 from .well_log import Log
 from .well_storage import WellStorage
@@ -499,14 +500,16 @@ class Well(object):
         """
         return self._get_pressure("unloading", ref=ref)
 
-    def eaton(self, velocity, obp=None, n=None, a=None, b=None):
+    def eaton(self, vel_log, obp_log=None, n=None, a=None, b=None):
         """
         Predict pore pressure using Eaton method
 
         Parameters
         ----------
-        velocity : 1-d ndarray
-            velocity data for calculation
+        vel_log : Log
+            velocity log
+        obp_log : Log
+            overburden pressure log
         n : scalar
             Eaton exponent
 
@@ -515,19 +518,27 @@ class Well(object):
         Log
             a Log object containing calculated pressure.
         """
-        # temp_log = self.get_log("Overburden_Pressure")
-        log = Log()
-        log.depth = self.depth
+        if isinstance(vel_log, str):
+            vel_log.get_log(vel_log)
+        velocity = np.array(vel_log.data)
 
-        if obp is None:
+        if obp_log is None:
             obp = self.lithostatic
-        if n is None:
-            try:
-                n = self.params['n']
-            except:
-                n = 3
+        else:
+            if isinstance(obp_log, str):
+                obp_log.get_log(obp_log)
+            obp = np.array(obp_log.data)
+
+        try:
+            n = self.params['n'] if n is None else n
+        except KeyError:
+            n = 3
+
         if a is None or b is None:
             a, b = self.params['nct']
+
+        log = Log()
+        log.depth = self.depth
         log.data = eaton(hydrostatic=self.hydrostatic,
                          lithostatic=obp,
                          n=n, v=velocity, vn=self.normal_velocity)
@@ -537,6 +548,7 @@ class Well(object):
         log.units = "MPa"
         log.prop_type = "PRE"
         return log
+
 
     def plot_horizons(self, ax, color_dict=None):
         horizon_dict = None
