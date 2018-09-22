@@ -26,8 +26,8 @@ from pygeopressure.basic.utils import rmse, pick_sparse
 from pygeopressure.pressure.eaton import ratio_eaton
 
 
-def optimize_bowers_loading(well, vel_log, obp_log, upper, lower,
-                            pres_log='loading', mode='nc', nnc=5):
+def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
+                           pres_log='loading', mode='nc', nnc=5):
     """
     Optimizer for Bowers loading curve
 

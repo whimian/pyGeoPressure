@@ -8,7 +8,7 @@ import pytest
 import pygeopressure
 
 from pygeopressure.basic.optimizer import (
-    optimize_bowers_loading, optimize_eaton, optimize_nct)
+    optimize_bowers_virgin, optimize_eaton, optimize_nct)
 
 from builtins import str
 
@@ -17,8 +17,8 @@ def real_well():
     return pygeopressure.Well(json_file='test/data/FW1.json')
 
 
-def test__optimize_bowers_loading(real_well):
-    a, b, err = optimize_bowers_loading(
+def test__optimize_bowers_virgin(real_well):
+    a, b, err = optimize_bowers_virgin(
         real_well, 'Velocity', 'Overburden_Pressure', 'T12', 'T20',
         pres_log='loading', mode='both')
     assert float("{:.4f}".format(a)) == 121.3322

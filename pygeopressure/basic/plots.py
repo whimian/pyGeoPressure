@@ -128,7 +128,7 @@ class LoadingPlot(object):
         return (predict_es - es) / es * 100
 
 
-def plot_bowers_loading(ax, a, b, well, vel_log, obp_log, upper, lower,
+def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
                         pres_log='loading', mode='nc', nnc=5):
     if isinstance(upper, str):
         depth_upper = well.params['horizon'][upper]
