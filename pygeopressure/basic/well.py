@@ -549,6 +549,62 @@ class Well(object):
         log.prop_type = "PRE"
         return log
 
+    def bowers(self, vel_log, obp_log=None, a=None, b=None, u=1, vmax=4600,
+               start_depth=None, buf=20, end_depth=None, end_buffer=10):
+        """
+        Predict pore pressure using Eaton method
+
+        Parameters
+        ----------
+        vel_log : Log
+            velocity log
+        obp_log : Log
+            overburden pressure log
+        a, b, u : float
+            bowers model coefficients
+
+        Returns
+        -------
+        Log
+            a Log object containing calculated pressure.
+        """
+        if isinstance(vel_log, str):
+            vel_log.get_log(vel_log)
+        velocity = np.array(vel_log.data)
+
+        if obp_log is None:
+            obp = self.lithostatic
+        else:
+            if isinstance(obp_log, str):
+                obp_log.get_log(obp_log)
+            obp = np.array(obp_log.data)
+
+        try:
+            a = self.params['bowers']['A'] if a is None else a
+            b = self.params['bowers']['B'] if b is None else b
+            if not start_depth:
+                start_depth = self.params['bowers']["start_depth"]
+            if not end_depth:
+                end_depth = self.params['bowers']["end_depth"]
+            vmax = self.params['bowers']["vmax"] if vmax is None else vmax
+            u = self.params['bowers']["U"] if u is None else u
+        except KeyError as e:
+            raise KeyError("Missing parameter: {}".format(e.args[0]))
+
+        log = Log()
+        log.depth = self.depth
+
+        log.data = bowers_varu(
+            velocity, obp, u, start_idx=vel_log.get_depth_idx(start_depth),
+            a=a, b=b, vmax=vmax, buf=buf,
+            end_idx=vel_log.get_depth_idx(end_depth), end_buffer=end_buffer)
+
+        log.name = "pressure_bowers_{}".format(
+            self.well_name.lower().replace('-', '_'))
+        log.descr = "Pressure_Bowers"
+        log.units = "MPa"
+        log.prop_type = "PRE"
+        return log
 
     def plot_horizons(self, ax, color_dict=None):
         horizon_dict = None
