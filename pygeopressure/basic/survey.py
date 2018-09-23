@@ -18,6 +18,7 @@ import numpy as np
 
 from .seisegy import SeiSEGY
 from .well import Well
+from pygeopressure.basic.horizon import Horizon
 from .survey_setting import SurveySetting
 from .threepoints import ThreePoints
 
@@ -59,8 +60,10 @@ class Survey(SurveySetting):
         self.wells = dict()
         self.seismics = dict()
         self.inl_crl = dict()
+        self.horizons = dict()
         self._add_seis_wells()
         self._add_seismic()
+        self._add_horizon()
 
     def _check_dir(self):
         survey_file = Path(self.survey_dir, '.survey')
@@ -72,8 +75,10 @@ class Survey(SurveySetting):
     def _add_seismic(self):
         seis_dir = self.survey_dir / "Seismics"
         for seis_name in get_data_files(seis_dir):
+            # with open(str(self.survey_dir.absolute() / \
+            #         "Seismics" / ".{}".format(seis_name)), 'r') as fl:
             with open(str(self.survey_dir.absolute() / \
-                    "Seismics" / ".{}".format(seis_name)), 'r') as fl:
+                    "Seismics" / "{}.seis".format(seis_name)), 'r') as fl:
                 temp_json = json.load(fl)
             seis_path = Path(temp_json['path'])
             if not seis_path.is_absolute() and \
@@ -85,8 +90,10 @@ class Survey(SurveySetting):
     def _add_seis_wells(self):
         well_dir = self.survey_dir / "Wellinfo"
         for well_name in get_data_files(well_dir):
+            # info_file = str(self.survey_dir.absolute() / \
+            #     "Wellinfo" / ".{}".format(well_name))
             info_file = str(self.survey_dir.absolute() / \
-                "Wellinfo" / ".{}".format(well_name))
+                "Wellinfo" / "{}.well".format(well_name))
             data_path = None
             with open(info_file, "r") as fl:
                 data_path = Path(json.load(fl)["hdf_file"])
@@ -99,6 +106,14 @@ class Survey(SurveySetting):
         for well in self.wells.values():
             loc = self._tie(well)
             self.inl_crl[well.well_name] = loc
+
+    def _add_horizon(self):
+        surf_dir = self.survey_dir / "Surfaces"
+        for f in surf_dir.iterdir():
+            if f.is_file() and f.suffix == '.hor':
+                tmp = Horizon(str(f))
+                tmp.horizon_name = f.stem
+                self.horizons[f.stem] = tmp
 
     def _tie(self, well):
         return self.coord_2_line(well.loc)
@@ -261,7 +276,10 @@ def get_data_files(dir_path):
     fnames = list()
     # dir_path = Path(dir_path)
     if dir_path.exists():
-        if list(dir_path.glob('.*')):
-            for item in list(dir_path.glob('.*')):
-                fnames.append(item.name[1:])
+        # if list(dir_path.glob('.*')):
+        #     for item in list(dir_path.glob('.*')):
+        #         fnames.append(item.name[1:])
+        for f in dir_path.iterdir():
+            if f.suffix == '.seis' or f.suffix == '.well':
+                fnames.append(f.stem)
     return fnames

@@ -36,5 +36,5 @@ def create_seis_info(segy_object, name):
         ("z_range", [segy_object.startDepth,
                      segy_object.endDepth,
                      segy_object.stepDepth])])
-    with open(str(parent_folder / ".{}".format(name)), 'w') as fl:
+    with open(str(parent_folder / "{}.seis".format(name)), 'w') as fl:
         json.dump(dict_info, fl, indent=4)
