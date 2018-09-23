@@ -263,10 +263,11 @@ class SeiSEGY(object):
     @plot.register(InlineIndex)
     def _(self, index, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.data(index)
+        handle = None
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
         elif kind == 'img':
-            img(data.T,
+            handle = img(data.T,
                 extent=[
                     self.startCrline, self.endCrline,
                     self.startDepth, self.endDepth],
@@ -288,6 +289,8 @@ class SeiSEGY(object):
             bbox_to_anchor=(1., 0.),
             bbox_transform=ax.transAxes)
         ax.add_artist(inline_text)
+
+        return handle
 
     @plot.register(CrlineIndex)
     def _(self, index, ax, kind='vawt', cm='seismic', ptype='seis'):
