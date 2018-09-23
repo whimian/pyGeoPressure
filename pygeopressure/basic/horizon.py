@@ -29,9 +29,6 @@ class Horizon(object):
     def __str__(self):
         return "Horizon Object: {}".format(self.horizon_name)
 
-    def __repr__(self):
-        return "Horizon Object: {}".format(self.horizon_name)
-
     def get_cdp(self, cdp):
         """
         Get value for a CDP point on the horizon.
