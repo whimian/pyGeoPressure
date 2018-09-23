@@ -226,3 +226,22 @@ def obp_trace(rho, step):
     """
     data = np.array(rho)
     return np.cumsum(data * 9.8 * step * 0.001)
+
+
+def obp_seis(output_name, den_cube):
+    # create seismic object
+    obp_cube = create_seis(output_name, den_cube)
+    # create info file
+    create_seis_info(obp_cube, output_name)
+    # calculate obp
+    step = den_cube.stepDepth
+    for inl in den_cube.inlines():
+        den_inline = den_cube.data(InlineIndex(inl))
+        obp_inline = obp_section(den_inline, step)
+        obp_cube.update(InlineIndex(inl), obp_inline)
+
+    return obp_cube
+
+
+def obp_section(rho_inline, step):
+    return np.cumsum(rho_inline * 9.8 * step * 0.001, axis=1)
