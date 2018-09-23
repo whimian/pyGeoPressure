@@ -21,14 +21,13 @@ from scipy.optimize import curve_fit
 from scipy.interpolate import interp1d
 
 import matplotlib as mpl
-from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.eaton import eaton
-from ..velocity.extrapolate import normal
-from ..pressure.bowers import virgin_curve, invert_virgin, unloading_curve
-from .well_log import Log
-# from .well_storage import WellStorage
+from pygeopressure.pressure.eaton import eaton, sigma_eaton, power_eaton
+from pygeopressure.pressure.bowers import (
+    virgin_curve, invert_virgin, unloading_curve)
+from pygeopressure.pressure.multivariate import multivariate_virgin
+from pygeopressure.velocity.extrapolate import normal
+from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.utils import rmse, pick_sparse
-from pygeopressure.pressure.eaton import sigma_eaton, power_eaton
 
 
 class LoadingPlot(object):
@@ -129,7 +128,7 @@ class LoadingPlot(object):
 
 
 def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
-                        pres_log='loading', mode='nc', nnc=5):
+                       pres_log='loading', mode='nc', nnc=5):
     if isinstance(upper, str):
         depth_upper = well.params['horizon'][upper]
     else:
@@ -283,3 +282,33 @@ def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
     ax.text(
         s="{}".format(info_string), x=0.1, y=0.1, color='b',
         transform=ax.transAxes, size=9)
+
+
+def plot_multivariate(axes, well, vel_log, por_log, vsh_log, obp_log,
+                      upper, lower, a0, a1, a2, a3, B):
+
+    #     plt.subplots_adjust(wspace=0, hspace=0)
+    axes[0].plot(np.array(vel_log.data)/1000, vel_log.depth, linewidth=0.5)
+    #     axes[0].yaxis.grid()
+    axes[0].set(xlabel='Vp (km/s)', ylabel='Depth (m)', ylim=[lower, upper])#, xticks=[2500, 3500, 4500, 5000], xticklabels=[2.5, 3.5, 4.5, 5])
+
+    axes[1].plot(por_log.data, por_log.depth, linewidth=0.5)
+    #     axes[1].yaxis.grid()
+    axes[1].set(xlabel='$\phi$') #, xticks=[0.05, 0.15, 0.25], xticklabels=[0.05, 0.15, 0.25])
+
+    axes[2].plot(vsh_log.data, vsh_log.depth, linewidth=0.5)
+    #     axes[2].yaxis.grid()
+    axes[2].set(xlabel='$V_{sh}$')#, xticks=[0.2, 0.4, 0.6, 0.8], xticklabels=[0.2, 0.4, 0.6, 0.8])
+
+    depth = well.depth
+    hydrostatic = well.hydrostatic
+    obp = well.lithostatic
+    es = obp - hydrostatic
+
+    axes[3].plot(es, depth)
+    # axes[3].plot(obp_log.data, obp_log.depth)
+    # axes[3].plot(hydrostatic, obp_log.depth)
+    #     axes[3].yaxis.grid()
+    # axes[3].set(xlabel='${\sigma}^{B}$', xticks=[15, 20, 25, 30], xticklabels=[15, 20, 25, 30])
+    axes[3].set(xlabel='${\sigma}^{B}$')
+

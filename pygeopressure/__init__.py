@@ -15,9 +15,10 @@ from pygeopressure.basic.indexes import (
 from pygeopressure.basic.horizon import Horizon
 from pygeopressure.basic.optimizer import (
     optimize_nct, optimize_eaton, optimize_bowers_virgin, optimize_traugott,
-    optimize_bowers_unloading)
+    optimize_bowers_unloading, optimize_multivaraite)
 from pygeopressure.basic.plots import (
-    plot_eaton_error, plot_bowers_vrigin, plot_bowers_unloading)
+    plot_eaton_error, plot_bowers_vrigin, plot_bowers_unloading,
+    plot_multivariate)
 
 from pygeopressure.velocity.smoothing import smooth, smooth_2d, smooth_trace
 from pygeopressure.velocity.conversion import (

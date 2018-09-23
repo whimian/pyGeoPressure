@@ -20,6 +20,7 @@ import pandas as pd
 from ..pressure.hydrostatic import hydrostatic_pressure
 from ..pressure.eaton import eaton
 from pygeopressure.pressure.bowers import bowers_varu
+from pygeopressure.pressure.multivariate import pressure_multivariate
 from ..velocity.extrapolate import normal
 from .well_log import Log
 from .well_storage import WellStorage
@@ -602,6 +603,51 @@ class Well(object):
         log.name = "pressure_bowers_{}".format(
             self.well_name.lower().replace('-', '_'))
         log.descr = "Pressure_Bowers"
+        log.units = "MPa"
+        log.prop_type = "PRE"
+        return log
+
+    def multivariate(self, vel_log, por_log, vsh_log, obp_log=None,
+                     a0=None, a1=None, a2=None, a3=None, b=None):
+        if isinstance(vel_log, str):
+            vel_log.get_log(vel_log)
+        vel = np.array(vel_log.data)
+        if isinstance(por_log, str):
+            por_log.get_log(por_log)
+        phi = np.array(por_log.data)
+        if isinstance(vsh_log, str):
+            vsh_log.get_log(vsh_log)
+        vsh = np.array(vsh_log.data)
+        if isinstance(vsh_log, str):
+            vsh_log.get_log(vsh_log)
+        vsh = np.array(vsh_log.data)
+
+        if obp_log is None:
+            obp = self.lithostatic
+        else:
+            if isinstance(obp_log, str):
+                obp_log.get_log(obp_log)
+            obp = np.array(obp_log.data)
+
+        try:
+            a0 = self.params['multivariate']['a0'] if a0 is None else a0
+            a1 = self.params['multivariate']['a1'] if a1 is None else a1
+            a2 = self.params['multivariate']['a2'] if a2 is None else a2
+            a3 = self.params['multivariate']['a3'] if a3 is None else a3
+            b = self.params['multivariate']['B'] if b is None else b
+        except KeyError as e:
+            raise KeyError("Missing parameter: {}".format(e.args[0]))
+
+        log = Log()
+        log.depth = self.depth
+
+        log.data = pressure_multivariate(
+            obp, vel, phi, vsh, a0, a1, a2, a3,
+            b, 1, 4600, start_idx=3000, end_idx=None)
+
+        log.name = "pressure_mutlivariate_{}".format(
+            self.well_name.lower().replace('-', '_'))
+        log.descr = "Pressure_Multivariate"
         log.units = "MPa"
         log.prop_type = "PRE"
         return log
