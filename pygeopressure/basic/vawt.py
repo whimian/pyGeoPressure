@@ -262,6 +262,8 @@ def img(data, extent, ax, cm='seismic', ptype='seis'):
     ax.yaxis.set_ticks_position('both')
     ax.xaxis.set_tick_params(labeltop='on', labelbottom='off')
 
+    return _
+
 
 def opendtect_seismic_colormap():
     normalizer = Normalize(vmin=0, vmax=255)
