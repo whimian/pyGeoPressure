@@ -8,6 +8,13 @@ from __future__ import division, print_function, absolute_import
 
 __author__ = "yuhao"
 
+import numpy as np
+
+from pygeopressure.pressure.utils import create_seis, create_seis_info
+from pygeopressure.pressure.hydrostatic import hydrostatic_trace
+from pygeopressure.basic.indexes import InlineIndex
+from pygeopressure.velocity.extrapolate import normal
+
 
 def eaton(v, vn, hydrostatic, lithostatic, n=3):
     """
@@ -68,3 +75,31 @@ def power_eaton(v_ratio, n):
 
     """
     return (v_ratio)**n
+
+
+def eaton_seis(output_name, obp_cube, vel_cube, a, b, n):
+    # create seismic object
+    eaton_cube = create_seis(output_name, vel_cube)
+    # create info file
+    create_seis_info(eaton_cube, output_name)
+
+    depth = np.array(list(vel_cube.depths()))
+    # depth_inline = np.tile(depth,(vel_cube.nNorth, 1))
+    vn = normal(depth, a, b)
+    vn_inline = np.tile(vn, (vel_cube.nNorth, 1))
+
+    hydrostatic = hydrostatic_trace(depth)
+    hydro_inline = np.tile(hydrostatic, (vel_cube.nNorth, 1))
+
+    # actual calcualtion
+    for inl in vel_cube.inlines():
+        obp_data_inline = obp_cube.data(InlineIndex(inl))
+        vel_data_inline = vel_cube.data(InlineIndex(inl))
+
+        eaton_inline = obp_data_inline - \
+            sigma_eaton(
+                obp_data_inline-hydro_inline, vel_data_inline/vn_inline, n)
+
+        eaton_cube.update(InlineIndex(inl), eaton_inline)
+
+    return eaton_cube
