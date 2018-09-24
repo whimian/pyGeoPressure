@@ -75,23 +75,19 @@ class Survey(SurveySetting):
     def _add_seismic(self):
         seis_dir = self.survey_dir / "Seismics"
         for seis_name in get_data_files(seis_dir):
-            # with open(str(self.survey_dir.absolute() / \
-            #         "Seismics" / ".{}".format(seis_name)), 'r') as fl:
-            with open(str(self.survey_dir.absolute() / \
-                    "Seismics" / "{}.seis".format(seis_name)), 'r') as fl:
-                temp_json = json.load(fl)
-            seis_path = Path(temp_json['path'])
-            if not seis_path.is_absolute() and \
-                    seis_path.name == str(seis_path):
-                seis_path = self.survey_dir.absolute() / "Seismics" / seis_path
-            temp = SeiSEGY(seis_path)
-            self.seismics[seis_name] = temp
+            info_file = str(self.survey_dir.absolute() / \
+                "Seismics" / "{}.seis".format(seis_name))
+            data_path = None
+            with open(info_file, "r") as fl:
+                data_path = Path(json.load(fl)["path"])
+            if not data_path.is_absolute() and \
+                    data_path.name == str(data_path):
+                data_path = self.survey_dir.absolute() / "Seismics" / data_path
+            self.seismics[seis_name] = SeiSEGY.from_json(info_file, data_path)
 
     def _add_seis_wells(self):
         well_dir = self.survey_dir / "Wellinfo"
         for well_name in get_data_files(well_dir):
-            # info_file = str(self.survey_dir.absolute() / \
-            #     "Wellinfo" / ".{}".format(well_name))
             info_file = str(self.survey_dir.absolute() / \
                 "Wellinfo" / "{}.well".format(well_name))
             data_path = None

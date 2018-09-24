@@ -27,13 +27,19 @@ from pygeopressure.basic.threepoints import ThreePoints
 
 
 class SeiSEGY(object):
-    def __init__(self, segy_file, json_file=None, like=None):
+    def __init__(self, segy_file, like=None):
+        """
+        Parameters
+        ----------
+        segy_file : str
+            segy file path
+        """
         self.segy_file = segy_file
         self.inDepth = False # True if dataset Z is in Depth
         self.property_type = None
-        self.json_file = json_file
-        if self.json_file:
-            self._parse_json()
+        # self.json_file = json_file
+        # if self.json_file:
+        #     self._parse_json()
 
         if like is not None:
             if Path(like).exists() and not Path(self.segy_file).exists():
@@ -44,18 +50,44 @@ class SeiSEGY(object):
         else:
             raise Exception("File does not exist!")
 
+    @classmethod
+    def from_json(cls, json_file, segy_file=None):
+        """
+        Initialize SeiSEGY from an json file containing information
+
+        Parameters
+        ----------
+        json_file : str
+            json file path
+        segy_file : str
+            segy file path for overriding information in json file.
+        """
+        with open(str(Path(json_file)), 'r') as fl:
+            json_object = json.load(fl)
+            segy = json_object["path"]
+            inDepth = json_object["inDepth"]
+            property_type = json_object["Property_Type"]
+
+        if segy_file:
+            segy = segy_file
+        instance = cls(segy)
+        instance.inDepth = inDepth
+        instance.property_type = property_type
+
+        return instance
+
     def __str__(self):
         return "SeiSEGY(inl[{},{},{}];crl[{},{},{}];z[{},{},{}])".format(
             self.startInline, self.endInline, self.stepInline,
             self.startCrline, self.endCrline, self.stepCrline,
             self.startDepth, self.endDepth, self.stepDepth)
 
-    def _parse_json(self):
-        with open(Path(self.json_file), 'r') as fl:
-            json_object = json.load(fl)
-            self.segy_file = json_object["path"]
-            self.inDepth = json_object["inDepth"]
-            self.property_type = json_object["Property_Type"]
+    # def _parse_json(self):
+    #     with open(Path(self.json_file), 'r') as fl:
+    #         json_object = json.load(fl)
+    #         self.segy_file = json_object["path"]
+    #         self.inDepth = json_object["inDepth"]
+    #         self.property_type = json_object["Property_Type"]
 
     def _parse_segy(self):
         with segyio.open(self.segy_file, 'r') as segyfile:
