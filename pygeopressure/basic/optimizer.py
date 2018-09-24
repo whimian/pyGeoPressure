@@ -174,6 +174,27 @@ def optimize_bowers_unloading(well, vel_log, obp_log, a, b,
     return u
 
 
+def optimize_bowers_trace(depth_tr, vel_tr, obp_tr, hydro_tr,
+                          depth_upper, depth_lower):
+
+    es_data = np.array(obp_tr) - np.array(hydro_tr)
+    depth = np.array(depth_tr)
+
+    mask = depth < depth_lower
+    mask *= depth > depth_upper
+
+    vel_interval = np.array(vel_tr)[mask]
+    es_interval = es_data[mask]
+
+    vel_to_fit = pick_sparse(vel_interval, 3)
+    es_to_fit = pick_sparse(es_interval, 3)
+
+    popt, _ = curve_fit(virgin_curve, es_to_fit, vel_to_fit)
+    a, b = popt
+
+    return a, b
+
+
 def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):
     """
     Optimizer for Eaton model
@@ -319,17 +340,28 @@ def optimize_nct(vel_log, fit_start, fit_stop):
     if fit_stop is None or fit_stop > vel_log.bottom:
         fit_stop = vel_log.bottom
 
-    start_idx = vel_log.get_depth_idx(fit_start)
-    stop_idx = vel_log.get_depth_idx(fit_stop) + 1
-    depth = np.array(vel_log.depth[start_idx: stop_idx + 1])
-    vel = np.array(vel_log.data[start_idx: stop_idx + 1])
-    dt = vel**(-1)
-    dt_log = np.log(dt)
-    mask = np.isfinite(dt_log)
-    dt_log_finite = dt_log[mask]
-    depth_finite = depth[mask]
+    a, b = optimize_nct_trace(
+        np.array(vel_log.depth), np.array(vel_log.data), fit_start, fit_stop)
 
-    popt, _ = curve_fit(normal_dt, depth_finite, dt_log_finite)
+    return a, b
+
+
+def optimize_nct_trace(depth, vel, fit_start, fit_stop):
+
+    mask = depth > fit_start
+    mask *= depth < fit_stop
+
+    depth_interval = np.array(depth)[mask]
+    vel_interval = np.array(vel)[mask]
+
+
+    depth_to_fit = pick_sparse(depth_interval, 3)
+    vel_to_fit = pick_sparse(vel_interval, 3)
+
+    dt = vel_to_fit**(-1)
+    log_dt = np.log(dt)
+
+    popt, _ = curve_fit(normal_dt, depth_to_fit, log_dt)
     a, b = popt
 
     return a, b
@@ -366,7 +398,7 @@ def optimize_traugott(den_log, fit_start, fit_stop, kb=0, wd=0):
 
     depth_finite_shift = depth_finite - kb - wd
 
-    popt, _ = curve_fit(traugott, depth_finite, den_finite)
+    popt, _ = curve_fit(traugott, depth_finite_shift, den_finite)
     a, b = popt
 
     return a, b
