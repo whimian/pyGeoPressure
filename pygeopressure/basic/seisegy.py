@@ -33,6 +33,8 @@ class SeiSEGY(object):
         ----------
         segy_file : str
             segy file path
+        like : str, optional
+            created segy file has the same dimesions as like.
         """
         self.segy_file = segy_file
         self.inDepth = False # True if dataset Z is in Depth
@@ -142,6 +144,11 @@ class SeiSEGY(object):
     def inlines(self):
         """
         Iterator for inline numbers
+
+        Yields
+        ------
+        int
+            inline number
         """
         for inline in range(self.startInline, self.endInline+1, self.stepInline):
             yield inline
@@ -149,6 +156,11 @@ class SeiSEGY(object):
     def crlines(self):
         """
         Iterator for crline numbers
+
+        Yields
+        ------
+        int
+            cross-line number
         """
         for crline in range(self.startCrline, self.endCrline+1, self.stepCrline):
             yield crline
@@ -156,6 +168,12 @@ class SeiSEGY(object):
     def inline_crlines(self):
         """
         Iterator for both inline and crline numbers
+
+
+        Yields
+        ------
+        tuple of int
+            (inline number, crossline number)
         """
         for inline, crline in product(
                 range(self.startInline, self.endInline+1, self.stepInline),
@@ -165,6 +183,11 @@ class SeiSEGY(object):
     def depths(self):
         """
         Iterator for z coordinate
+
+        Yields
+        ------
+        float
+            depth value
         """
         for i in range(self.nDepth):
             yield self.startDepth + i * self.stepDepth
@@ -201,6 +224,18 @@ class SeiSEGY(object):
 
     @methdispatch
     def data(self, indexes):
+        """
+        Retrieve Data according to the index provided.
+
+        Parameters
+        ----------
+        indexes : {InlineIndex, CrlineIndex, DepthIndex, CdpIndex}
+            index of data to retrieve
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         raise TypeError("Unsupported Type")
 
     @data.register(InlineIndex)
@@ -290,6 +325,27 @@ class SeiSEGY(object):
 
     @methdispatch
     def plot(self, index, ax, kind='vawt', cm='seismic', ptype='seis'):
+        """
+        Plot seismic section according to index provided.
+
+        Parameters
+        ----------
+        index : {InlineIndex, CrlineIndex, DepthIndex, CdpIndex}
+            index of data to plot
+        ax : matplotlib.axes._subplots.AxesSubplot
+            axis to plot on
+        kind : {'vawt', 'img'}
+            'vawt' for variable area wiggle trace plot
+            'img' for variable density plot
+        cm : str
+            colormap for plotting
+        ptype : str, optional
+            property type
+
+        Returns
+        -------
+        matplotlib.image.AxesImage
+         """
         raise TypeError('Unsupported index type')
 
     @plot.register(InlineIndex)
@@ -300,10 +356,10 @@ class SeiSEGY(object):
             wiggles(data.T, wiggleInterval=1, ax=ax)
         elif kind == 'img':
             handle = img(data.T,
-                extent=[
-                    self.startCrline, self.endCrline,
-                    self.startDepth, self.endDepth],
-                ax=ax, cm=cm, ptype=ptype)
+                         extent=[
+                             self.startCrline, self.endCrline,
+                             self.startDepth, self.endDepth],
+                         ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
@@ -327,14 +383,15 @@ class SeiSEGY(object):
     @plot.register(CrlineIndex)
     def _(self, index, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.data(index)
+        handle = None
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
         elif kind == 'img':
-            img(data.T,
-                extent=[
-                    self.startInline, self.endInline,
-                    self.startDepth, self.endDepth],
-                ax=ax, cm=cm, ptype=ptype)
+            handle = img(data.T,
+                         extent=[
+                             self.startInline, self.endInline,
+                             self.startDepth, self.endDepth],
+                         ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
@@ -353,17 +410,20 @@ class SeiSEGY(object):
             bbox_transform=ax.transAxes)
         ax.add_artist(inline_text)
 
+        return handle
+
     @plot.register(DepthIndex)
     def _(self, index, ax, kind='vawt', cm='seismic', ptype='seis'):
         data = self.data(index)
+        handle = None
         if kind == 'vawt':
             wiggles(data.T, wiggleInterval=1, ax=ax)
         elif kind == 'img':
-            img(data.T,
-                extent=[
-                    self.startInline, self.endInline,
-                    self.startCrline, self.endCrline,],
-                ax=ax, cm=cm, ptype=ptype)
+            handle = img(data.T,
+                         extent=[
+                             self.startInline, self.endInline,
+                             self.startCrline, self.endCrline,],
+                         ax=ax, cm=cm, ptype=ptype)
             ax.invert_yaxis()
         else:
             pass
@@ -381,6 +441,8 @@ class SeiSEGY(object):
             bbox_to_anchor=(1., 0.),
             bbox_transform=ax.transAxes)
         ax.add_artist(inline_text)
+
+        return handle
 
     # def get_pseudo_log(self, cdp):
     #     pseudo_log = Log()
