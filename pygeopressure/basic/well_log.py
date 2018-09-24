@@ -14,32 +14,7 @@ import matplotlib.pyplot as plt
 
 class Log(object):
     """
-    class for well log
-
-    Attributes
-    ----------
-    name : str
-        log name
-    units : str
-        units of log
-    descr : str
-        description of log
-    prop_type : str {'VEL', 'DEN', 'VSH', 'PRE'}
-        property type of log
-    depth : list
-    data : list
-    top : float
-        minimum depth of log
-    bottom : float
-        maximum depth of log
-    start : float
-        start depth of log data
-    stop : float
-        end depth of log data
-    start_idx : int
-        index of start of log data
-    stop_idx : int
-        index of end of log data
+    class for well log data
     """
     def __init__(self, file_name=None, log_name="unk"):
         """
@@ -79,7 +54,7 @@ class Log(object):
         return log
 
     def __init_from_file(self, file_name):
-        self.read_od(file_name)
+        self._read_od(file_name)
         try:
             shorthand = self.descr[:3].lower()
             self.name = shorthand + "_unk"
@@ -101,18 +76,6 @@ class Log(object):
         return len(self.__data)
 
     def __str__(self):
-        # if not self.__depth:
-        #     start, end = (0, 0)
-        # elif len(self.__depth) == 1:
-        #     start, end = [self.__depth[0]] * 2
-        # else:
-        #     start = self.__depth[0]
-        #     end = self.__depth[-1]
-        # return "Log Name: {}\n".format(self.name) +\
-        #        "Attribute Name: {}\n".format(self.descr) +\
-        #        "Log Units: {}\n".format(self.units) +\
-        #        "Depth range: {} - {} - {}\n".format(
-        #            start, end, 0.1)
         return "Well_Log:{}({}[{}])".format(self.name, self.descr, self.units)
 
     def __bool__(self):
@@ -123,6 +86,7 @@ class Log(object):
 
     @property
     def depth(self):
+        "depth data of the log"
         return list(self.__depth)
 
     @depth.setter
@@ -131,6 +95,7 @@ class Log(object):
 
     @property
     def data(self):
+        "property data of the log"
         return list(self.__data)
 
     @data.setter
@@ -139,6 +104,7 @@ class Log(object):
 
     @property
     def start(self):
+        "start depth of available property data"
         if self.log_start is None:
             for dep, dat in zip(self.__depth, self.__data):
                 if np.isfinite(dat):
@@ -148,6 +114,7 @@ class Log(object):
 
     @property
     def start_idx(self):
+        "start index of available property data"
         if self.log_start_idx is None:
             self.__data = np.array(self.__data)
             mask = np.isfinite(self.__data)
@@ -157,6 +124,7 @@ class Log(object):
 
     @property
     def stop(self):
+        "end depth of available property data"
         if self.log_stop is None:
             for dep, dat in zip(reversed(self.__depth), reversed(self.__data)):
                 if np.isfinite(dat):
@@ -166,6 +134,7 @@ class Log(object):
 
     @property
     def stop_idx(self):
+        "end index of available property data"
         if self.log_stop_idx is None:
             self.__data = np.array(self.__data)
             mask = np.isfinite(self.__data)
@@ -176,13 +145,15 @@ class Log(object):
 
     @property
     def top(self):
+        "top depth of this log"
         return self.__depth[0]
 
     @property
     def bottom(self):
+        "bottom depth of this log"
         return self.__depth[-1]
 
-    def read_od(self, file_name):
+    def _read_od(self, file_name):
         try:
             with open(file_name, "r") as fin:
                 info_list = fin.readline().split('\t')
@@ -200,7 +171,10 @@ class Log(object):
             print('{}: '.format(self.name))
             print(inst.args)
 
-    def write_od(self, file_name):
+    def to_las(self, file_name):
+        """
+        Save as pseudo-las file
+        """
         try:
             with open(file_name, 'w') as fout:
                 split_list = self.descr.split(' ')
@@ -214,12 +188,14 @@ class Log(object):
             print(inst.args)
 
     def get_depth_idx(self, d):
+        "return index of depth"
         if d > self.bottom or d < self.top:
             return None
         else:
             return int((d - self.top) // 0.1)
 
     def get_data(self, depth):
+        "get data at certain depth"
         depth_idx = list()
         for de in depth:
             depth_idx.append(self.get_depth_idx(de))
@@ -232,6 +208,7 @@ class Log(object):
         return log_data[mask]
 
     def get_resampled(self, rate):
+        "return resampled log"
         standard_log_step = 0.1
         step = int(rate // standard_log_step) + 1
         log = Log()
@@ -251,8 +228,7 @@ class Log(object):
 
         Returns
         -------
-        ax : matplotlib.axes._subplots.AxesSubplot
-            axis object on which the curve has been plotted
+        matplotlib.axes._subplots.AxesSubplot
         """
         if ax is None:
             _, ax = plt.subplots()
