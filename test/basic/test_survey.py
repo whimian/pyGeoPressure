@@ -61,7 +61,9 @@ def test__survey(data_root):
         "path": "test/data/f3_sparse.sgy",
         "inline_range": [200, 640, 20],
         "z_range": [400, 1100, 20],
-        "crline_range": [700, 1200, 20]
+        "crline_range": [700, 1200, 20],
+        "inDepth": True,
+        "Property_Type": "reflection"
     }
     with open(str(seis_file), 'w') as fl:
         json.dump(seis_info, fl)
