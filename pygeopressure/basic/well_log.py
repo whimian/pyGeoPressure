@@ -65,6 +65,19 @@ class Log(object):
         if file_name is not None:
             self.__init_from_file(file_name)
 
+    @classmethod
+    def from_scratch(cls, depth, data, name=None, units=None, descr=None,
+                     prop_type=None):
+        log = cls()
+        log.depth = np.array(depth)
+        log.data = np.array(data)
+        log.name = name
+        log.units = units
+        log.descr = descr
+        log.prop_type = prop_type
+
+        return log
+
     def __init_from_file(self, file_name):
         self.read_od(file_name)
         try:

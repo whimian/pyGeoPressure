@@ -28,12 +28,17 @@ from .well_storage import WellStorage
 
 class Well(object):
     """
-    Parameters
-    ----------
-    json_file : str
-        path to parameter file
+    A class representing a well with information and log curve data.
     """
     def __init__(self, json_file, hdf_path=None):
+        """
+        Parameters
+        ----------
+        json_file : str
+            path to parameter file
+        hdf_path : str, optional
+            path to hdf5 file used to override the one written in json_file
+        """
         self.json_file = json_file
         self.hdf_file = None
         self.well_name = None
@@ -77,6 +82,13 @@ class Well(object):
 
     @property
     def depth(self):
+        """
+        depth values of the well
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         if self.data_frame is not None:
             return np.around(self.data_frame['Depth(m)'].values, decimals=1)
         else:
@@ -84,6 +96,13 @@ class Well(object):
 
     @property
     def logs(self):
+        """
+        logs stored in this well
+
+        Returns
+        -------
+        list
+        """
         if self.data_frame is not None:
             temp = [item.strip(')').split('(')[0] \
                 for item in self.data_frame.keys()]
@@ -94,6 +113,9 @@ class Well(object):
 
     @property
     def unit_dict(self):
+        """
+        properties and their units
+        """
         temp_dict = {
             item.strip(')').split('(')[0]: item.strip(')').split('(')[-1] \
             for item in self.data_frame.keys()}
@@ -102,6 +124,13 @@ class Well(object):
 
     @property
     def hydrostatic(self):
+        """
+        Hydrostatic Pressure
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         try:
             # temp_log = self.get_log('Overburden_Pressure')
             return hydrostatic_pressure(
@@ -130,6 +159,13 @@ class Well(object):
 
     @property
     def lithostatic(self):
+        """
+        Overburden Pressure (Lithostatic)
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         try:
             temp_log = self.get_log('Overburden_Pressure')
             return np.array(temp_log.data)
@@ -139,7 +175,11 @@ class Well(object):
     @property
     def normal_velocity(self):
         """
-        return Normal Velocity calculated using NCT stored in well
+        Normal Velocity calculated using NCT stored in well
+
+        Returns
+        -------
+        numpy.ndarray
         """
         try:
             a = self.params['nct']['a']
@@ -536,18 +576,28 @@ class Well(object):
             n = 3
 
         if a is None or b is None:
-            a, b = self.params['nct']
+            a = self.params['nct']['a']
+            b = self.params['nct']['b']
 
-        log = Log()
-        log.depth = self.depth
-        log.data = eaton(hydrostatic=self.hydrostatic,
+        # log = Log()
+        # log.depth = self.depth
+
+        pres_eaton = eaton(hydrostatic=self.hydrostatic,
                          lithostatic=obp,
                          n=n, v=velocity, vn=self.normal_velocity)
-        log.name = "pressure_eaton_{}".format(
-            self.well_name.lower().replace('-', '_'))
-        log.descr = "Pressure_Eaton"
-        log.units = "MPa"
-        log.prop_type = "PRE"
+        # log.name = "pressure_eaton_{}".format(
+        #     self.well_name.lower().replace('-', '_'))
+        # log.descr = "Pressure_Eaton"
+        # log.units = "MPa"
+        # log.prop_type = "PRE"
+
+        log = Log.from_scratch(
+            self.depth, pres_eaton,
+            "pressure_eaton_{}".format(self.well_name.lower().replace('-', '_')),
+            descr = "Pressure_Eaton",
+            units = "MPa",
+            prop_type = "PRE")
+
         return log
 
     def bowers(self, vel_log, obp_log=None, a=None, b=None, u=1, vmax=4600,
