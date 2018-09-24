@@ -56,7 +56,7 @@ def test__survey(data_root):
     with open(str(survey_file), 'w') as fl:
         json.dump(survey_info, fl)
     # create seismic definition
-    seis_file = dir_Seismics / ".poststack"
+    seis_file = dir_Seismics / "poststack.seis"
     seis_info = {
         "path": "test/data/f3_sparse.sgy",
         "inline_range": [200, 640, 20],

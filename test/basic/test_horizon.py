@@ -15,4 +15,3 @@ def test__Horizon(tmpdir):
     hor.horizon_name = "hor_A"
     assert hor.get_cdp((1, 1)) == 200
     assert str(hor) == "Horizon Object: hor_A"
-    assert repr(hor) == "Horizon Object: hor_A"

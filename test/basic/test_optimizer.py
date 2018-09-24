@@ -38,4 +38,4 @@ def test__optimize_nct(real_well):
     vel_log = real_well.get_log("Velocity")
     a, b = optimize_nct(vel_log, 1200, 2000)
     assert float("{:.4f}".format(a)) == -7.7037
-    assert float("{:.8f}".format(b)) == 0.00012812
+    assert float("{:.7f}".format(b)) == 0.0001281
