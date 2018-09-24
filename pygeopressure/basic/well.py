@@ -349,7 +349,7 @@ class Well(object):
         except Exception as inst:
             print(inst)
     # Presure -----------------------------------------------------------------
-    def _get_pressure(self, pres_key, ref=None, hydrodynamic=0):
+    def get_pressure(self, pres_key, ref=None, hydrodynamic=0):
         pres_to_get = None
         try:
             pres_to_get = self.params[pres_key]
@@ -396,7 +396,7 @@ class Well(object):
         Log
             Log object containing Measured Pressure
         """
-        return self._get_pressure("Measured_Pressure", ref=ref)
+        return self.get_pressure("Measured_Pressure", ref=ref)
 
     def get_pressure_coefficient(self):
         """
@@ -468,7 +468,7 @@ class Well(object):
         Log
             Log object containing Equivalent Mud Weight
         """
-        return self._get_pressure("EMW", ref=ref)
+        return self.get_pressure("EMW", ref=ref)
 
     def get_dst(self, ref=None):
         """
@@ -485,7 +485,7 @@ class Well(object):
         Log
             Log object containing Drill-Stem Test Pressure
         """
-        return self._get_pressure("DST", ref=ref)
+        return self.get_pressure("DST", ref=ref)
 
     def get_wft(self, hydrodynamic=0, ref=None):
         """
@@ -505,7 +505,7 @@ class Well(object):
         Log
             Log object containing Wireline Formation Test Pressure
         """
-        return self._get_pressure("MDT", hydrodynamic=hydrodynamic, ref=ref)
+        return self.get_pressure("MDT", hydrodynamic=hydrodynamic, ref=ref)
 
     def get_loading_pressure(self, ref=None):
         """
@@ -522,7 +522,7 @@ class Well(object):
         Log
             Log object containing Pressure on Loading Curve
         """
-        return self._get_pressure("loading", ref=ref)
+        return self.get_pressure("loading", ref=ref)
 
     def get_unloading_pressure(self, ref=None):
         """
@@ -539,7 +539,7 @@ class Well(object):
         Log
             Log object containing Pressure on Unloading Curve
         """
-        return self._get_pressure("unloading", ref=ref)
+        return self.get_pressure("unloading", ref=ref)
 
     def eaton(self, vel_log, obp_log=None, n=None, a=None, b=None):
         """
