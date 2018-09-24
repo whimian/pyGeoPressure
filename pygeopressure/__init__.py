@@ -32,8 +32,10 @@ from pygeopressure.pressure.obp import (
     traugott, traugott_trend)
 from pygeopressure.pressure.bowers import (
     virgin_curve, invert_virgin, unloading_curve, invert_unloading,
-    bowers, bowers_varu, bowers_seis)
-from pygeopressure.pressure.eaton import eaton, eaton_seis
+    bowers, bowers_varu)
+from pygeopressure.pressure.bowers_seis import bowers_seis
+from pygeopressure.pressure.eaton import eaton
+from pygeopressure.pressure.eaton_seis import eaton_seis
 from pygeopressure.pressure.multivariate import (
     multivariate_virgin, invert_multivariate_virgin,
     multivariate_unloading, invert_multivariate_unloading,
