@@ -341,22 +341,27 @@ def optimize_nct(vel_log, fit_start, fit_stop):
         fit_stop = vel_log.bottom
 
     a, b = optimize_nct_trace(
-        np.array(vel_log.depth), np.array(vel_log.data), fit_start, fit_stop)
+        np.array(vel_log.depth), np.array(vel_log.data), fit_start, fit_stop,
+        pick=False)
 
     return a, b
 
 
-def optimize_nct_trace(depth, vel, fit_start, fit_stop):
+def optimize_nct_trace(depth, vel, fit_start, fit_stop, pick=True):
 
     mask = depth > fit_start
     mask *= depth < fit_stop
+    mask *= np.isfinite(vel)
 
     depth_interval = np.array(depth)[mask]
     vel_interval = np.array(vel)[mask]
 
-
-    depth_to_fit = pick_sparse(depth_interval, 3)
-    vel_to_fit = pick_sparse(vel_interval, 3)
+    if pick is True:
+        depth_to_fit = pick_sparse(depth_interval, 3)
+        vel_to_fit = pick_sparse(vel_interval, 3)
+    else:
+        depth_to_fit = depth_interval
+        vel_to_fit = vel_interval
 
     dt = vel_to_fit**(-1)
     log_dt = np.log(dt)
