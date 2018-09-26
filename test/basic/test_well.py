@@ -21,17 +21,32 @@ def test__well_properties(real_well):
         'Velocity': 'Meter/Second'}
     assert str(real_well) == "Well-FW1"
 
+
 @pytest.fixture()
 def measured_log():
     temp_log = pygeopressure.Log()
     temp_log.depth = [4118.5]
-    temp_log.data = [60.605]
+    temp_log.data = [60.6047]
     return temp_log
 
-def test__well_get_pressure(real_well, measured_log):
-    assert real_well.get_pressure_measured(ref='sea') == measured_log
-    assert real_well.get_dst(ref='sea') == measured_log
-    assert real_well.get_wft(ref='sea') == measured_log
-    assert real_well.get_emw(ref='sea') == measured_log
-    assert real_well.get_loading_pressure(ref='sea') == measured_log
-    assert real_well.get_unloading_pressure(ref='sea') == measured_log
+
+@pytest.fixture()
+def measured_coef_log():
+    temp_log = pygeopressure.Log()
+    temp_log.depth = [4118.5]
+    temp_log.data = [1.5005]
+    return temp_log
+
+
+def test__well_get_pressure(real_well, measured_log, measured_coef_log):
+    # assert real_well.get_pressure_measured(ref='sea') == measured_log
+    # assert real_well.get_dst(ref='sea') == measured_log
+    # assert real_well.get_wft(ref='sea') == measured_log
+    # assert real_well.get_emw(ref='sea') == measured_log
+    assert real_well.get_pressure("loading", ref='sea') == measured_log
+    assert real_well.get_pressure("loading", ref="sea", coef=True) == \
+        measured_coef_log
+    assert real_well.get_pressure("unloading", ref="sea", coef=True) == \
+        measured_coef_log
+    assert real_well.get_pressure("unloading", ref='sea') == measured_log
+    assert real_well.get_pressure("unloading").depth == [4159.5]
