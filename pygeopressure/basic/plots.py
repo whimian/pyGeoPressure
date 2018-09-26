@@ -142,7 +142,8 @@ def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
     if isinstance(obp_log, str):
         obp_log = well.get_log(obp_log)
     if isinstance(pres_log, str):
-        pres_log = well.get_loading_pressure()
+        # pres_log = well.get_loading_pressure()
+        pres_log = well.get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
 
@@ -237,7 +238,8 @@ def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
     if isinstance(obp_log, str):
         obp_log = well.get_log(obp_log)
     if isinstance(pres_log, str):
-        pres_log = well.get_loading_pressure()
+        # pres_log = well.get_loading_pressure()
+        pres_log = well.get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
 

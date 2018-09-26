@@ -75,8 +75,8 @@ def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
     if isinstance(obp_log, str):
         obp_log = well.get_log(obp_log)
     if isinstance(pres_log, str):
-        pres_log = well.get_loading_pressure()
-
+        # pres_log = well.get_loading_pressure()
+        pres_log = well.get_pressure(pres_log)
     depth = np.array(obp_log.depth)
 
     nct_vel_to_fit = []
@@ -226,7 +226,8 @@ def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):
     if isinstance(obp_log, str):
         obp_log = well.get_log(obp_log)
     if isinstance(pres_log, str):
-        pres_log = well.get_loading_pressure()
+        # pres_log = well.get_loading_pressure()
+        pres_log = well.get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
 

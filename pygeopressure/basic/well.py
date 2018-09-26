@@ -312,7 +312,7 @@ class Well(object):
         else:
             raise Warning("Mismatch")
 
-    def export(self, file_path, logs_to_export=None, full_las=False,
+    def to_las(self, file_path, logs_to_export=None, full_las=False,
                null_value=1e30):
         """
         Export logs to LAS or pseudo-LAS file
@@ -336,10 +336,10 @@ class Well(object):
             keys_to_export.append(
                 "{}({})".format(log.descr.replace(' ', '_'), log.units))
         self.data_frame.to_csv(
-            file_path, sep='\t', na_rep="{}".format(null_value),
+            file_path, sep="\t".encode('utf-8'), na_rep="{}".format(null_value),
             columns=keys_to_export, index=False)
 
-    def save_well(self):
+    def save_well_logs(self):
         """
         Save current well logs to file
         """
@@ -348,8 +348,28 @@ class Well(object):
             storage.update_well(self.well_name, self.data_frame)
         except Exception as inst:
             print(inst)
-    # Presure -----------------------------------------------------------------
-    def get_pressure(self, pres_key, ref=None, hydrodynamic=0):
+    # Measured Presure ----------
+    def get_pressure(self, pres_key, ref=None, hydrodynamic=0, coef=False):
+        """
+        Get Pressure Values or Pressure Coefficients
+
+        Parameters
+        ----------
+        pres_key : str
+            Pressure data name
+        ref : {'sea', 'kb'}
+            depth reference, 'sea' references to sea level, 'kb' references
+            to Kelly Bushing
+        hydrodynamic : float
+            return Pressure at depth deeper than this value
+        coef : bool
+            True - get pressure coefficient else get pressure value
+
+        Returns
+        -------
+        Log
+            Log object containing Pressure or Pressure coefficients
+        """
         pres_to_get = None
         try:
             pres_to_get = self.params[pres_key]
@@ -360,72 +380,50 @@ class Well(object):
                                      kelly_bushing=self.kelly_bushing,
                                      depth_w=self.water_depth)
         depth = pres_to_get["depth"]
-        coef = pres_to_get["coef"]
+        coefficients = pres_to_get["coef"]
         pres = pres_to_get["data"]
-        if not coef:
-            coef = pres
-            hydro = np.ones(hydro.shape)
+
         obp_depth = self.depth # obp_log.depth
-        pres_data = list()
-        pres_depth = list()
-        for dp, co in zip(depth, coef):
-            if dp > hydrodynamic:
+
+        output_depth = np.array(depth)
+
+        if coef is True:
+            if not coefficients:
+                # get pressure coefficients but no coefficients stored
+                output_data = list()
+                for dp, pr in zip(depth, pres):
+                    idx = np.searchsorted(self.depth, dp)
+                    output_data.append(pr / hydro[idx])
+                output_data = np.array(output_data)
+            else:
+                output_data = np.array(coefficients)
+        elif coef is False:
+            if pres:
+                # get pressure values and values stored
+                coefficients = pres
+                hydro = np.ones(hydro.shape)
+
+            output_data = list()
+            # ouput_depth = list()
+            for dp, co in zip(depth, coefficients):
                 idx = np.searchsorted(obp_depth, dp)
-                pres_data.append(hydro[idx] * co)
-                pres_depth.append(dp)
+                output_data.append(hydro[idx] * co)
+                # ouput_depth.append(dp)
+            output_data = np.array(output_data)
+        else:
+            raise Exception()
+
+        mask = output_depth > hydrodynamic
+        output_depth = output_depth[mask]
+        output_data = output_data[mask]
+
         log = Log()
         if ref == 'sea':
-            log.depth = np.array(pres_depth) - self.kelly_bushing
+            log.depth = output_depth - self.kelly_bushing
         else:
-            log.depth = pres_depth
-        log.data = np.round(np.array(pres_data), 3)
-        return log
+            log.depth = output_depth
+        log.data = np.round(output_data, 4)
 
-    def get_pressure_measured(self, ref=None):
-        """
-        Get Measured Pressure
-
-        Parameters
-        ----------
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Measured Pressure
-        """
-        return self.get_pressure("Measured_Pressure", ref=ref)
-
-    def get_pressure_coefficient(self):
-        """
-        Retrieve Pressure Coefficient
-
-        Returns
-        -------
-        Log
-            Log object containing Measured Pressure Coefficients
-        """
-        depth = self.params["Measured_Pressure"]["depth"]
-        coef = self.params["Measured_Pressure"]["coef"]
-        pres = self.params["Measured_Pressure"]["data"]
-        if depth and not coef and pres:
-            hydro = hydrostatic_pressure(self.depth,
-                                         kelly_bushing=self.kelly_bushing,
-                                         depth_w=self.water_depth)
-            coef_data = list()
-            for dp, pr in zip(depth, pres):
-                idx = np.searchsorted(self.depth, dp)
-                coef_data.append(pr / hydro[idx])
-            log = Log()
-            log.depth = depth
-            log.data = coef_data
-            return log
-        else:
-            log = Log()
-            log.depth = depth
-            log.data = coef
         return log
 
     def get_pressure_normal(self):
@@ -452,95 +450,7 @@ class Well(object):
         log.depth = depth
         log.data = pres_data
         return log
-
-    def get_emw(self, ref=None):
-        """
-        Get Equivalent Mud Weight
-
-        Parameters
-        ----------
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Equivalent Mud Weight
-        """
-        return self.get_pressure("EMW", ref=ref)
-
-    def get_dst(self, ref=None):
-        """
-        Get Drill-Stem Test Pressure Measurements
-
-        Parameters
-        ----------
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Drill-Stem Test Pressure
-        """
-        return self.get_pressure("DST", ref=ref)
-
-    def get_wft(self, hydrodynamic=0, ref=None):
-        """
-        Get Wireline Formation Test Pressure Measurements
-        (Both MDT and/or RFT)
-
-        Parameters
-        ----------
-        hydrodynamic : scalar
-            start depth of hydrodynamic interval
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Wireline Formation Test Pressure
-        """
-        return self.get_pressure("MDT", hydrodynamic=hydrodynamic, ref=ref)
-
-    def get_loading_pressure(self, ref=None):
-        """
-        Get Pressure Measurements on loading curve
-
-        Parameters
-        ----------
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Pressure on Loading Curve
-        """
-        return self.get_pressure("loading", ref=ref)
-
-    def get_unloading_pressure(self, ref=None):
-        """
-        Get Pressure Measurements on unloading curve
-
-        Parameters
-        ----------
-        ref : {'sea', 'kb'}
-            depth reference, 'sea' references to sea level, 'kb' references
-            to Kelly Bushing
-
-        Returns
-        -------
-        Log
-            Log object containing Pressure on Unloading Curve
-        """
-        return self.get_pressure("unloading", ref=ref)
-
+    # Prediction ------------
     def eaton(self, vel_log, obp_log=None, n=None, a=None, b=None):
         """
         Predict pore pressure using Eaton method
@@ -703,6 +613,9 @@ class Well(object):
         return log
 
     def plot_horizons(self, ax, color_dict=None):
+        """
+        Plot horizons stored in well
+        """
         horizon_dict = None
         try:
             color_dict = self.params['color_dict']
@@ -732,7 +645,7 @@ class Well(object):
 
     def save_params(self):
         """
-        Save edited parameters to file
+        Save edited parameters to well information file
         """
         try:
             with open(self.json_file, "w") as fl:
