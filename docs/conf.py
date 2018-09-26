@@ -42,7 +42,8 @@ extensions = [
     'sphinx.ext.ifconfig',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinx.ext.autosummary']
+    'sphinx.ext.autosummary',
+    'nbsphinx']
 
 # numpydoc_class_members_toctree = False
 
@@ -90,6 +91,7 @@ language = None
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 # exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', "*/.ipynb_checkpoints", ".ipynb_checkpoints"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -105,24 +107,21 @@ todo_include_todos = False
 import sphinx_bootstrap_theme
 html_theme = 'bootstrap'
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+# kill in and out prompt
+nbsphinx_prompt_width=0
 
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#
 html_theme_options = dict(
     bootstrap_version="3",
-    bootswatch_theme="readable",
-    navbar_sidebarrel=False,
+    bootswatch_theme="lumen",
+    # navbar_sidebarrel=False,
+    navbar_fixed_top=False,
     source_link_position="footer",
-    globaltoc_depth=2,
-    navbar_links=[
-        # ("Cookbook", "cookbook/index"),
-        ("API", "api/api")
-    ],
+    # navbar_class="navbar navbar-inverse",
+    globaltoc_depth=-1,
+    # navbar_links=[
+    #     # ("Cookbook", "cookbook/index"),
+    #     # ("Index", "index")
+    # ],
 )
 html_favicon = "img/pygeopressure-logo-notext.png"
 

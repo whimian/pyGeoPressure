@@ -14,13 +14,10 @@ A Python package for pore pressure prediction using well log data and seismic ve
 
 # Features
 
-1. Hydrostatic Pressure Calculation
-2. Overburden (or Lithostatic) Pressure Calculation
-3. Eaton's method and Parameter Optimization (Well log)
-4. Eaton's method and Parameter Optimization (Seismic Velocity)
-5. Bowers' method and Parameter Optimization (Well log)
-6. Bowers' method and Parameter Optimization (Seismic Velocity)
-7. Multivariate method and Parameter Optimization (Well log)
+1. Overburden (or Lithostatic) Pressure Calculation
+2. Eaton's method and Parameter Optimization
+3. Bowers' method and Parameter Optimization
+4. Multivariate method and Parameter Optimization
 
 # Getting Started
 

@@ -12,4 +12,11 @@ Seismic Velocity
 ================
 
 When it comes to 3D seismic data, we directly interact with SEGY file
-utlizing `segyio <https://github.com/Statoil/segyio>`_)
+utlizing `segyio <https://github.com/Statoil/segyio>`_.
+
+
+
+.. automethod:: pygeopressure.basic.seisegy.SeiSEGY.__init__
+
+.. autoclass:: pygeopressure.basic.seisegy.SeiSEGY
+    :members:

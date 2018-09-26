@@ -44,7 +44,7 @@ or
 
 if using Python 2.7.
 
-Install from :code:`pypi`
+Install from :code:`pyPI`
 -------------------------
 :code:`pyGeoPressure` is on :code:`PyPI`, so run the following command to install
 :code:`pyGeoPressure` from :code:`pypi`.
@@ -62,12 +62,13 @@ Install latest develop branch from github:
 
     pip install -e git://github.com/whimian/pyGeoPressure.git@develop
 
-Alternatively, you can download the repo, unzip, `cd` to that directory and run:
+Alternatively, if you don't have :code:`git` installed, you can download the repo
+from `Github <https://github.com/whimian/pyGeoPressure/archive/develop.zip>`_,
+unzip, :code:`cd` to that directory and run:
 
 .. code:: bash
 
     pip install pyGeoPressure
-
 
 For Developers
 ==============

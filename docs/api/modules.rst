@@ -1,5 +1,5 @@
-pygeopressure
-=============
+API
+===
 
 .. toctree::
    :maxdepth: 4

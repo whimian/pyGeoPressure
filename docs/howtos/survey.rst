@@ -8,7 +8,7 @@ seismic and well data associated with the survey area.
 
 Create Survey
 -------------
-A new survey can be created with a survey folder：
+A new survey is created with a survey folder：
 
 ::
 
@@ -28,56 +28,63 @@ the following structure:
     |   .survey
     |   |
     |   +---Seismics
-    |   |       .SEIS_1
-    |   |       .SEIS_2
-    |   |       .SEIS_3
+    |   |       velocity.seis
+    |   |       density.seis
+    |   |       pressure.seis
     |   |
     |   +---Surfaces
-    |   |       .HORIZON_1
-    |   |       .HORIZON_2
-    |   |       .HORIZON_3
-    |   |       .HORIZON_4
+    |   |       T20.hor
+    |   |       T16.hor
     |   |
     |   \---Wellinfo
-    |           .WELL-1
-    |           .WELL-2
-    |           .WELL-3
-    |           .WELL-4
+    |           .CUG1
+    |           .CUG2
     |           well_data.h5
     |
 
 Within the survey directory named :code:`EXAMPLE_SURVEY`, there are three
 sub-folders :code:`Seismics`, :code:`Surfaces` and :code:`Wellinfo`.
-Their names are self-explanatory.
 
 Seismics
 ^^^^^^^^
 Within :code:`Seismics` folder, each file written in JSON represents a seismic data cube.
 In-line/cross-line range and Z range are stored in each file.
-The file also contains file path to the actual SEG-Y file storing seismic data.
-So the :code:`Seismics` folder doesn't need to store large SEG-Y files, it just holds references to them.
+The file also contains file path to the actual SEG-Y file storing seismic data,
+and the type of property (:code:`Property_Type`) and wether data is in depth scale
+or not (:code:`inDepth`). So the :code:`Seismics` folder doesn't need to store
+large SEG-Y files, it just holds references to them.
 
+The `velocity.seis` file in our example survey looks like this:
 ::
 
     {
-        "path": "D:\\poststack_f3.sgy",
+        "path": "velocity.sgy",
         "inline_range": [200, 650, 2],
         "z_range": [400, 1100, 4],
-        "crline_range": [700, 1200, 2]
+        "crline_range": [700, 1200, 2],
+        "inDepth": true,
+        "Property_Type": "Velocity"
     }
+
+Note that if path is relative, pygeopressure will look for segy file in
+the Seismics folder.
 
 Surfaces
 ^^^^^^^^
 
-Surfaces like seimic horizons are stored in :code:`Surfaces`. Surface files are
-just tsv files storing inline number, crossline number and depth values of 3D geologic surfaces.
+Surfaces like seimic horizons are stored in :code:`Surfaces` folder. Surface
+files ending with .hor are tsv files storing inline number, crossline number
+and depth values defining the geometry of a 3D geologic surface.
 
 Wellinfo
 ^^^^^^^^
 
-Well log data is stored in :code:`Wellinfo`. Each file with file name staring with '.' plus well name is a
-well information file, it stores well name, kelly bushing, water depth and other information.
-Actual well logging data are stored in :code:`well_data.h5`.
+Well information is stored in :code:`Wellinfo`. Each file with file name with
+extention :code:`.well` is a well information file, it stores well position information
+like coordination, kelly bushing and interpretation information like interpretated
+layers, fitted coefficients. It also holds a pointer to where the log curve data is
+stored. By default, well log curve data are stored in :code:`well_data.h5`, but
+users can point to other storage files.
 
 :code:`.survey`
 ---------------
@@ -94,10 +101,32 @@ Survey Geometry defines:
 3. X/Y Coordinates, real world Coordinates
 4. Relations between them
 
-In pyGeoPressure, survey geometry is defined using a method I personally dubbed
-"Three points" method. The information needed are the extent and step of
-Inline/Crline coordinates
+In pyGeoPressure, survey geometry is defined using a method I personally
+dubbed "Three points" method. Given the inline/crossline number and X/Y coordinates
+of three points on the survey grid, we are able to solve the linear equaions for
+transformation between inline/crossline coordination and X/Y coordination.
 
+Information in :code:`.survey` file of the example survey are
 
+::
+
+    {
+        "name": "CUG_depth",
+        "point_A": [6400, 4100, 701319, 3274887],
+        "point_B": [6400, 4180, 702185, 3274387],
+        "point_C": [6440, 4180, 702685, 3275253],
+        "inline_range": [6400, 7000, 20],
+        "crline_range": [4100, 6020, 40],
+        "z_range": [0, 5000, 4, "m"]
+    }
+
+Of the three points selected, point A and point B share the same inline, and
+point B and point C share the same crossline.
+
+In addition to coordinations of three points, the extent and step of inline, crossline
+,z coordinates and unit of z are also needed to fully define the extent of the
+survey.
+
+--------
 
 .. [1] http://www.glossary.oilfield.slb.com/en/Terms/s/survey.aspx

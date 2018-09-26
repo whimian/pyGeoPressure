@@ -28,10 +28,10 @@ pygeopressure.basic.las module
     :undoc-members:
     :show-inheritance:
 
-pygeopressure.basic.las\_reader module
---------------------------------------
+pygeopressure.basic.log\_tools module
+-------------------------------------
 
-.. automodule:: pygeopressure.basic.las_reader
+.. automodule:: pygeopressure.basic.log_tools
     :members:
     :undoc-members:
     :show-inheritance:
@@ -48,14 +48,6 @@ pygeopressure.basic.plots module
 --------------------------------
 
 .. automodule:: pygeopressure.basic.plots
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-pygeopressure.basic.reader module
----------------------------------
-
-.. automodule:: pygeopressure.basic.reader
     :members:
     :undoc-members:
     :show-inheritance:
