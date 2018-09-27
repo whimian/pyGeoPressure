@@ -117,6 +117,7 @@ html_theme_options = dict(
     navbar_fixed_top=False,
     source_link_position="footer",
     # navbar_class="navbar navbar-inverse",
+    navbar_site_name="Contents",
     globaltoc_depth=-1,
     # navbar_links=[
     #     # ("Cookbook", "cookbook/index"),
