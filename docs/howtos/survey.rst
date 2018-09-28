@@ -6,15 +6,15 @@ particular area of the Earth's surface [1]_. Survey is the basic management unit
 projects in pyGeoPressure. It holds both survey geometry and references to
 seismic and well data associated with the survey area.
 
-Create Survey
--------------
-A new survey is created with a survey folder：
+In :code:`pyGeoPressure`, a :code:`Survey` object is initialized with a survey folder：
 
 ::
 
     import pygeopressure as ppp
 
     survey = ppp.Survey('path/to/survey/folder')
+
+So to setup a survey is to build the survey folder.
 
 Survey Folder Structure
 -----------------------
@@ -43,57 +43,18 @@ the following structure:
     |
 
 Within the survey directory named :code:`EXAMPLE_SURVEY`, there are three
-sub-folders :code:`Seismics`, :code:`Surfaces` and :code:`Wellinfo`.
-
-Seismics
-^^^^^^^^
-Within :code:`Seismics` folder, each file written in JSON represents a seismic data cube.
-In-line/cross-line range and Z range are stored in each file.
-The file also contains file path to the actual SEG-Y file storing seismic data,
-and the type of property (:code:`Property_Type`) and wether data is in depth scale
-or not (:code:`inDepth`). So the :code:`Seismics` folder doesn't need to store
-large SEG-Y files, it just holds references to them.
-
-The `velocity.seis` file in our example survey looks like this:
-::
-
-    {
-        "path": "velocity.sgy",
-        "inline_range": [200, 650, 2],
-        "z_range": [400, 1100, 4],
-        "crline_range": [700, 1200, 2],
-        "inDepth": true,
-        "Property_Type": "Velocity"
-    }
-
-Note that if path is relative, pygeopressure will look for segy file in
-the Seismics folder.
-
-Surfaces
-^^^^^^^^
-
-Surfaces like seimic horizons are stored in :code:`Surfaces` folder. Surface
-files ending with .hor are tsv files storing inline number, crossline number
-and depth values defining the geometry of a 3D geologic surface.
-
-Wellinfo
-^^^^^^^^
-
-Well information is stored in :code:`Wellinfo`. Each file with file name with
-extention :code:`.well` is a well information file, it stores well position information
-like coordination, kelly bushing and interpretation information like interpretated
-layers, fitted coefficients. It also holds a pointer to where the log curve data is
-stored. By default, well log curve data are stored in :code:`well_data.h5`, but
-users can point to other storage files.
+sub-folders :code:`Seismics`, :code:`Surfaces` and :code:`Wellinfo`. At the root of the
+survey folder is a survey definition file :code:`.survey`. The definition file defines
+the geometry of the survey, the folder structure defines its association with the data.
 
 :code:`.survey`
 ---------------
 
-Most importantly, there is a :code:`.survey` file, which stores geometry definition of the
+First and foremost, there is a :code:`.survey` file, which stores geometry definition of the
 whole geophysical survey and auxiliary information.
 
 Geometry Definition
--------------------
+^^^^^^^^^^^^^^^^^^^
 Survey Geometry defines:
 
 1. Survey Area extent
@@ -126,6 +87,45 @@ point B and point C share the same crossline.
 In addition to coordinations of three points, the extent and step of inline, crossline
 ,z coordinates and unit of z are also needed to fully define the extent of the
 survey.
+
+Seismics
+^^^^^^^^
+Within :code:`Seismics` folder, each file written in JSON with extention :code:`.seis` represents a seismic data cube.
+These files contain file path to the actual SEG-Y file storing seismic data,
+and the type of property (:code:`Property_Type`) and wether data is in depth scale
+or not (:code:`inDepth`). So the :code:`Seismics` folder doesn't need to store
+large SEG-Y files, it just holds references to them.
+In-line/cross-line range and Z range are also written in these files.
+
+Surfaces
+^^^^^^^^
+
+Surfaces like seimic horizons are stored in :code:`Surfaces` folder. Surface
+files ending with :code:`.hor` are tsv files storing inline number, crossline number
+and depth values defining the geometry of a 3D geologic surface.
+
+Wellinfo
+^^^^^^^^
+
+Well information is stored in :code:`Wellinfo`. Each file with file name with
+extention :code:`.well` is a well information file, it stores well position information
+like coordination, kelly bushing and interpretation information like interpretated
+layers, fitted coefficients. It also holds a pointer to where the log curve data is
+stored. By default, well log curve data are stored in :code:`well_data.h5`, but
+users can point to other storage files.
+
+Create New Survey
+-----------------
+A helper function :code:`create_survey_directory` can facilitate users to build survey folder structure:
+
+::
+
+    import pygeopressure as ppp
+
+    ppp.create_survey_directory(ROOTDIR, SURVEY_NAME)
+
+It will create a survey folder named :code:`SURVEY_NAME` in :code:`ROOTDIR`
+with three sub-folders for each kind of data and a :code:`.survey` file.
 
 --------
 

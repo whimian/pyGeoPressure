@@ -67,13 +67,13 @@ Contents
     :caption: How-to:
 
     howtos/survey
+    howtos/new_well
     howtos/import_well_log_data
-    howtos/manage_well_storage
+    howtos/new_seismic
 
 .. toctree::
     :maxdepth: 1
     :caption: References:
 
     explanation/data_types
-    explanation/data_io
     api/modules
