@@ -35,10 +35,12 @@ setup(
     install_requires=[
         'future',
         'pathlib2;python_version=="2.7"',
+        'singledispatch;python_version=="2.7'
         'scipy',
         'scikit-learn',
         'pandas',
         'tables',
+        'pyqt=4;python_version=="2.7',
         'matplotlib',
         'jupyter',
         'segyio'
