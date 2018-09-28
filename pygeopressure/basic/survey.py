@@ -245,10 +245,11 @@ def create_survey_directory(root_dir, survey_name):
 
     Parameters
     ----------
-    root_dir : Path
+    root_dir : str
         Root directory for storing surveys
     survey_nam : str
     """
+    root_dir = Path(root_dir)
     survey_root = root_dir / survey_name
     try:
         survey_root.mkdir()
@@ -257,9 +258,7 @@ def create_survey_directory(root_dir, survey_name):
                          root_dir / survey_name / 'Surfaces']
         for directory in dir_to_create:
             directory.mkdir()
-        # new folder structure does not require folder dot file
-        #     file_path = directory / ".{}".format(str(directory.name).lower())
-        #     file_path.touch()
+        (survey_root / ".survey").touch()
         return survey_root
     except OSError:
         raise DuplicateSurveyNameExeption()

@@ -19,6 +19,7 @@ from pygeopressure.basic.optimizer import (
 from pygeopressure.basic.plots import (
     plot_eaton_error, plot_bowers_vrigin, plot_bowers_unloading,
     plot_multivariate)
+from pygeopressure.basic.survey import create_survey_directory
 
 from pygeopressure.velocity.smoothing import smooth, smooth_2d, smooth_trace
 from pygeopressure.velocity.conversion import (

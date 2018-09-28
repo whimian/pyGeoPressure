@@ -41,9 +41,9 @@ def test__survey(data_root):
     assert dir_Wellinfo.exists() is True
     assert dir_Surfaces.exists() is True
 
-    with pytest.raises(Exception) as excinfo:
-        ppp.Survey(dir_F3)
-    assert "No survey setting file" in str(excinfo.value)
+    # with pytest.raises(Exception) as excinfo:
+    #     ppp.Survey(dir_F3)
+    # assert "No survey setting file" in str(excinfo.value)
     # create survey file
     survey_file = dir_F3 / ".survey"
     survey_info = {
