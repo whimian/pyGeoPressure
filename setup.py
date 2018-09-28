@@ -36,6 +36,7 @@ setup(
         'future',
         'pathlib2;python_version=="2.7"',
         'scipy',
+        'scikit-learn',
         'pandas',
         'tables',
         'matplotlib',
