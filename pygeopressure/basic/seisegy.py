@@ -64,7 +64,7 @@ class SeiSEGY(object):
         segy_file : str
             segy file path for overriding information in json file.
         """
-        with open(str(Path(json_file)), 'r') as fl:
+        with open(str(Path(str(json_file))), 'r') as fl:
             json_object = json.load(fl)
             segy = json_object["path"]
             inDepth = json_object["inDepth"]
