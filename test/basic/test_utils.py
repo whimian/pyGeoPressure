@@ -4,6 +4,10 @@ Test
 
 Created on Jun. 15th 2017
 """
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+
 __author__ = "yuhao"
 
 import pytest

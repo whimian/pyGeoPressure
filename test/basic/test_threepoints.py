@@ -4,7 +4,9 @@ Test
 
 Created on Feb. 22nd 2018
 """
-from __future__ import unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 
 __author__ = "yuhao"
 

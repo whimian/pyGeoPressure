@@ -2,15 +2,15 @@
 """
 Created on Sep 16 2018
 """
-from __future__ import unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 
 import pytest
 import pygeopressure
 
 from pygeopressure.basic.optimizer import (
     optimize_bowers_virgin, optimize_eaton, optimize_nct)
-
-from builtins import str
 
 
 @pytest.fixture()
