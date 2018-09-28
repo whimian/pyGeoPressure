@@ -4,15 +4,15 @@ well log processing tools
 
 Created on Sep 19 2018
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 __author__ = "yuhao"
 
+from builtins import range, open
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 from scipy.signal import butter, filtfilt
-from scipy.optimize import curve_fit
 
 from pygeopressure.velocity.smoothing import smooth
 

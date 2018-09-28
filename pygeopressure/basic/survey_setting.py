@@ -4,8 +4,10 @@ A survey setting class
 
 Created on Sat Jan 20 2018
 """
-from __future__ import absolute_import, print_function, division
-from __future__ import unicode_literals, with_statement
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from builtins import range
 
 import math
 

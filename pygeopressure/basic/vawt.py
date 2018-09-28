@@ -2,7 +2,10 @@
 """
 Created on Thu Apr 26 2017
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from builtins import range
 
 __author__ = "yuhao"
 

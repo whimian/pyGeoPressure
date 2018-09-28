@@ -7,10 +7,9 @@ Created on Sep 16 2018
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from builtins import str
-
 __author__ = "yuhao"
 
+from builtins import bytes, str
 import json
 from collections import OrderedDict
 
@@ -62,19 +61,19 @@ def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
     rms_err : float
         root mean square error of pressure
     """
-    if isinstance(upper, str):
+    if isinstance(upper, (bytes, str)):
         depth_upper = well.params['horizon'][upper]
     else:
         depth_upper = upper
-    if isinstance(upper, str):
+    if isinstance(upper, (bytes, str)):
         depth_lower = well.params['horizon'][lower]
     else:
         depth_lower = lower
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         # pres_log = well.get_loading_pressure()
         pres_log = well.get_pressure(pres_log)
     depth = np.array(obp_log.depth)
@@ -144,11 +143,11 @@ def optimize_bowers_unloading(well, vel_log, obp_log, a, b,
     error : float
         Relative RMS error
     """
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         pres_log = well._get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
@@ -221,11 +220,11 @@ def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):
     rms_err : array
         array of rms error of different n around minmum
     """
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         # pres_log = well.get_loading_pressure()
         pres_log = well.get_pressure(pres_log)
 
@@ -262,13 +261,13 @@ def optimize_eaton(well, vel_log, obp_log, a, b, pres_log="loading"):
 
 def optimize_multivaraite(well, obp_log, vel_log, por_log, vsh_log, B,
                           upper, lower):
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(por_log, str):
+    if isinstance(por_log, (bytes, str)):
         por_log = well.get_log(por_log)
-    if isinstance(vsh_log, str):
+    if isinstance(vsh_log, (bytes, str)):
         vsh_log = well.get_log(vsh_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
     # --------------------------------------------
     obp_data = np.array(obp_log.data)

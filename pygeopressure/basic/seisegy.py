@@ -4,26 +4,25 @@ class for interfacing with segy file.
 
 Created on Feb. 7th 2018
 """
-from __future__ import division, print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 __author__ = "yuhao"
 
-from shutil import copyfile
-from builtins import range
-from itertools import product
-
+from builtins import range, open
 import json
-
+from shutil import copyfile
+from itertools import product
+from future.utils import native
 import segyio
-
-from . import Path
 
 from .utils import  methdispatch
 from .vawt import wiggles, img
 from .indexes import InlineIndex, CrlineIndex, DepthIndex, CdpIndex
-from pygeopressure.basic.survey_setting import SurveySetting
-from pygeopressure.basic.threepoints import ThreePoints
-# from .well_log import Log
+from .survey_setting import SurveySetting
+from .threepoints import ThreePoints
+
+from . import Path
 
 
 class SeiSEGY(object):
@@ -39,15 +38,12 @@ class SeiSEGY(object):
         self.segy_file = segy_file
         self.inDepth = False # True if dataset Z is in Depth
         self.property_type = None
-        # self.json_file = json_file
-        # if self.json_file:
-        #     self._parse_json()
 
         if like is not None:
-            if Path(like).exists() and not Path(self.segy_file).exists():
+            if Path(native(like)).exists() and not Path(native(self.segy_file)).exists():
                 copyfile(src=like, dst=self.segy_file)
 
-        if Path(self.segy_file).exists():
+        if Path(native(self.segy_file)).exists():
             self._parse_segy()
         else:
             raise Exception("File does not exist!")
@@ -64,15 +60,15 @@ class SeiSEGY(object):
         segy_file : str
             segy file path for overriding information in json file.
         """
-        with open(str(Path(str(json_file))), 'r') as fl:
+        with open(json_file, 'r') as fl:
             json_object = json.load(fl)
             segy = json_object["path"]
             inDepth = json_object["inDepth"]
             property_type = json_object["Property_Type"]
 
         if segy_file:
-            segy = str(segy_file)
-        instance = cls(segy)
+            segy = segy_file
+        instance = cls(native(segy))
         instance.inDepth = inDepth
         instance.property_type = property_type
 
@@ -83,13 +79,6 @@ class SeiSEGY(object):
             self.startInline, self.endInline, self.stepInline,
             self.startCrline, self.endCrline, self.stepCrline,
             self.startDepth, self.endDepth, self.stepDepth)
-
-    # def _parse_json(self):
-    #     with open(Path(self.json_file), 'r') as fl:
-    #         json_object = json.load(fl)
-    #         self.segy_file = json_object["path"]
-    #         self.inDepth = json_object["inDepth"]
-    #         self.property_type = json_object["Property_Type"]
 
     def _parse_segy(self):
         with segyio.open(self.segy_file, 'r') as segyfile:
@@ -443,13 +432,6 @@ class SeiSEGY(object):
         ax.add_artist(inline_text)
 
         return handle
-
-    # def get_pseudo_log(self, cdp):
-    #     pseudo_log = Log()
-    #     pseudo_log.depth = list(self.depth())
-    #     pseudo_log.data = self.get_data(CdpIndex(cdp))
-    #     pseudo_log.name = "{}_inline_{}_crline_{}".format(attr, cdp[0], cdp[1])
-    #     return pseudo_log
 
     def valid_cdp(self, cdp_num):
         "Return valid CDP numbers nearest to cdp_num"

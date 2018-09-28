@@ -7,7 +7,7 @@ Created on Tue Dec 27 2016
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from builtins import str
+from builtins import zip, open, bytes, str
 
 __author__ = "yuhao"
 
@@ -17,11 +17,11 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 
-from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.eaton import eaton
+from pygeopressure.pressure.hydrostatic import hydrostatic_pressure
+from pygeopressure.pressure.eaton import eaton
 from pygeopressure.pressure.bowers import bowers_varu
 from pygeopressure.pressure.multivariate import pressure_multivariate
-from ..velocity.extrapolate import normal
+from pygeopressure.velocity.extrapolate import normal
 from .well_log import Log
 from .well_storage import WellStorage
 
@@ -208,7 +208,7 @@ class Well(object):
         """
         log_list = list()
         output_list = list()
-        if isinstance(logs, str):
+        if isinstance(logs, (bytes, str)):
             log_list.append(logs)
         elif isinstance(logs, list):
             log_list = logs
@@ -227,7 +227,7 @@ class Well(object):
                 shift_data[:-shift] = new_log.data[shift:]
                 new_log.data = shift_data
             output_list.append(new_log)
-        if isinstance(logs, str):
+        if isinstance(logs, (bytes, str)):
             return output_list[0]
         else:
             return output_list
@@ -469,14 +469,14 @@ class Well(object):
         Log
             a Log object containing calculated pressure.
         """
-        if isinstance(vel_log, str):
+        if isinstance(vel_log, (bytes, str)):
             vel_log.get_log(vel_log)
         velocity = np.array(vel_log.data)
 
         if obp_log is None:
             obp = self.lithostatic
         else:
-            if isinstance(obp_log, str):
+            if isinstance(obp_log, (bytes, str)):
                 obp_log.get_log(obp_log)
             obp = np.array(obp_log.data)
 
@@ -529,14 +529,14 @@ class Well(object):
         Log
             a Log object containing calculated pressure.
         """
-        if isinstance(vel_log, str):
+        if isinstance(vel_log, (bytes, str)):
             vel_log.get_log(vel_log)
         velocity = np.array(vel_log.data)
 
         if obp_log is None:
             obp = self.lithostatic
         else:
-            if isinstance(obp_log, str):
+            if isinstance(obp_log, (bytes, str)):
                 obp_log.get_log(obp_log)
             obp = np.array(obp_log.data)
 
@@ -569,23 +569,23 @@ class Well(object):
 
     def multivariate(self, vel_log, por_log, vsh_log, obp_log=None,
                      a0=None, a1=None, a2=None, a3=None, b=None):
-        if isinstance(vel_log, str):
+        if isinstance(vel_log, (bytes, str)):
             vel_log.get_log(vel_log)
         vel = np.array(vel_log.data)
-        if isinstance(por_log, str):
+        if isinstance(por_log, (bytes, str)):
             por_log.get_log(por_log)
         phi = np.array(por_log.data)
-        if isinstance(vsh_log, str):
+        if isinstance(vsh_log, (bytes, str)):
             vsh_log.get_log(vsh_log)
         vsh = np.array(vsh_log.data)
-        if isinstance(vsh_log, str):
+        if isinstance(vsh_log, (bytes, str)):
             vsh_log.get_log(vsh_log)
         vsh = np.array(vsh_log.data)
 
         if obp_log is None:
             obp = self.lithostatic
         else:
-            if isinstance(obp_log, str):
+            if isinstance(obp_log, (bytes, str)):
                 obp_log.get_log(obp_log)
             obp = np.array(obp_log.data)
 

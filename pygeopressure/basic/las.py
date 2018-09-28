@@ -4,20 +4,22 @@ an interface for interacting with Las file
 
 Created on Thu May 10 2018
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 __author__ = "yuhao"
 
-import json
-
+from builtins import open
+from future.utils import native
 import numpy as np
 import pandas as pd
 
-from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.eaton import eaton
-from ..velocity.extrapolate import normal
-from .well_log import Log
+from pygeopressure.pressure.hydrostatic import hydrostatic_pressure
+from pygeopressure.pressure.eaton import eaton
+from pygeopressure.velocity.extrapolate import normal
+from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.las_reader import LASReader
+
 from . import Path
 
 
@@ -69,8 +71,8 @@ class LasData(object):
         # data.to_hdf(self.hdf5_file, well_name)
 
     def read_las(self):
-        if Path(self.las_file).exists():
-            las = LASReader(str(Path(self.las_file)), null_subs=np.nan)
+        if Path(native(self.las_file)).exists():
+            las = LASReader(native(str(Path(self.las_file))), null_subs=np.nan)
             # well_name = las.well.items['WELL'].data
             df = pd.DataFrame(
                 las.data2d,

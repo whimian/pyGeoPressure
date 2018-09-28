@@ -4,21 +4,12 @@ an interface to a hdf5 storage file
 
 Created on Thu May 10 2018
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 __author__ = "yuhao"
 
-import json
-
-import numpy as np
 import pandas as pd
-
-from ..pressure.hydrostatic import hydrostatic_pressure
-from ..pressure.eaton import eaton
-from ..velocity.extrapolate import normal
-from .well_log import Log
-from pygeopressure.basic.las_reader import LASReader
-from . import Path
 
 
 class WellStorage(object):
@@ -49,7 +40,6 @@ class WellStorage(object):
             with pd.HDFStore(self.hdf5_file) as store:
                 return store.remove(well_name)
         except KeyError:
-            # print("No well named {}".format(well_name))
             raise KeyError("No well named {}".format(well_name))
 
     def add_well(self, well_name, well_data_frame):

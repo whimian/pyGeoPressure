@@ -7,7 +7,7 @@ Created on May 27 2018
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from builtins import str
+from builtins import zip, bytes, str
 
 __author__ = "yuhao"
 
@@ -129,19 +129,19 @@ class LoadingPlot(object):
 
 def plot_bowers_vrigin(ax, a, b, well, vel_log, obp_log, upper, lower,
                        pres_log='loading', mode='nc', nnc=5):
-    if isinstance(upper, str):
+    if isinstance(upper, (bytes, str)):
         depth_upper = well.params['horizon'][upper]
     else:
         depth_upper = upper
-    if isinstance(upper, str):
+    if isinstance(upper, (bytes, str)):
         depth_lower = well.params['horizon'][lower]
     else:
         depth_lower = lower
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         # pres_log = well.get_loading_pressure()
         pres_log = well.get_pressure(pres_log)
 
@@ -200,11 +200,11 @@ def plot_bowers_unloading(ax, a, b, u, vmax, well, vel_log, obp_log,
     """
     plot bowers unloading plot
     """
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         pres_log = well._get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
@@ -233,11 +233,11 @@ def plot_bowers_unloading(ax, a, b, u, vmax, well, vel_log, obp_log,
 
 
 def plot_eaton_error(ax, well, vel_log, obp_log, a, b, pres_log="loading"):
-    if isinstance(vel_log, str):
+    if isinstance(vel_log, (bytes, str)):
         vel_log = well.get_log(vel_log)
-    if isinstance(obp_log, str):
+    if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
-    if isinstance(pres_log, str):
+    if isinstance(pres_log, (bytes, str)):
         # pres_log = well.get_loading_pressure()
         pres_log = well.get_pressure(pres_log)
 

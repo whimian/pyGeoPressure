@@ -2,13 +2,15 @@
 """
 Created on Feb. 14th 2018
 """
-from __future__ import division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from builtins import open, bytes, str
+
+__author__ = "yuhao"
 
 import json
 
-from builtins import str
-
-__author__ = "yuhao"
 
 class ThreePoints(object):
     """
@@ -40,7 +42,7 @@ class ThreePoints(object):
         self.east_C = None
         self.north_C = None
         if json_file is not None:
-            if isinstance(json_file, str):
+            if isinstance(json_file, (bytes, str)):
                 self.json_file = json_file
                 self._read_json()
             elif isinstance(json_file, dict):

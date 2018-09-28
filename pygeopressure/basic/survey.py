@@ -4,15 +4,16 @@ Class for defining a seismic survey
 
 Created on Fri Dec 11 20:24:38 2015
 """
-from __future__ import absolute_import, division, print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
-from builtins import str
+from builtins import str, range, open
 
 __author__ = "yuhao"
 
 import json
 from itertools import product
-from . import Path
+from future.utils import native
 
 import numpy as np
 
@@ -21,7 +22,7 @@ from .well import Well
 from pygeopressure.basic.horizon import Horizon
 from .survey_setting import SurveySetting
 from .threepoints import ThreePoints
-
+from . import Path
 
 class Survey(SurveySetting):
     """
@@ -29,7 +30,7 @@ class Survey(SurveySetting):
 
     Parameters
     ----------
-    survey_dir : Path
+    survey_dir : str
         survey directory.
 
     Attributes
@@ -53,7 +54,13 @@ class Survey(SurveySetting):
         get seismic data in the vicinity of a given well
     """
     def __init__(self, survey_dir):
-        self.survey_dir = survey_dir
+        """
+        Parameters
+        ----------
+        survey_dir : str
+            survey directory.
+        """
+        self.survey_dir = Path(native(survey_dir))
         self.setting_json = None
         self._check_dir()
         super(Survey, self).__init__(ThreePoints(self.setting_json))
@@ -66,9 +73,9 @@ class Survey(SurveySetting):
         self._add_horizon()
 
     def _check_dir(self):
-        survey_file = Path(self.survey_dir, '.survey')
+        survey_file = self.survey_dir / '.survey'
         if survey_file.exists():
-            self.setting_json = str(survey_file)
+            self.setting_json = native(str(survey_file))
         else:
             raise Exception("No survey setting file in folder!")
 
@@ -79,7 +86,7 @@ class Survey(SurveySetting):
                 "Seismics" / "{}.seis".format(seis_name))
             data_path = None
             with open(info_file, "r") as fl:
-                data_path = Path(json.load(fl)["path"])
+                data_path = Path(native(json.load(fl)["path"]))
             if not data_path.is_absolute() and \
                     data_path.name == str(data_path):
                 data_path = self.survey_dir.absolute() / "Seismics" / data_path
@@ -93,7 +100,7 @@ class Survey(SurveySetting):
                 "Wellinfo" / "{}.well".format(well_name))
             data_path = None
             with open(info_file, "r") as fl:
-                data_path = Path(json.load(fl)["hdf_file"])
+                data_path = Path(native(json.load(fl)["hdf_file"]))
             if not data_path.is_absolute() and \
                     data_path.name == str(data_path):
                 data_path = self.survey_dir.absolute() / "Wellinfo" / data_path

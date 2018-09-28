@@ -2,18 +2,26 @@
 """
 some utilities regarding pressure calculation
 """
-from __future__ import division, print_function, absolute_import
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
+from builtins import str, open
 
 __author__ = "yuhao"
 
 import json
 from collections import OrderedDict
-
 from pygeopressure.basic.seisegy import SeiSEGY
 from . import Path
 
 
 def create_seis(name, like):
+    """
+    Parameters
+    ----------
+    name : str
+    like : SeiSEGY
+    """
     # create output segy file
     input_path = Path(like.segy_file)
     output_path = input_path.parent / "{}.sgy".format(name)
@@ -21,6 +29,12 @@ def create_seis(name, like):
 
 
 def create_seis_info(segy_object, name):
+    """
+    Parameters
+    ----------
+    segy_object : SeiSEGY
+    name : str
+    """
     file_path = Path(segy_object.segy_file).absolute()
     parent_folder = file_path.parent
     dict_info = OrderedDict([
