@@ -40,7 +40,6 @@ setup(
         'scikit-learn',
         'pandas',
         'tables',
-        'pyqt=4;python_version=="2.7',
         'matplotlib',
         'jupyter',
         'segyio'
