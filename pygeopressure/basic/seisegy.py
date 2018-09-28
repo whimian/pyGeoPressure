@@ -71,7 +71,7 @@ class SeiSEGY(object):
             property_type = json_object["Property_Type"]
 
         if segy_file:
-            segy = segy_file
+            segy = str(segy_file)
         instance = cls(segy)
         instance.inDepth = inDepth
         instance.property_type = property_type

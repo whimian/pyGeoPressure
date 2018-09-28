@@ -83,7 +83,8 @@ class Survey(SurveySetting):
             if not data_path.is_absolute() and \
                     data_path.name == str(data_path):
                 data_path = self.survey_dir.absolute() / "Seismics" / data_path
-            self.seismics[seis_name] = SeiSEGY.from_json(info_file, data_path)
+            self.seismics[seis_name] = SeiSEGY.from_json(info_file,
+                                                         str(data_path))
 
     def _add_seis_wells(self):
         well_dir = self.survey_dir / "Wellinfo"
