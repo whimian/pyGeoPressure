@@ -34,11 +34,11 @@ def test__log_object(real_well_log):
     assert str(real_well_log) == "Well_Log:vel_unk(Velocity[Meter/second])"
 
 
-def test__log_plot(real_well_log):
-    ax = real_well_log.plot()
-    line = ax.get_lines()[0]
-    x_plot, _ = line.get_xydata().T
-    np.testing.assert_array_equal(x_plot, real_well_log.data)
+# def test__log_plot(real_well_log):
+#     ax = real_well_log.plot()
+#     line = ax.get_lines()[0]
+#     x_plot, _ = line.get_xydata().T
+#     np.testing.assert_array_equal(x_plot, real_well_log.data)
 
 
 def test_log_smooth(real_well_log):
