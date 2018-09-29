@@ -40,8 +40,8 @@ setup(
         'scikit-learn',
         'pandas',
         'tables',
-        'matplotlib',
-        'jupyter',
+        'matplotlib<3.0;python_version=="2.7"',
+        'matplotlib;python_version>"2.7"',
         'segyio'
     ],
     packages=find_packages(exclude=['test']),
