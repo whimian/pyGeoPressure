@@ -205,7 +205,7 @@ def plot_bowers_unloading(ax, a, b, u, vmax, well, vel_log, obp_log,
     if isinstance(obp_log, (bytes, str)):
         obp_log = well.get_log(obp_log)
     if isinstance(pres_log, (bytes, str)):
-        pres_log = well._get_pressure(pres_log)
+        pres_log = well.get_pressure(pres_log)
 
     depth = np.array(obp_log.depth)
 
