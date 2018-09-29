@@ -25,7 +25,7 @@ The main features of :code:`pyGeoPressure` are:
 1. Overburden (or Lithostatic) Pressure Calculation (Tutorials: :doc:`OBP calculation for well <tutorial/obp_well>`, :doc:`OBP calculation for seismic <tutorial/obp_seis>`)
 2. Eaton's method and Parameter Optimization (Tutorials: :doc:`Eaton for well <tutorial/eaton_well>`, :doc:`Eaton for seismic <tutorial/eaton_seis>`)
 3. Bowers' method and Parameter Optimization (Tutorials: :doc:`Bowers for well <tutorial/bowers_well>`, :doc:`Bowers for seismic <tutorial/bowers_seis>`)
-4. Multivariate method and Parameter Optimization (Tutorials: )
+4. Multivariate method and Parameter Optimization (Tutorials: :doc:`Multivariate for well <tutorial/multivariate>`)
 
 Aside from main prediction features, :code:`pyGeoPressrue` provides other functionalities to facilitate the workflow:
 

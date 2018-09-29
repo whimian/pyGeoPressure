@@ -4,7 +4,7 @@ Overview
 .. note::
 
     The following tutorials are created with a set of jupyter notebooks, users may download
-    these notebooks (`Download <abc>`_) and the example survey (`Download <abc>`_),
+    these notebooks (`Download <https://github.com/whimian/pyGeoPressure/blob/master/test/data/pygeopressure_nb_tutorials.zip>`_) and the example survey (`Download <https://github.com/whimian/pyGeoPressure/blob/master/test/data/Example_Survey.zip>`_),
     and run these notebooks locally.
 
 .. toctree::
