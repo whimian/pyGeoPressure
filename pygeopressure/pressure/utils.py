@@ -5,7 +5,7 @@ some utilities regarding pressure calculation
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from builtins import str, open
+from builtins import str#, open
 
 __author__ = "yuhao"
 
@@ -39,16 +39,16 @@ def create_seis_info(segy_object, name):
     parent_folder = file_path.parent
     dict_info = OrderedDict([
         ("path", str(file_path)),
-        ("inDepth", segy_object.inDepth),
-        ("Property_Type", segy_object.property_type),
-        ("inline_range", [segy_object.startInline,
-                          segy_object.endInline,
-                          segy_object.stepInline]),
-        ("crline_range", [segy_object.startCrline,
-                          segy_object.endCrline,
-                          segy_object.stepCrline]),
-        ("z_range", [segy_object.startDepth,
-                     segy_object.endDepth,
-                     segy_object.stepDepth])])
+        ("inDepth", str(segy_object.inDepth)),
+        ("Property_Type", str(segy_object.property_type)),
+        ("inline_range", [str(segy_object.startInline),
+                          str(segy_object.endInline),
+                          str(segy_object.stepInline)]),
+        ("crline_range", [str(segy_object.startCrline),
+                          str(segy_object.endCrline),
+                          str(segy_object.stepCrline)]),
+        ("z_range", [str(segy_object.startDepth),
+                     str(segy_object.endDepth),
+                     str(segy_object.stepDepth)])])
     with open(str(parent_folder / "{}.seis".format(name)), 'w') as fl:
         json.dump(dict_info, fl, indent=4)
