@@ -65,12 +65,24 @@ https://pygeopressure.readthedocs.io/en/latest/
 
 # Contribute
 
-- Issue Tracker: https://github.com/whimian/pyGeoPressure/issues
-- Source Code: https://github.com/whimian/pyGeoPressure
+## Report Bugs
+
+If you find a bug, please report it at [Github Issues](https://github.com/whimian/pyGeoPressure/issues) by opening a new issue with `bug` label.
+
+## Suggest Enhancements
+
+If you have new ideas or need new features, you can request them by opening a new issue at [Github Issues](https://github.com/whimian/pyGeoPressure/issues) with `enhancement` label. We will see if we can work on it together.
+
+## Submit Pull Requests
+
+If you would like to help fix known bugs, please submit a PR.
+(See [The beginner's guide to contributing to a GitHub project](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/), if you are new to Github).
+
+Before creating a pull request, please try to make sure the tests pass and use numpy-style docstrings. (Please see the documentation on setting up the development environment https://pygeopressure.readthedocs.io/en/latest/install.html)
 
 # Support
 
-If you have any questions, please open an issue.
+If you have any questions, please open an issue at [Github Issues](https://github.com/whimian/pyGeoPressure/issues) with `question` label. Tell us about your question, we will provide assistance. And maybe we could add it to the documentation.
 
 # License
 
