@@ -8,9 +8,16 @@
 [![Build Status](https://travis-ci.org/whimian/pyGeoPressure.svg?branch=master)](https://travis-ci.org/whimian/pyGeoPressure)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2f79d873803d4ef1a3c306603fcfd767)](https://www.codacy.com/app/whimian/pyGeoPressure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=whimian/pyGeoPressure&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/whimian/pyGeoPressure/branch/master/graph/badge.svg)](https://codecov.io/gh/whimian/pyGeoPressure)
-[![Waffle.io - Columns and their card count](https://badge.waffle.io/whimian/pyGeoPressure.svg?columns=all)](https://waffle.io/whimian/pyGeoPressure)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1452001.svg)](https://doi.org/10.5281/zenodo.1452001)
+
 
 A Python package for pore pressure prediction using well log data and seismic velocity data.
+
+
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00992/status.svg)](https://doi.org/10.21105/joss.00992)
+
+Cite as:
+Hao, (2018). PyGeoPressure: Geopressure Prediction in Python. Journal of Open Source Software, 3(30), 992, https://doi.org/10.21105/joss.00992
 
 # Features
 
