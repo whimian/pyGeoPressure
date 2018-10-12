@@ -7,7 +7,7 @@ tags:
   - pore pressure
   - well planning
 authors:
-  - name: Yu Hao
+  - name: Hao Yu
     orcid: 0000-0002-4109-6358
     affiliation: 1
 affiliations:
