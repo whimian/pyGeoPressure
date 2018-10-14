@@ -17,7 +17,7 @@ A Python package for pore pressure prediction using well log data and seismic ve
 [![DOI](http://joss.theoj.org/papers/10.21105/joss.00992/status.svg)](https://doi.org/10.21105/joss.00992)
 
 Cite as:
-Hao, (2018). PyGeoPressure: Geopressure Prediction in Python. Journal of Open Source Software, 3(30), 992, https://doi.org/10.21105/joss.00992
+Yu, (2018). PyGeoPressure: Geopressure Prediction in Python. Journal of Open Source Software, 3(30), 992, https://doi.org/10.21105/joss.00992
 
 # Features
 
