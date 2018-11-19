@@ -155,7 +155,7 @@ def twt2depth(twt, v_avg, prop_2_convert,
     """
     depth = np.ones((len(twt), ))
     twt = twt * 0.001
-    depth = twt * v_avg
+    depth = twt * v_avg / 2.0
     startDepth = depth[0] if startDepth is None else startDepth
     endDepth = depth[-1] if endDepth is None else endDepth
     newDepth = np.arange(startDepth, endDepth+0.01, stepDepth)
