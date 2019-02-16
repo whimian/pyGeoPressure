@@ -148,6 +148,13 @@ class SurveySetting(object):
         m = G.I * d
         # m = m.astype(int)
 
+        # d = np.array([[x - self.alpha_x],
+        #                [y - self.alpha_y]])
+        # G = np.array([[self.beta_x, self.gamma_x],
+        #                [self.beta_y, self.gamma_y]])
+
+        # m = np.linalg.inv(G) @ d
+
         inline, crline = m[0][0], m[1][0]
         param_in = (inline - self.startInline) // self.stepInline + \
             ((inline - self.startInline) % self.stepInline) // \
@@ -157,7 +164,7 @@ class SurveySetting(object):
             ((inline - self.startCrline) % self.stepCrline) // \
             (self.stepCrline)
         crline = self.startCrline + self.stepCrline * param_cr
-        return (inline, crline)
+        return (int(inline), int(crline))
 
     def azimuth_and_invertedAxis(self):
         """
