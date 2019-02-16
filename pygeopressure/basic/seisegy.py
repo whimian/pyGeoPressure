@@ -446,3 +446,71 @@ class SeiSEGY(object):
                             self.stepCrline)
         crline = self.startCrline + (n_crline + cr_plus_one) * self.stepCrline
         return (inline, crline)
+
+    def to_gslib(self, attr, fname, cdps=None,
+                 title="Exported from pyGeopressure"):
+        """
+        Output attributes to a gslib data file.
+        A description of this file format could be found on
+        'http://www.gslib.com/gslib_help/format.html'
+
+        attr : str
+            attribute name
+        fname : str
+            file name
+        cdps : list of tuples
+            cdps to export
+        """
+        import numpy as np
+        import pandas as pd
+        try:
+            with open(fname, 'w') as fout:
+                fout.write(title+'\n')
+                fout.write("4\nx\ny\nz\n")
+                fout.write(attr+'\n')
+            if cdps is None:
+                percent = 0
+                nInline = len(list(self.inlines()))
+                for i, inl in enumerate(self.inlines()):
+                    data_per_inline = self.inline(inl).flatten()
+                    inline_per_inline = [inl] * data_per_inline.shape[0]
+                    crline_per_inline = np.array(
+                        [[cl]*self.nDepth for cl in self.crlines()]).flatten()
+
+                    depth_per_inline = np.array(
+                        [d for d in self.depths()] * self.nNorth).flatten()
+
+                    temp_frame = pd.DataFrame(
+                        {'col1': inline_per_inline,
+                         'col2': crline_per_inline,
+                         'col3': depth_per_inline,
+                         'col4': data_per_inline})
+
+                    temp_frame.to_csv(
+                        fname, mode='a', index=False, sep=str(' '),
+                        header=False)
+                    #     x, y = self.line_2_coord(inl, crl)
+                    percent_now = int(i / nInline * 100)
+                    if percent_now != percent:
+                        percent = percent_now
+                        print("............... [{}%]".format(percent))
+            else:
+                for cdp in cdps:
+                    data_per_cdp = self.cdp(cdp)
+                    depth_per_cdp = list(self.depths())
+                    n_depth = len(list(self.depths()))
+                    inl, crl = cdp
+                    inline_per_cdp = [inl] * n_depth
+                    crline_per_cdp = [crl] * n_depth
+                    temp_frame = pd.DataFrame(
+                        {'col1': inline_per_cdp,
+                         'col2': crline_per_cdp,
+                         'col3': depth_per_cdp,
+                         'col4': data_per_cdp})
+                    temp_frame.to_csv(
+                        fname, mode='a', index=False, sep=str(' '),
+                        header=False)
+
+        except Exception as inst:
+            print(inst)
+            print("Failed to export.")
