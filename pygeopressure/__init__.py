@@ -9,7 +9,8 @@ from pygeopressure.basic.survey import Survey
 from pygeopressure.basic.las import LasData
 from pygeopressure.basic.survey_setting import SurveySetting
 from pygeopressure.basic.threepoints import ThreePoints
-from pygeopressure.basic.utils import rmse, nmse, gslib_to_od, merge_gslib
+from pygeopressure.basic.utils import rmse, nmse
+from pygeopressure.basic.gslib import gslib_to_od, merge_gslib, Gslib
 from pygeopressure.basic.indexes import (
     InlineIndex, CrlineIndex, DepthIndex, CdpIndex)
 from pygeopressure.basic.horizon import Horizon

@@ -15,6 +15,9 @@ from shutil import copyfile
 from itertools import product
 from future.utils import native
 import segyio
+import numpy as np
+import pandas as pd
+from tqdm.auto import tqdm
 
 from .utils import  methdispatch
 from .vawt import wiggles, img
@@ -447,8 +450,7 @@ class SeiSEGY(object):
         crline = self.startCrline + (n_crline + cr_plus_one) * self.stepCrline
         return (inline, crline)
 
-    def to_gslib(self, attr, fname, cdps=None,
-                 title="Exported from pyGeopressure"):
+    def to_gslib(self, attr, fname, cdps=None):
         """
         Output attributes to a gslib data file.
         A description of this file format could be found on
@@ -461,41 +463,39 @@ class SeiSEGY(object):
         cdps : list of tuples
             cdps to export
         """
-        import numpy as np
-        import pandas as pd
         try:
-            with open(fname, 'w') as fout:
-                fout.write(title+'\n')
-                fout.write("4\nx\ny\nz\n")
-                fout.write(attr+'\n')
             if cdps is None:
-                percent = 0
+                info = "Number of cells: [{},{},{}] ".format(
+                        self.nEast, self.nNorth, self.nDepth) + \
+                    "Cell dimensions: [{},{},{}] ".format(
+                        self.stepInline, self.stepCrline, self.stepDepth) + \
+                    "Origin: [{}, {}, {}]".format(
+                        self.startInline, self.startCrline, self.startDepth)
+                with open(fname, 'w') as fout:
+                    fout.write("{}\n4\nx\ny\nz\n{}\n".format(info, attr))
+
                 nInline = len(list(self.inlines()))
-                for i, inl in enumerate(self.inlines()):
+                for i, inl in enumerate(
+                        tqdm(self.inlines(), total=nInline, ascii=True)):
                     data_per_inline = self.inline(inl).flatten()
                     inline_per_inline = [inl] * data_per_inline.shape[0]
                     crline_per_inline = np.array(
                         [[cl]*self.nDepth for cl in self.crlines()]).flatten()
-
                     depth_per_inline = np.array(
                         [d for d in self.depths()] * self.nNorth).flatten()
-
                     temp_frame = pd.DataFrame(
                         {'col1': inline_per_inline,
                          'col2': crline_per_inline,
                          'col3': depth_per_inline,
                          'col4': data_per_inline})
-
                     temp_frame.to_csv(
                         fname, mode='a', index=False, sep=str(' '),
                         header=False)
-                    #     x, y = self.line_2_coord(inl, crl)
-                    percent_now = int(i / nInline * 100)
-                    if percent_now != percent:
-                        percent = percent_now
-                        print("............... [{}%]".format(percent))
             else:
-                for cdp in cdps:
+                info = "CDPs: {}".format(cdps)
+                with open(fname, 'w') as fout:
+                    fout.write("{}\n4\nx\ny\nz\n{}\n".format(info, attr))
+                for cdp in tqdm(cdps, ascii=True):
                     data_per_cdp = self.cdp(cdp)
                     depth_per_cdp = list(self.depths())
                     n_depth = len(list(self.depths()))
