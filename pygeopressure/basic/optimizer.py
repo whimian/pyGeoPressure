@@ -15,6 +15,7 @@ from collections import OrderedDict
 
 import numpy as np
 from scipy.optimize import curve_fit
+from sklearn import linear_model
 
 from pygeopressure.pressure.bowers import (
     virgin_curve, invert_virgin, power_bowers)
@@ -24,7 +25,6 @@ from pygeopressure.basic.well import Well
 from pygeopressure.basic.well_log import Log
 from pygeopressure.basic.utils import rmse, pick_sparse
 from pygeopressure.pressure.eaton import power_eaton
-from sklearn import linear_model
 
 
 def optimize_bowers_virgin(well, vel_log, obp_log, upper, lower,
@@ -294,6 +294,65 @@ def optimize_multivaraite(well, obp_log, vel_log, por_log, vsh_log, B,
     es_data = es_data[mask]
     vp_data = vp_data[mask]
     depth = depth[mask]
+
+    por_data = por_data.reshape((por_data.shape[0], 1))
+    vsh_data = vsh_data.reshape((vsh_data.shape[0], 1))
+    es_data = es_data.reshape((es_data.shape[0], 1))
+    vp_data = vp_data.reshape((vp_data.shape[0], 1))
+
+    #_____________________REGRESSION______________________
+    data = np.hstack((por_data, vsh_data, es_data))
+    # global REG
+    reg = linear_model.LinearRegression()
+    reg.fit(data, vp_data)
+
+    r2 = reg.score(data, vp_data)
+
+    a0 = reg.intercept_[0]
+    a1 = -reg.coef_[0][0]
+    a2 = -reg.coef_[0][1]
+    a3 = reg.coef_[0][2]
+
+    return a0, a1, a2, a3
+
+
+def optimize_eberhart_phillips(well, obp_log, vel_log, por_log, vsh_log, B,
+                               upper, lower):
+    if isinstance(vel_log, (bytes, str)):
+        vel_log = well.get_log(vel_log)
+    if isinstance(por_log, (bytes, str)):
+        por_log = well.get_log(por_log)
+    if isinstance(vsh_log, (bytes, str)):
+        vsh_log = well.get_log(vsh_log)
+    if isinstance(obp_log, (bytes, str)):
+        obp_log = well.get_log(obp_log)
+    # --------------------------------------------
+    obp_data = np.array(obp_log.data)
+    por_data = np.array(por_log.data)
+    vp_data = np.array(vel_log.data)
+    vsh_data = np.array(vsh_log.data)
+
+    depth = well.depth
+    hydrostatic = well.hydrostatic
+
+    es = obp_data - hydrostatic
+
+    B = well.params['eberthart']['B'] if B is None else B  # 0.88
+    es_data = es - np.exp(B*es)
+
+    mask = np.isfinite(vp_data)
+    mask *= np.isfinite(por_data)
+    mask *= np.isfinite(vsh_data)
+    mask *= depth < lower #3500
+    mask *= depth > upper #1500
+
+    por_data = por_data[mask]
+    vsh_data = vsh_data[mask]
+    es_data = es_data[mask]
+    vp_data = vp_data[mask]
+    depth = depth[mask]
+
+    vsh_data = np.sqrt(vsh_data)
 
     por_data = por_data.reshape((por_data.shape[0], 1))
     vsh_data = vsh_data.reshape((vsh_data.shape[0], 1))
