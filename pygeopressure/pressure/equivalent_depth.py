@@ -10,6 +10,7 @@ from __future__ import (absolute_import, division, print_function,
 __author__ = "yuhao"
 
 import numpy as np
+from scipy.interpolate import interp1d
 
 
 def invert_NCT(vel, a, b):
