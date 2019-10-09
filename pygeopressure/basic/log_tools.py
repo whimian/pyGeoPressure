@@ -12,12 +12,12 @@ __author__ = "yuhao"
 from builtins import range, open
 import numpy as np
 from scipy.interpolate import interp1d
-from scipy.signal import butter, filtfilt
 
 from pygeopressure.velocity.smoothing import smooth
 
 from pygeopressure.pressure.obp import traugott_trend
 from pygeopressure.basic.well_log import Log
+from pygeopressure.velocity.lowpass_filter import butter_lowpass_filter
 
 
 def extrapolate_log_traugott(den_log, a, b, kb=0, wd=0):
@@ -105,10 +105,11 @@ def upscale_log(log, freq=20):
     mask = np.isfinite(data)
     func = interp1d(depth[mask], data[mask])
     interp_data = func(depth[log.start_idx: log.stop_idx])
-    nyq = 10000 / 2
-    dw = freq / nyq
-    b, a = butter(4, dw, btype='low', analog=False)
-    filtered = filtfilt(b, a, interp_data, method='gust')
+
+    sample_rate = 1 / 0.002
+    filtered = butter_lowpass_filter(
+        interp_data, freq, sample_rate/2)
+
     downscale_data = np.array(data)
     downscale_data[log.start_idx: log.stop_idx] = filtered
     log_downscale = Log()
@@ -117,6 +118,7 @@ def upscale_log(log, freq=20):
     log_downscale.descr = log.descr
     log_downscale.depth = log.depth
     log_downscale.data = downscale_data
+
     return log_downscale
 
 
