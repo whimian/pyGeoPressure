@@ -108,7 +108,16 @@ import sphinx_bootstrap_theme
 html_theme = 'bootstrap'
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
 # kill in and out prompt
-nbsphinx_prompt_width=0
+# nbsphinx_prompt_width=0
+nbsphinx_prolog = """
+.. raw:: html
+    <style>
+    .nbinput .prompt,
+    .nboutput .prompt {
+        display: none;
+        }
+    </style>
+"""
 
 html_theme_options = dict(
     bootstrap_version="3",
