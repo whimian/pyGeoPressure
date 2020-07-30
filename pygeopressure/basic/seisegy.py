@@ -514,3 +514,45 @@ class SeiSEGY(object):
         except Exception as inst:
             print(inst)
             print("Failed to export.")
+
+    def to_gslib_grid(self, attr, fname):
+        """
+        Only the variable values are stored in Grid file, grid coordination are
+        defined during the importation.
+        Data are sorted in Fortran order
+        """
+        info = "Number of cells: [{},{},{}] ".format(
+            self.nEast, self.nNorth, self.nDepth) + \
+            "Cell dimensions: [{},{},{}] ".format(
+                self.stepInline, self.stepCrline, self.stepDepth) + \
+            "Origin: [{}, {}, {}]".format(
+                self.startInline, self.startCrline, self.startDepth)
+        with open(fname, 'w') as fout:
+            fout.write("{}\n1\n{}\n".format(info, attr))
+        # nDepth = self.nDepth
+
+        # for i, d in enumerate(
+        #         tqdm(self.depths(), total=nDepth, ascii=True)):
+        #     data_per_depth = self.depth(d).flatten(order="F")
+        #     temp_frame = pd.DataFrame(
+        #         {'col1': data_per_depth})
+        #     temp_frame.to_csv(
+        #         fname, mode='a', index=False, sep=str(' '),
+        #         header=False)
+
+        nInline = self.nEast
+
+        data_array = None
+
+        for inl in tqdm(self.inlines(), total=nInline, ascii=True):
+            data_per_inline = self.inline(inl).flatten()
+            if data_array is None:
+                data_array = data_per_inline
+            else:
+                data_array = np.append(data_array, data_per_inline)
+
+        data_array = data_array.reshape((self.nEast, self.nNorth, self.nDepth)).flatten('F')
+        temp_frame = pd.DataFrame({'col4': data_array})
+        temp_frame.to_csv(
+            fname, mode='a', index=False, sep=str(' '),
+            header=False)
