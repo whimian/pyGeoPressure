@@ -510,7 +510,7 @@ class Well(object):
 
         return log
 
-    def bowers(self, vel_log, obp_log=None, a=None, b=None, u=1, vmax=4600,
+    def bowers(self, vel_log, obp_log=None, a=None, b=None, u=None, vmax=None,
                start_depth=None, buf=20, end_depth=None, end_buffer=10):
         """
         Predict pore pressure using Eaton method
