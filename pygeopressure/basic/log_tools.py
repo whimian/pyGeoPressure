@@ -12,6 +12,7 @@ __author__ = "yuhao"
 from builtins import range, open
 import numpy as np
 from scipy.interpolate import interp1d
+from scipy.signal import butter, filtfilt
 
 from pygeopressure.velocity.smoothing import smooth
 
@@ -96,6 +97,31 @@ def smooth_log(log, window=1500):
     return log_smooth
 
 
+# def upscale_log(log, freq=20):
+#     """
+#     downscale a well log with a lowpass butterworth filter
+#     """
+#     depth = np.array(log.depth)
+#     data = np.array(log.data)
+#     mask = np.isfinite(data)
+#     func = interp1d(depth[mask], data[mask])
+#     interp_data = func(depth[log.start_idx: log.stop_idx])
+
+#     sample_rate = 1 / 0.002
+#     filtered = butter_lowpass_filter(
+#         interp_data, freq, sample_rate/2)
+
+#     downscale_data = np.array(data)
+#     downscale_data[log.start_idx: log.stop_idx] = filtered
+#     log_downscale = Log()
+#     log_downscale.name = log.name + "_downscale_" + str(freq)
+#     log_downscale.units = log.units
+#     log_downscale.descr = log.descr
+#     log_downscale.depth = log.depth
+#     log_downscale.data = downscale_data
+
+#     return log_downscale
+
 def upscale_log(log, freq=20):
     """
     downscale a well log with a lowpass butterworth filter
@@ -105,11 +131,10 @@ def upscale_log(log, freq=20):
     mask = np.isfinite(data)
     func = interp1d(depth[mask], data[mask])
     interp_data = func(depth[log.start_idx: log.stop_idx])
-
-    sample_rate = 1 / 0.002
-    filtered = butter_lowpass_filter(
-        interp_data, freq, sample_rate/2)
-
+    nyq = 10000 / 2
+    dw = freq / nyq
+    b, a = butter(4, dw, btype='low', analog=False)
+    filtered = filtfilt(b, a, interp_data, method='gust')
     downscale_data = np.array(data)
     downscale_data[log.start_idx: log.stop_idx] = filtered
     log_downscale = Log()
@@ -118,7 +143,6 @@ def upscale_log(log, freq=20):
     log_downscale.descr = log.descr
     log_downscale.depth = log.depth
     log_downscale.data = downscale_data
-
     return log_downscale
 
 
