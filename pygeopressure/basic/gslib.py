@@ -75,13 +75,13 @@ class Gslib(object):
             self.column_names = [fl.readline().strip('\n') \
                 for i in range(self.header_len)]
             self.dataframe = pd.read_csv(
-                gslib_file, sep=str(r"\s+|\t+|\s+\t+|\t+\s+"), header=None,
+                gslib_file, sep="\s+", header=None,
                 names=self.column_names, index_col=False,
-                skiprows=self.header_len+2, na_values=na, engine='python')
+                skiprows=self.header_len+2, na_values=na)
             # df.groupby(['X', 'Y'])[column_names[-1]].apply(list).to_csv(
             #     od_file, sep='\t')
 
-    def to_grid(self, filename, shape=None):
+    def to_grid(self, filename, shape):
         with open(filename, 'w') as out_fl:
             out_fl.write("{}\n".format(self.info))
             out_fl.write("1\n")
