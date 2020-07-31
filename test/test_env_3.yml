@@ -17,6 +17,7 @@ dependencies:
 - scikit-learn
 - pandas
 - pytables
+- tqdm
 - matplotlib
 - pytest
 - pytest-cov
